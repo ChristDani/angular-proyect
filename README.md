@@ -45,7 +45,7 @@ La aplicación requiere que dos procesos se ejecuten de forma simultánea en dos
 1.  **Iniciar la API Simulada**
     En una terminal, ejecuta el siguiente comando para iniciar `json-server`. Este servidor leerá el archivo `db.json` y servirá los datos en `http://localhost:3000`.
     ```bash
-    npx json-server --watch db.json --port 3000
+    npm run serve:api
     ```
 
 2.  **Iniciar el Servidor de Angular**
