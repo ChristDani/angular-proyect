@@ -1,59 +1,56 @@
-# BankApp
+# Sistema de Gestión Bancaria Avanzada con Angular
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.1.6.
+## Descripción del Proyecto
 
-## Development server
+Este es un proyecto para un curso de Angular que simula una aplicación web de gestión bancaria. El sistema permite dos tipos de roles: **clientes** y **administradores**, cada uno con su propio conjunto de funcionalidades para interactuar con productos financieros como cuentas, préstamos y tarjetas.
 
-To start a local development server, run:
+La aplicación está construida como una Single-Page Application (SPA) utilizando Angular y consume una **API REST simulada con `json-server`**, lo que permite un desarrollo completo del frontend sin necesidad de un backend real. La interfaz de usuario se desarrolla con la librería de componentes **Angular Material** para asegurar un diseño profesional y responsive.
 
-```bash
-ng serve
-```
+### Características Principales
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+* **Autenticación por Roles**: Sistema de login que redirige a los usuarios a un dashboard de cliente o a un panel de administración según su rol.
+* **Gestión para Clientes**: Los clientes pueden ver sus cuentas, el detalle de sus transacciones, realizar transferencias, pagar servicios y gestionar sus préstamos y tarjetas.
+* **Panel de Administración**: Los administradores tienen acceso a un panel con **operaciones CRUD completas** (Crear, Leer, Actualizar, Eliminar) para gestionar todos los usuarios, cuentas, préstamos y tarjetas del sistema.
+* **Rutas Protegidas**: Se implementan *guards* de Angular para proteger las rutas y asegurar que solo los usuarios autorizados puedan acceder a ciertas secciones.
 
-## Code scaffolding
+## Ejecución del Proyecto
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+Para poder ejecutar este proyecto en tu máquina local, sigue los siguientes pasos.
 
-```bash
-ng generate component component-name
-```
+### Prerrequisitos
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+Asegúrate de tener el siguiente software instalado:
+* **Node.js** (versión 16 o superior)
+* **Angular CLI** (puedes instalarlo globalmente con `npm install -g @angular/cli`)
 
-```bash
-ng generate --help
-```
+### Pasos para la Instalación
 
-## Building
+1.  **Clonar el Repositorio**
+    Abre tu terminal y clona el proyecto desde su repositorio.
+    ```bash
+    git clone <URL-DEL-REPOSITORIO>
+    cd <nombre-del-proyecto>
+    ```
 
-To build the project run:
+2.  **Instalar Dependencias**
+    Una vez dentro de la carpeta del proyecto, ejecuta el siguiente comando para instalar todas las librerías y paquetes necesarios.
+    ```bash
+    npm install
+    ```
 
-```bash
-ng build
-```
+### Iniciar la Aplicación
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+La aplicación requiere que dos procesos se ejecuten de forma simultánea en dos terminales separadas: la **API simulada** y el **servidor de desarrollo de Angular**.
 
-## Running unit tests
+1.  **Iniciar la API Simulada**
+    En una terminal, ejecuta el siguiente comando para iniciar `json-server`. Este servidor leerá el archivo `db.json` y servirá los datos en `http://localhost:3000`.
+    ```bash
+    npx json-server --watch db.json --port 3000
+    ```
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+2.  **Iniciar el Servidor de Angular**
+    En una **segunda terminal**, ejecuta el comando para iniciar el servidor de desarrollo de Angular.
+    ```bash
+    ng serve -o
+    ```
+    La opción `-o` abrirá automáticamente tu navegador en `http://localhost:4200/`, donde podrás ver la aplicación en funcionamiento.
