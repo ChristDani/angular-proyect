@@ -1,0 +1,43 @@
+
+.app-toolbar{
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 2;
+    background-color: #005CBB;
+    color: #ffffff;
+    font-size: 1rem;
+}
+
+.app-toolbar .mat-icon{
+    color: #ffffff;
+}
+
+.name-user{
+    font-size: 1rem;
+    margin-right: 5px;
+}
+
+.toolbar-spacer {
+    flex: 1 1 auto;
+}
+
+.sidenav-container{
+    height: 100vh;
+    padding-top: 64px;
+}
+
+.sidenav{
+    width: 240px;
+    background-color: #92bfe2;
+    padding-top: 64px;
+}
+
+.sidenav-content .content-wrapper{
+    padding: 16px;
+}
+
+.buttonNew{
+    margin-left: 10px;
+}
