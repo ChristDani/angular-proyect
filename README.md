@@ -54,3 +54,9 @@ La aplicación requiere que dos procesos se ejecuten de forma simultánea en dos
     ng serve -o
     ```
     La opción `-o` abrirá automáticamente tu navegador en `http://localhost:4200/`, donde podrás ver la aplicación en funcionamiento.
+
+3. **Otra opción de iniciar la API simulada y el servidor de Angular con un solo comando**
+    En la terminal, ejecutar el siguiente comando para iniciar:
+    ```bash
+    npm run start
+    ```

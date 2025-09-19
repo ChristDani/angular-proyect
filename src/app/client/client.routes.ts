@@ -5,12 +5,15 @@ import { Transfers } from './transfers/transfers';
 import { Loans } from './loans/loans';
 import { Cards } from './cards/cards';
 import { Accounts } from './accounts/accounts';
+import { RoleGuardClient } from '../core/guards/role.guard';
 
 
 export const CLIENT_ROUTES: Routes = [
     { path: '', 
       component: Client,
-    children: [
+      canActivate: [RoleGuardClient],
+      canActivateChild: [RoleGuardClient],
+      children: [
         { path: '', component: Dashboard},
         { path: 'accounts', component: Accounts},
         { path: 'transfers', component: Transfers},

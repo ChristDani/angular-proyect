@@ -1,8 +1,8 @@
-import { Component, signal } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-
+import { AuthService } from '../auth.service';
 
 import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatInputModule } from '@angular/material/input';
@@ -17,22 +17,38 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
   templateUrl: './login.html',
   styleUrl: './login.css'
 })
-export class Login {
+export class Login implements OnInit{
   username = signal('');
   password = signal('');
 
-  constructor(private router:Router, private _snackBar: MatSnackBar){}
+  constructor(private router:Router,private auth: AuthService, private _snackBar: MatSnackBar){}
+
+  ngOnInit(): void {
+    if(this.auth.getLoggedInUser()?.role==="admin"){
+      this.router.navigate(['/admin']);
+    }
+
+    if(this.auth.getLoggedInUser()?.role==="client"){
+      this.router.navigate(['/client']);
+    }
+  }
 
   login(): void{
-    if(this.username()==='admin' && this.password()==='admin'){
-      this.router.navigate(['/admin']);
-      console.log("correcto");
-    }else if(this.username()==='client' && this.password()==='client'){
-      this.router.navigate(['/client']);
-      console.log("correcto");
-    }else{
-      this.error()
-    }
+    this.auth.autenticacion(this.username(),this.password()).subscribe({
+      next: user => {
+        console.log(typeof user);
+        if(user.role==="admin"){
+          this.router.navigate(['/admin']);
+        }
+        if(user.role==="client"){
+          this.router.navigate(['/client']);
+        }
+      },
+      error: err => {
+        this.error();
+        console.log(err);
+      }
+    });
   }
 
   clearAlertAndSetUsername(event: any): void{
