@@ -1,0 +1,19 @@
+
+<div class="body">
+  <div class="login">
+    <mat-icon>account_balance</mat-icon>
+    <form (ngSubmit)="login()">
+      <h2> Login</h2>
+      <mat-form-field>
+        <mat-label>Usuario</mat-label>
+        <input type="text" matInput id="username" name="username" [ngModel]="username()" (ngModelChange)="clearAlertAndSetUsername($event)" required/>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Password</mat-label>
+        <input type="password" matInput id="password" name="password" [ngModel]="password()"  (ngModelChange)="clearAlertAndSetPassword($event)" required/>
+      </mat-form-field>
+      <br>
+      <button [disabled]="username()==='' || password()===''" type="submit" mat-flat-button color="primary">Ingresar</button>
+    </form>
+  </div>
+</div>
