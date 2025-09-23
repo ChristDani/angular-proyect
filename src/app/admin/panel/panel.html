@@ -1,1 +1,162 @@
-<p>panel works!</p>
+<h2 class="section-title">Acciones Rápidas</h2>
+
+<div class="shortcut-cards-container">
+  <div class="shortcut-cards" (click)="redirectTo('/users')">
+    <mat-card>
+  </mat-card>
+  <mat-card>
+    <mat-card-header>
+      <div mat-card-avatar class="example-header-image">
+        	<!-- <mat-icon>account_circle</mat-icon> -->
+           <!-- <mat-icon>assignment_ind</mat-icon> -->
+            <mat-icon>supervisor_account</mat-icon>
+      </div>
+      <mat-card-title>Gestión de clientes</mat-card-title>
+    </mat-card-header>
+  </mat-card>
+  </div>
+  <div class="shortcut-cards"  (click)="redirectTo('/reports')">
+    <mat-card>
+  </mat-card>
+  <mat-card>
+    <mat-card-header>
+      <div mat-card-avatar class="example-header-image">
+        	<!-- <mat-icon>receipt</mat-icon> -->
+           <mat-icon>file_copy</mat-icon>
+      </div>
+      <mat-card-title>Reportes</mat-card-title>
+    </mat-card-header>
+  </mat-card>
+  </div>
+
+</div>
+
+<h2 class="section-title">Estadísticas</h2>
+
+<div class="stadistics-cards">
+  @for (stat of statistics; track stat.title) {
+    <div class="stadistics-cards-container">
+     <mat-card appearance="outlined">
+       <mat-card-header>
+         <mat-card-title> {{ stat.title }} </mat-card-title>
+         <br>
+       </mat-card-header>
+       @for (item of stat.items; track item.label) {
+         <div>
+           <mat-card-content>
+             <mat-progress-bar mode="determinate" [value]="item.value" [class]="item.class"></mat-progress-bar>
+             <p>{{ item.label }}</p>
+           </mat-card-content>
+         </div>
+       }
+     </mat-card>
+   </div>
+  }
+  <!-- <div #cardClients class="stadistics-cards-container">
+    <mat-card appearance="outlined">
+      <mat-card-header>
+        <mat-card-title> Clientes</mat-card-title>
+        <br>
+      </mat-card-header>
+      <div>
+        <mat-card-content>
+          <mat-progress-bar mode="determinate" value="40" class="total"></mat-progress-bar>
+          <p>Clientes actuales</p>
+        </mat-card-content>
+      </div>
+      <div>
+        <mat-card-content>
+          <mat-progress-bar mode="determinate" value="40" class="new"></mat-progress-bar>
+          <p>Nuevos clientes registrados</p>
+        </mat-card-content>
+      </div>
+      <div>
+        <mat-card-content>
+          <mat-progress-bar mode="determinate" value="10" class="delete"></mat-progress-bar>
+          <p>Clientes eliminados</p>
+        </mat-card-content>
+      </div>
+    </mat-card>
+  </div>
+
+  <div #cardClientsCards class="stadistics-cards-container">
+    <mat-card appearance="outlined">
+      <mat-card-header>
+        <mat-card-title> Tarjetas</mat-card-title>
+        <br>
+      </mat-card-header>
+      <div>
+        <mat-card-content>
+          <mat-progress-bar mode="determinate" value="40" class="total"></mat-progress-bar>
+          <p>Tarjetas actuales</p>
+        </mat-card-content>
+      </div>
+      <div>
+        <mat-card-content>
+          <mat-progress-bar mode="determinate" value="40" class="new"></mat-progress-bar>
+          <p>Solicitudes de nuevas tarjetas</p>
+        </mat-card-content>
+      </div>
+      <div>
+        <mat-card-content>
+          <mat-progress-bar mode="determinate" value="10" class="delete"></mat-progress-bar>
+          <p>Tarjetas eliminadas/bloqueadas</p>
+        </mat-card-content>
+      </div>
+    </mat-card>
+  </div>
+
+  <div #cardClients class="stadistics-cards-container">
+    <mat-card appearance="outlined">
+      <mat-card-header>
+        <mat-card-title> Cuentas</mat-card-title>
+        <br>
+      </mat-card-header>
+      <div>
+        <mat-card-content>
+          <mat-progress-bar mode="determinate" value="40" class="total"></mat-progress-bar>
+          <p>Cuentas actuales</p>
+        </mat-card-content>
+      </div>
+      <div>
+        <mat-card-content>
+          <mat-progress-bar mode="determinate" value="40" class="new"></mat-progress-bar>
+          <p>Nuevos cuentas registrados</p>
+        </mat-card-content>
+      </div>
+      <div>
+        <mat-card-content>
+          <mat-progress-bar mode="determinate" value="10" class="delete"></mat-progress-bar>
+          <p>Cuentas eliminados</p>
+        </mat-card-content>
+      </div>
+    </mat-card>
+  </div>
+
+  <div #cardClients class="stadistics-cards-container">
+    <mat-card appearance="outlined">
+      <mat-card-header>
+        <mat-card-title> Préstamos</mat-card-title>
+        <br>
+      </mat-card-header>
+      <div>
+        <mat-card-content>
+          <mat-progress-bar mode="determinate" value="40" class="total"></mat-progress-bar>
+          <p>Préstamos actuales</p>
+        </mat-card-content>
+      </div>
+      <div>
+        <mat-card-content>
+          <mat-progress-bar mode="determinate" value="40" class="new"></mat-progress-bar>
+          <p>Nuevos Préstamos registrados</p>
+        </mat-card-content>
+      </div>
+      <div>
+        <mat-card-content>
+          <mat-progress-bar mode="determinate" value="10" class="delete"></mat-progress-bar>
+          <p>Préstamos eliminados</p>
+        </mat-card-content>
+      </div>
+    </mat-card>
+  </div> -->
+</div>
