@@ -1,1 +1,85 @@
-<p>accounts works!</p>
+<div class="container mt-4">
+  <!-- Selección de la cuenta -->
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h5>Selección de la cuenta</h5>
+    <button  matButton="filled" class="btn-redondeado">Solicitar nueva cuenta</button>
+  </div>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h5>Cuenta</h5>
+   <mat-chip class="example-box">Activa</mat-chip>
+</div>
+
+<!-- Selector de cuentas -->
+<mat-form-field appearance="outline" class="w-100">
+  <mat-select [(value)]="selectedAccount">
+    <mat-select-trigger>
+      <div class="d-flex justify-content-between align-items-center w-100">
+        <!-- Icono circular -->
+        <div class="d-flex align-items-center">
+          <div class="circle-icon me-2">T</div>
+          <div>
+            <p class="mb-0 fw-bold">CUENTA RETIRO</p>
+            <small>****2015</small>
+          </div>
+        </div>
+        <!-- Saldo -->
+        <span class="text-warning fw-bold">- $ 1,000,000.00</span>
+      </div>
+    </mat-select-trigger>
+
+    <!-- Opciones -->
+    <mat-option *ngFor="let cuenta of cuentas" [value]="cuenta">
+      <div class="d-flex justify-content-between align-items-center w-100">
+        <div>
+          <p class="mb-0 fw-bold">{{ cuenta.nombre }}</p>
+          <small>{{ cuenta.numero }}</small>
+        </div>
+        <span class="text-warning fw-bold">{{ cuenta.saldo | currency:'USD' }}</span>
+      </div>
+    </mat-option>
+  </mat-select>
+</mat-form-field>
+
+  <!-- Detalle de movimientos -->
+  <h6 class="fw-bold color-blue">Detalle de movimientos</h6>
+  <mat-card class="shadow-sm">
+    <div class="table-responsive">
+      <table mat-table [dataSource]="movimientos" class="table table-bordered mb-0">
+        <!-- Fecha -->
+        <ng-container matColumnDef="fecha">
+          <th mat-header-cell *matHeaderCellDef> Fecha </th>
+          <td mat-cell *matCellDef="let element"> {{ element.fecha }} </td>
+        </ng-container>
+
+        <!-- N° de Operación -->
+        <ng-container matColumnDef="operacion">
+          <th mat-header-cell *matHeaderCellDef> N° de Operación </th>
+          <td mat-cell *matCellDef="let element"> {{ element.operacion }} </td>
+        </ng-container>
+
+        <!-- Descripción -->
+        <ng-container matColumnDef="descripcion">
+          <th mat-header-cell *matHeaderCellDef> Descripción </th>
+          <td mat-cell *matCellDef="let element"> {{ element.descripcion }} </td>
+        </ng-container>
+
+        <!-- Moneda -->
+        <ng-container matColumnDef="moneda">
+          <th mat-header-cell *matHeaderCellDef> Moneda </th>
+          <td mat-cell *matCellDef="let element"> {{ element.moneda }} </td>
+        </ng-container>
+
+        <!-- Importe -->
+        <ng-container matColumnDef="importe">
+          <th mat-header-cell *matHeaderCellDef> Importe </th>
+          <td mat-cell *matCellDef="let element"> {{ element.importe }} </td>
+        </ng-container>
+
+        <!-- Header y Row -->
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    </div>
+  </mat-card>
+</div>
