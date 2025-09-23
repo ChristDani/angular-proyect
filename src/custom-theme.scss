@@ -17,6 +17,14 @@ html {
   ));
 }
 
+:root {
+  @include mat.list-overrides((
+    active-indicator-shape: 0px,
+    list-item-label-text-color: #86929E,
+    list-item-hover-label-text-color: #2B3442  
+  ));
+}
+
 body {
   // Default the application to a light color theme. This can be changed to
   // `dark` to enable the dark color theme, or to `light dark` to defer to the
