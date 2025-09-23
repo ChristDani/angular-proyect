@@ -1,0 +1,18 @@
+.shortcut-cards-container,
+.stadistics-cards {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.shortcut-cards {
+    cursor: pointer;
+    width: 30%;
+}
+
+.stadistics-cards-container {
+    width: 45%;
+    margin: 20px 10px;
+}

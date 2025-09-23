@@ -1,0 +1,37 @@
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.even-table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+.even-table th {
+  background-color: #005CBB;
+  color: #fff;
+}
+
+.even-table th, .even-table td {
+  text-align: center;
+  vertical-align: middle;
+  padding: 12px 8px;
+  word-break: break-word;
+}
+
+.even-table th, .even-table td {
+  width: calc(100% / 5); /* Adjust 5 to your total number of columns */
+}
+
+.expand-row {
+  background: #f5faff;
+  text-align: center;
+  padding: 16px 0;
+}
+
+.expand-actions button {
+  margin: 0 8px;
+}
