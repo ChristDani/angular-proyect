@@ -1,0 +1,69 @@
+mat-card {
+    border-radius: 12px;
+}
+
+table {
+    th {
+        background-color: #194175;
+        color: white;
+        text-align: center;
+    }
+
+    td {
+        text-align: center;
+        vertical-align: middle;
+    }
+}
+
+h5 {
+    color: #2B3442;
+    font-family: roboto;
+}
+
+.circle-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: #194175;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+.table,
+.table th,
+.table td {
+    border: none !important;
+}
+
+.mat-mdc-header-cell,
+.mat-mdc-cell {
+    border-bottom: none !important;
+}
+
+.mat-mdc-header-cell,
+.mat-mdc-cell {
+    text-align: center !important;
+    vertical-align: middle !important;
+}
+
+.color-blue {
+    color: #2B3442
+}
+
+.mat-mdc-button,
+.mat-mdc-raised-button,
+.mat-mdc-stroked-button,
+.mat-mdc-flat-button {
+    border-radius: 0 !important;
+}
+
+.btn-redondeado {
+    border-radius: 12px;
+}
+
+.chip-azul {
+  background-color: #194175 !important;
+}

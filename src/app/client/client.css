@@ -1,20 +1,19 @@
-
-.app-toolbar{
+.app-toolbar {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     z-index: 2;
-    background-color: #005CBB;
+    background-color: #194175;
     color: #ffffff;
     font-size: 1rem;
 }
 
-.app-toolbar .mat-icon{
+.app-toolbar .mat-icon {
     color: #ffffff;
 }
 
-.name-user{
+.name-user {
     font-size: 1rem;
     margin-right: 5px;
 }
@@ -23,21 +22,36 @@
     flex: 1 1 auto;
 }
 
-.sidenav-container{
+.sidenav-container {
     height: 100vh;
     padding-top: 64px;
 }
 
-.sidenav{
-    width: 240px;
-    background-color: #92bfe2;
+.sidenav {
+    width: 350px;
+    background-color: #F6FAFC;
     padding-top: 64px;
+    border: 1px solid #EEF2F5;
+    color: #86929E;
 }
 
-.sidenav-content .content-wrapper{
+mat-nav-list span {
+    color: #86929E;
+
+}
+
+mat-nav-list a:hover {
+    background: #194175;
+
+    span {
+        color: #fff
+    }
+}
+
+.sidenav-content .content-wrapper {
     padding: 16px;
 }
 
-.buttonNew{
+.buttonNew {
     margin-left: 10px;
 }
