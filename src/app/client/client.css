@@ -1,57 +1,59 @@
+/* ==== Toolbar ==== */
 .app-toolbar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 2;
-    background-color: #194175;
-    color: #ffffff;
-    font-size: 1rem;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  background-color: #194175;
+  color: #ffffff;
+  font-size: 1rem;
 }
 
 .app-toolbar .mat-icon {
-    color: #ffffff;
+  color: #ffffff;
 }
 
 .name-user {
-    font-size: 1rem;
-    margin-right: 5px;
+  font-size: 1rem;
+  margin-right: 5px;
 }
 
 .toolbar-spacer {
-    flex: 1 1 auto;
+  flex: 1 1 auto;
 }
 
+/* ==== Sidenav Layout ==== */
 .sidenav-container {
-    height: 100vh;
-    padding-top: 64px;
+  height: 100vh;
+  padding-top: 64px;
 }
 
 .sidenav {
-    width: 350px;
-    background-color: #F6FAFC;
-    padding-top: 64px;
-    border: 1px solid #EEF2F5;
-    color: #86929E;
-}
-
-mat-nav-list span {
-    color: #86929E;
-
-}
-
-mat-nav-list a:hover {
-    background: #194175;
-
-    span {
-        color: #fff
-    }
+  width: 350px;
+  background-color: #f6fafc;
+  border: 1px solid #eef2f5;
+  padding-top: 64px;
+  color: #86929e;
 }
 
 .sidenav-content .content-wrapper {
-    padding: 16px;
+  padding: 16px;
 }
 
-.buttonNew {
-    margin-left: 10px;
+.sidenav-title {
+  display: block;
+  text-align: center;
+  font-weight: bold;
+  font-size: 20px;
+  margin: 26px 0;
+  color: #2B3442;
+}
+
+/* ==== NavList Layout ==== */
+mat-nav-list a.mat-mdc-list-item {
+  padding-left: 3rem !important;
+  span {
+    font-weight: 500
+  }
 }
