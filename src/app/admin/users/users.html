@@ -1,57 +1,52 @@
-<mat-card>
+<mat-card class="mb-4">
   <mat-card-header class="card-header">
     <mat-card-title> Clientes </mat-card-title>
-    <button matButton="filled" class="buttonNew">Nuevo</button>
+    <button matButton="filled" (click)="addNewUser">Nuevo</button>
   </mat-card-header>
-
-  <mat-card-content>
-    <table mat-table [dataSource]="dataSource" multiTemplateDataRows class="mat-elevation-z8 full-width-table even-table">
-
-      <ng-container matColumnDef="{{col.key}}" *ngFor="let col of columns">
-        <th mat-header-cell *matHeaderCellDef> {{col.label}} </th>
-        <td mat-cell *matCellDef="let element"> {{element[col.key]}} </td>
-      </ng-container>
-
-      <ng-container matColumnDef="acciones">
-        <th mat-header-cell *matHeaderCellDef>Acciones</th>
-        <td mat-cell *matCellDef="let element" class="acciones-cell">
-          <button mat-icon-button color="primary" (click)="editUser(element)">
-            <mat-icon>edit</mat-icon>
-          </button>
-          <button mat-icon-button color="warn" (click)="deleteUser(element)">
-            <mat-icon>delete</mat-icon>
-          </button>
-          <button mat-icon-button color="accent" (click)="addUserProduct(element)">
-            <mat-icon>add</mat-icon>
-          </button>
-        </td>
-      </ng-container>
-
-          <ng-container matColumnDef="expandedDetail">
-            <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length">
-              <div class="expand-row" *ngIf="expandedElement === element">
-                <div class="expand-actions">
-                  <button mat-raised-button matButton="filled">Agregar Cuenta</button>
-                  <button mat-raised-button matButton="filled">Agregar Préstamo</button>
-                  <button mat-raised-button matButton="filled">Agregar Tarjeta</button>
-                </div>
-              </div>
-            </td>
-          </ng-container>
-
-
-<tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-<tr mat-row *matRowDef="let element; columns: displayedColumns"
-    class="element-row"
-    [class.expanded-row]="expandedElement === element">
-</tr>
-      
-          <tr mat-row *matRowDef="let element; columns: ['expandedDetail']"
-              class="detail-row"
-              >
-          </tr>
-
-
-    </table>
-  </mat-card-content>
 </mat-card>
+
+<table mat-table [dataSource]="dataSource" multiTemplateDataRows class="mat-elevation-z8  even-table">
+  @for (column of columnsToDisplay; track column) {
+  <ng-container matColumnDef="{{column}}">
+    <th mat-header-cell *matHeaderCellDef>{{column}}</th>
+    <td mat-cell *matCellDef="let element">{{element[column]}}</td>
+  </ng-container>
+  }
+  <ng-container matColumnDef="expand">
+    <th mat-header-cell *matHeaderCellDef aria-label="row actions">&nbsp;</th>
+    <td mat-cell *matCellDef="let element">
+      <button mat-icon-button color="primary" (click)="editUser(element); $event.stopPropagation()">
+        <mat-icon>edit</mat-icon>
+      </button>
+      <button mat-icon-button color="warn" (click)="deleteUser(element); $event.stopPropagation()">
+        <mat-icon>delete</mat-icon>
+      </button>
+      <button matIconButton aria-label="expand row" (click)="toggle(element); $event.stopPropagation()"
+        class="toggle-button" [class.toggle-button-expanded]="isExpanded(element)">
+        <mat-icon>keyboard_arrow_down</mat-icon>
+      </button>
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="expandedDetail">
+    <td mat-cell *matCellDef="let element" [attr.colspan]="columnsToDisplayWithExpand.length">
+      <div class="element-detail-wrapper" [class.element-detail-wrapper-expanded]="isExpanded(element)">
+        <div class="element-detail d-block">
+          <div class="element-description">
+            <div class="expand-actions d-flex justify-content-center gap-3">
+              <button mat-raised-button matButton="filled" (click)="addUserAccount(element)">Agregar Cuenta</button>
+              <button mat-raised-button matButton="filled" (click)="addUserLoan(element)">Agregar Préstamo</button>
+              <button mat-raised-button matButton="filled" (click)="addUserCard(element)">Agregar Tarjeta</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="columnsToDisplayWithExpand"></tr>
+  <tr mat-row *matRowDef="let element; columns: columnsToDisplayWithExpand;" class="element-row"
+    [class.expanded-row]="isExpanded(element)" (click)="toggle(element)">
+  </tr>
+  <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="detail-row"></tr>
+</table>
