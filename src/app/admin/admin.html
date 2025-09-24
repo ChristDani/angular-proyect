@@ -13,21 +13,20 @@
 
 <mat-sidenav-container class="sidenav-container">
   <mat-sidenav #sidenav [mode]="(isHandset$ | async) ? 'over' : 'side'" [opened]="!(isHandset$ | async)" class="sidenav" role="navigation" aria-label="Main navigation">
-    <mat-nav-list>
+     <mat-nav-list>
+      <span class="sidenav-title">{{ currentRoute() }}</span>
       <a mat-list-item routerLink="admin">
         <span matLine>Inicio</span>
-        <mat-icon matListItemIcon>chevron_right</mat-icon>
       </a>
       <a mat-list-item routerLink="users">
-        <span matLine>Users</span>
-        <mat-icon matListItemIcon>chevron_right</mat-icon>
+        <span matLine>Clientes</span>
       </a>
-      <a mat-list-item routerLink="reports">
-        <span matLine>Reports</span>
-        <mat-icon matListItemIcon>chevron_right</mat-icon>
+      <a mat-list-item routerLink="reports" >
+        <span matLine>Reportes</span>
       </a>
     </mat-nav-list>
   </mat-sidenav>
+    
 
   <mat-sidenav-content class="sidenav-content">
     <div class="content-wrapper">

@@ -42,3 +42,38 @@
 .buttonNew{
     margin-left: 10px;
 }
+
+/* ==== Sidenav Layout ==== */
+.sidenav-container {
+  height: 100vh;
+  padding-top: 64px;
+}
+
+.sidenav {
+  width: 350px;
+  background-color: #f6fafc;
+  border: 1px solid #eef2f5;
+  padding-top: 64px;
+  color: #86929e;
+}
+
+.sidenav-content .content-wrapper {
+  padding: 16px;
+}
+
+.sidenav-title {
+  display: block;
+  text-align: center;
+  font-weight: bold;
+  font-size: 20px;
+  margin: 26px 0;
+  color: #2B3442;
+}
+
+/* ==== NavList Layout ==== */
+mat-nav-list a.mat-mdc-list-item {
+  padding-left: 3rem !important;
+  span {
+    font-weight: 500
+  }
+}
