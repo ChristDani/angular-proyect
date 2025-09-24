@@ -4,7 +4,7 @@ mat-card {
 
 table {
     th {
-        background-color: #194175;
+        background-color: #005CBB;
         color: white;
         text-align: center;
     }
@@ -17,14 +17,13 @@ table {
 
 h5 {
     color: #2B3442;
-    font-family: roboto;
 }
 
 .circle-icon {
     width: 32px;
     height: 32px;
     border-radius: 50%;
-    background-color: #194175;
+    background-color: #005CBB;
     color: #fff;
     display: flex;
     align-items: center;
@@ -60,10 +59,7 @@ h5 {
     border-radius: 0 !important;
 }
 
-.btn-redondeado {
-    border-radius: 12px;
-}
-
-.chip-azul {
-  background-color: #194175 !important;
+.img {
+    max-width: 300px;
+    margin-bottom: 16px;
 }
