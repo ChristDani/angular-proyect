@@ -14,25 +14,17 @@
 <mat-sidenav-container class="sidenav-container">
   <mat-sidenav #sidenav [mode]="(isHandset$ | async) ? 'over' : 'side'" [opened]="!(isHandset$ | async)" class="sidenav" role="navigation" aria-label="Main navigation">
     <mat-nav-list>
+      <a mat-list-item routerLink="admin">
+        <span matLine>Inicio</span>
+        <mat-icon matListItemIcon>chevron_right</mat-icon>
+      </a>
       <a mat-list-item routerLink="users">
-        <mat-icon matListItemIcon>chevron_right</mat-icon>
         <span matLine>Users</span>
-      </a>
-      <a mat-list-item routerLink="accounts">
         <mat-icon matListItemIcon>chevron_right</mat-icon>
-        <span matLine>Accounts</span>
-      </a>
-      <a mat-list-item routerLink="loans">
-        <mat-icon matListItemIcon>chevron_right</mat-icon>
-        <span matLine>Loans</span>
-      </a>
-      <a mat-list-item routerLink="cards">
-        <mat-icon matListItemIcon>chevron_right</mat-icon>
-        <span matLine>Cards</span>
       </a>
       <a mat-list-item routerLink="reports">
-        <mat-icon matListItemIcon>chevron_right</mat-icon>
         <span matLine>Reports</span>
+        <mat-icon matListItemIcon>chevron_right</mat-icon>
       </a>
     </mat-nav-list>
   </mat-sidenav>

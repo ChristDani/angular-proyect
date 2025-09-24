@@ -5,7 +5,7 @@
     left: 0;
     right: 0;
     z-index: 2;
-    background-color: #005CBB;
+    background-color: #194175;
     color: #ffffff;
     font-size: 1rem;
 }
@@ -30,8 +30,9 @@
 
 .sidenav{
     width: 240px;
-    background-color: #92bfe2;
+    background-color: #EEF2F5;
     padding-top: 64px;
+    
 }
 
 .sidenav-content .content-wrapper{

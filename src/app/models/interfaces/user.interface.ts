@@ -6,3 +6,12 @@ export interface User{
   role: string;
   name: string;
 }
+
+export interface StatItem {
+  title: string;
+  items: StatValue[];
+}
+interface StatValue {
+  value: number;
+  label: string;
+}
