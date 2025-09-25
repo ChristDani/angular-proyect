@@ -1,6 +1,5 @@
-
-export interface User{
-  id : number;
+export interface User {
+  id: string;
   username: string;
   password: string;
   role: string;

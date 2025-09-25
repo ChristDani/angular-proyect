@@ -1,0 +1,97 @@
+<h4 mat-dialog-title class="text-center mt-4">Crear nuevo producto</h4>
+<mat-dialog-content class="dialog-content">
+    <section class="client-info">
+        <h5>Datos del cliente</h5>
+        <p class="mb-1"><strong>Nombre:</strong> {{ client.name }}</p>
+        <p class="mb-1"><strong>Id:</strong> {{ client.id }}</p>
+    </section>
+
+    @if(userAccount.length === 0) {
+    <div class="rounded border p-3 bg-light">
+        <div class="d-flex justify-content-center">
+            <mat-icon class="text-warning" style="font-size: 48px;">warning</mat-icon>
+            <p class="text-danger mt-3 text-centerb fs-6 text">El cliente no tiene cuentas asociadas. Por favor, cree
+                una cuenta antes de agregar un producto.</p>
+        </div>
+    </div>
+    } @else {
+    <form [formGroup]="productForm">
+        <div class="d-flex flex-column gap-3 mt-3">
+            <label for="account">Cuenta a asociar nuevo producto:</label>
+
+            <mat-form-field>
+                <mat-label>Selecciona una cuenta</mat-label>
+                <mat-select id="account" formControlName="selectedAccount">
+                    @for (account of userAccount; track account) {
+                    <mat-option [value]="account.id"> {{ account.id }} - {{ account.type }} - S/{{ account.balance
+                        }}</mat-option>
+                    }
+                </mat-select>
+            </mat-form-field>
+        </div>
+        <div class="d-flex flex-column gap-3 mt-3">
+            <label for="account">Tipo de producto:</label>
+            <mat-form-field>
+                <mat-label>Selecciona un tipo de producto</mat-label>
+                <mat-select id="productType" formControlName="productType">
+                    @for (product of productTypes; track product) {
+                    <mat-option [value]="product.value">{{ product.label }}</mat-option>
+                    }
+
+                </mat-select>
+            </mat-form-field>
+        </div>
+        @if(productForm.get('productType')?.value === 'tarjeta') {
+        <div class="d-flex flex-column gap-3 mt-3">
+            <label for="subProductType">SubTipo de producto:</label>
+            <mat-form-field>
+                <mat-label>Selecciona un tipo de producto</mat-label>
+                <mat-select id="subProductType" formControlName="subProductType">
+                    @for (product of subTypesTarjeta; track product) {
+                    <mat-option [value]="product.value">{{ product.label }}</mat-option>
+                    }
+
+                </mat-select>
+            </mat-form-field>
+            @if(productForm.get('subProductType')?.value === 'crédito') {
+            <label for="limitCreditCard">Límite:</label>
+            <mat-form-field>
+                <input matInput id="limitCreditCard" formControlName="limitCreditCard" placeholder="Ex. 3000">
+                <mat-error>Límite de tarjeta<strong>es requerido</strong></mat-error>
+
+            </mat-form-field>
+            }
+
+
+        </div>
+        }
+        @if(productForm.get('productType')?.value === 'prestamo') {
+        <div class="d-flex flex-column gap-3 mt-3">
+            <label for="installments">N° de cuotas:</label>
+            <mat-form-field>
+                <mat-select id="installmentsQuotas" formControlName="installmentsQuotas">
+                    @for (product of installments; track product) {
+                    <mat-option [value]="product">{{ product }}</mat-option>
+                    }
+
+                </mat-select>
+            </mat-form-field>
+            <label for="subProductType">Monto:</label>
+            <mat-form-field>
+                <input matInput id="loanAmount" formControlName="loanAmount" placeholder="Ex. 3000">
+
+            </mat-form-field>
+        </div>
+        }
+    </form>
+    }
+
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+
+    <button mat-button (click)="cancel()" [disabled]="isSubmitting">Cancelar</button>
+    <button mat-raised-button matButton="filled" color="primary" (click)="submit()"
+        [disabled]="productForm.invalid || isSubmitting"> Crear producto </button>
+</mat-dialog-actions>
