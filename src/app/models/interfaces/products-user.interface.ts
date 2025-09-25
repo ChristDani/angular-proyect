@@ -11,7 +11,7 @@ export interface Account {
 
 export type ProductType = 'cuenta' | 'tarjeta' | 'prestamo';
 export type SubType = {
-  value: 'debito' | 'ahorro' | 'crédito';
+  value: 'debito' | 'ahorro' | 'crédito' | 'corriente' | string;
   label: string;
 };
 

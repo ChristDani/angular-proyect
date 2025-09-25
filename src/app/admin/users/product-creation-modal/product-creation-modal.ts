@@ -50,7 +50,7 @@ export class ProductCreationModal {
   ];
 
   subTypesCuenta: SubType[] = [
-    { value: 'debito', label: 'Débito' },
+    { value: 'corriente', label: 'Corriente' },
     { value: 'ahorro', label: 'Ahorro' },
   ];
   subTypesTarjeta: SubType[] = [
@@ -83,7 +83,7 @@ export class ProductCreationModal {
 
     this.accountForm = this.fb.group({
       type: ['', Validators.required],
-      balance: [0, [Validators.required, Validators.min(0)]],
+      balance: ['', [Validators.required, Validators.min(0)]],
     });
     this.watchProductAndSubProduct();
   }
