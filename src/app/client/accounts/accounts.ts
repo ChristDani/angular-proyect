@@ -1,67 +1,68 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatFormField, MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatSelect, MatSelectModule } from '@angular/material/select';
-import { MatTableModule } from '@angular/material/table';
+import { Button } from '../../shared/components/button/button';
+import { Account } from '../../models/interfaces/account.interface';
+import { MATERIAL_IMPORTS } from '../../shared/components/material.imports';
+import { Transaction } from '../../models/interfaces/transaction.interface';
 
 @Component({
   selector: 'app-accounts',
-  imports: [
-    CommonModule,
-    MatCardModule,
-    MatIconModule,
-    MatTableModule,
-    MatButtonModule,
-    MatFormFieldModule,
-    MatSelectModule,
-    MatChipsModule
-  ],
+  imports: [CommonModule, ...MATERIAL_IMPORTS, Button],
   templateUrl: './accounts.html',
   styleUrl: './accounts.css',
 })
 export class Accounts {
-  displayedColumns: string[] = ['fecha', 'operacion', 'descripcion', 'moneda', 'importe'];
+  displayedColumns: string[] = ['fecha', 'operacion', 'descripcion', 'importe'];
 
-  movimientos = [
+  movimientos: Transaction[] = [
     {
-      fecha: '20/09/2025',
-      operacion: '00001',
-      descripcion: 'Retiro',
-      moneda: 'Soles',
-      importe: 10000,
+      id: 1,
+      accountId: 2,
+      date: '2025-09-01',
+      type: 'depósito',
+      amount: 1000,
+      description: 'Depósito de apertura',
     },
     {
-      fecha: '20/09/2025',
-      operacion: '00001',
-      descripcion: 'Retiro',
-      moneda: 'Soles',
-      importe: 10000,
+      id: 2,
+      accountId: 2,
+      date: '2025-09-03',
+      type: 'retiro',
+      amount: 300,
+      description: 'Pago de servicios',
     },
     {
-      fecha: '20/09/2025',
-      operacion: '00001',
-      descripcion: 'Retiro',
-      moneda: 'Soles',
-      importe: 10000,
-    },
-    {
-      fecha: '20/09/2025',
-      operacion: '00001',
-      descripcion: 'Retiro',
-      moneda: 'Soles',
-      importe: 10000,
+      id: 3,
+      accountId: 2,
+      date: '2025-09-03',
+      type: 'depósito',
+      amount: 2500,
+      description: 'Transferencia recibida',
     },
   ];
 
-  selectedAccount: any;
-
-  cuentas = [
-    { nombre: 'CUENTA RETIRO', numero: '****2015', saldo: -1000000 },
-    { nombre: 'CUENTA AHORROS', numero: '****9981', saldo: 25000 },
-    { nombre: 'CUENTA SUELDO', numero: '****7742', saldo: 5800 },
+  cuentas: Account[] = [
+    {
+      id: 1,
+      userId: 1,
+      type: 'ahorro',
+      balance: 1500,
+      status: 'activa',
+    },
+        {
+      id: 2,
+      userId: 2,
+      type: 'retiro',
+      balance: 1400,
+      status: 'inactiva',
+    },
   ];
+
+  selectedAccount: Account = this.cuentas[0];
+
+  constructor() {}
+
+  get movimientosFiltrados(): Transaction[] {
+    return this.movimientos.filter((m) => m.accountId === this.selectedAccount?.id);
+  }
 }
