@@ -7,7 +7,12 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatListModule } from '@angular/material/list';
 import { MatButtonModule } from '@angular/material/button';
 import { MatPaginatorModule } from '@angular/material/paginator';
-
+import { UserService } from '../../core/services/user.service';
+import { User } from '../../models/interfaces/user.interface';
+import Swal from 'sweetalert2';
+import { MatDialog } from '@angular/material/dialog';
+import { ProductCreationModal } from './product-creation-modal/product-creation-modal';
+import { Account, Client } from '../../models/interfaces/products-user.interface';
 
 @Component({
   selector: 'app-users',
@@ -24,50 +29,34 @@ import { MatPaginatorModule } from '@angular/material/paginator';
   templateUrl: './users.html',
   styleUrl: './users.css',
 })
-
-export class Users {
-  /**
- * Datos de prueba para la tabla de usuarios
- * sustituir con data del CRUD
- */
-ELEMENT_DATA: UserElement[] = [
-  {
-    id: '1',
-    nombre: 'Ana García',
-    rol: 'Admin',
-  },
-  {
-    id: '2',
-    nombre: 'Juan Perez',
-    rol: 'Cliente',
-  },
-  {
-    id: '3',
-    nombre: 'cliente3',
-    rol: 'cliente',
-  },
-  {
-    id: '4',
-    nombre: 'cliente4',
-    rol: 'cliente',
-  },
- 
-];
-  dataSource = this.ELEMENT_DATA;
-  columnsToDisplay = ['id', 'nombre', 'rol'];
+export class Users implements OnInit {
+  dataSource: User[] = [];
+  columnsToDisplay = ['id', 'name', 'role'];
   columnsToDisplayWithExpand = [...this.columnsToDisplay, 'expand'];
-  expandedElement: UserElement | null = null;
-  
+  expandedElement: User | null = null;
+
+  users: User[] = [];
+
+  constructor(
+    // private fb:FormBuilder,
+    private userService: UserService,
+    private dialog: MatDialog
+  ) {}
+
+  ngOnInit(): void {
+    this.getUsers();
+  }
+
   /**
    * metodos para expandir/ocultar columnas con acciones (CRUD USER)
-   * @param element 
-   * @returns 
+   * @param element
+   * @returns
    */
-  isExpanded(element: UserElement) {
+  isExpanded(element: User) {
     return this.expandedElement === element;
   }
 
-  toggle(element: UserElement) {
+  toggle(element: User) {
     this.expandedElement = this.isExpanded(element) ? null : element;
   }
 
@@ -75,46 +64,77 @@ ELEMENT_DATA: UserElement[] = [
    * @param element metodos para CRUD USER
    * hacer llamado del listado al hacer operaciones del crud
    */
-  getUsers(element: UserElement) { // llamada del servicio con listado
-    console.log('getAllUsers', element);
+  getUsers() {
+    this.userService.getUsers().subscribe({
+      next: (data) => {
+        this.users = data;
+        this.dataSource = this.users;
+      },
+      error: (error) => {
+        console.error('Error en obtener users ', error);
+      },
+    });
   }
 
-  addNewUser(element: UserElement) {
-    console.log('addNewUser', element);
+  addNewUser() {
+    console.log('addNewUser');
     //getUsers();llamada del servicio
   }
 
-  editUser(element: UserElement) {
+  editUser(element: User) {
     console.log('editUser', element);
     //getUsers();
   }
-  
-  deleteUser(element: UserElement) {
+
+  deleteUser(element: User) {
     console.log('deleteUser', element);
-    //getUsers();
+    Swal.fire({
+      title: 'Eliminar usuario',
+      text: 'No podras revertir esto!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#005CBB',
+      confirmButtonText: 'Si, eliminar!',
+      cancelButtonColor: '#d33',
+      cancelButtonText: 'Cancelar',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.userService.deleteUser(element.id).subscribe({
+          next: () => {
+            console.log('Usuario eliminado exitosamente');
+            this.getUsers();
+          },
+          error: (error) => {
+            console.error('Error eliminando el usuario ', error);
+          },
+        });
+      }
+    });
   }
-  
+
   /**
    * métodos para agregar cuenta, prestamo o tarjeta a un usuario
    * consultar cuentas por usuario, usar id de account e id de user para crear productos
    * consultar de qué cuenta quiere hacer la creación de productos
    * se requiere tipo de producto, id de user, id de account
-   * @param element 
+   * @param element
    */
-  addUserAccount(element: UserElement) {
+  addUserAccount(element: User) {
     console.log('addUserAccount', element);
   }
-  addUserLoan(element: UserElement) {
-    console.log('addUserLoan', element);
-  }
-  addUserCard(element: UserElement) {
-    console.log('addUserCard', element);
+
+  openCreateProductDialog(client: Client) {
+    const ref = this.dialog.open(ProductCreationModal, {
+      width: '600px',
+      data: {
+        client,
+      },
+    });
+
+    ref.afterClosed().subscribe((createdProduct) => {
+      if (createdProduct) {
+        console.log('Producto creado:', createdProduct);
+      }
+    });
   }
 }
-
-export interface UserElement {
-  id: string;
-  nombre: string;
-  rol: string;
-}
-

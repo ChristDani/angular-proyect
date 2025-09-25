@@ -1,7 +1,7 @@
 <mat-card class="mb-4">
   <mat-card-header class="card-header">
     <mat-card-title> Clientes </mat-card-title>
-    <button matButton="filled" (click)="addNewUser">Nuevo</button>
+    <button matButton="filled" (click)="addNewUser()">Nuevo</button>
   </mat-card-header>
 </mat-card>
 
@@ -34,9 +34,10 @@
         <div class="element-detail d-block">
           <div class="element-description">
             <div class="expand-actions d-flex justify-content-center gap-3">
-              <button mat-raised-button matButton="filled" (click)="addUserAccount(element)">Agregar Cuenta</button>
-              <button mat-raised-button matButton="filled" (click)="addUserLoan(element)">Agregar Préstamo</button>
-              <button mat-raised-button matButton="filled" (click)="addUserCard(element)">Agregar Tarjeta</button>
+              <button mat-raised-button matButton="filled" (click)="addUserAccount(element)">Agregar
+                Cuenta</button>
+              <button mat-raised-button matButton="filled" (click)="openCreateProductDialog(element)">Agregar
+                Producto</button>
             </div>
           </div>
         </div>
