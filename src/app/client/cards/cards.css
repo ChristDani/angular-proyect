@@ -84,3 +84,9 @@
     }
   }
 }
+
+
+.img {
+    max-width: 300px;
+    margin-bottom: 16px;
+}

@@ -4,8 +4,7 @@
     <h5 class="fw-bold">Configurar mis tarjetas</h5>
   </div>
 
-  <!-- Tarjeta débito -->
-  <mat-card class="credit-card">
+  <!-- <mat-card class="credit-card">
     <div class="card-content">
       <div class="icon-section">
         <div class="circle-icon">T</div>
@@ -24,9 +23,8 @@
         </div>
       </div>
     </div>
-  </mat-card>
-
-  <!-- Tarjeta crédito -->
+  </mat-card> -->
+  @if(cards.length && !isLoading) { @for (card of cards; track card.id){
   <mat-card class="credit-card">
     <div class="card-content">
       <div class="icon-section">
@@ -34,8 +32,12 @@
       </div>
 
       <div class="info-section">
-        <div class="title">Tarjeta crédito <span class="card-number">****2052</span></div>
-        <div class="limit">Límite: <span class="amount">$ 5,000,000.00</span></div>
+        <div class="title">
+          Tarjeta {{ card.type }} <span class="card-number">****{{ card.id }}</span>
+        </div>
+        <div class="limit">
+          Límite: <span class="amount">{{ card.limit }}</span>
+        </div>
       </div>
 
       <div class="actions-section">
@@ -48,4 +50,10 @@
       </div>
     </div>
   </mat-card>
+  } } @else { @if(!isLoading) {
+  <div class="flex flex-col items-center justify-center text-center py-6">
+    <img src="/not-found/not-found-transactions.svg" alt="Not found" class="img" />
+    <p class="fw-bold m-1">¡Ups! No encontramos ninguna tarjeta registrada 🦴</p>
+  </div>
+  } }
 </div>
