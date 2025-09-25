@@ -1,0 +1,55 @@
+<h4 mat-dialog-title class="text-center mt-4">{{ isEdit ? 'Editar Cliente' : 'Crear nuevo Cliente' }}</h4>
+
+<mat-dialog-content class="dialog-content">
+    <form [formGroup]="userForm" (ngSubmit)="submit()" novalidate>
+        <div class="d-flex flex-column gap-3 mt-3">
+            <label for="name">Nombre y Apellido:</label>
+
+            <mat-form-field>
+                <input matInput id="name" formControlName="name" placeholder="Ex. Ada Lovelace">
+                @if(userForm.get('name')?.touched && userForm.get('name')?.invalid) {
+                <mat-error>El nombre <strong>es requerido</strong></mat-error>
+                }
+            </mat-form-field>
+        </div>
+        <div class="d-flex flex-column gap-3 mt-3">
+            <label for="username">Nombre de Usuario:</label>
+
+            <mat-form-field>
+                <input matInput id="username" formControlName="username" placeholder="Ex. AdaLove">
+                @if(userForm.get('username')?.touched && userForm.get('username')?.invalid) {
+                <mat-error>El usuario <strong>es requerido</strong></mat-error>
+                }
+            </mat-form-field>
+        </div>
+        <div class="d-flex flex-column gap-3 mt-3">
+            <label for="password">Contraseña:</label>
+
+            <mat-form-field>
+                <input matInput id="password" formControlName="password" placeholder="Ex. Passw0rd">
+                @if(userForm.get('password')?.touched && userForm.get('password')?.invalid) {
+                <mat-error>la contraseña <strong>es requerido</strong></mat-error>
+                }
+            </mat-form-field>
+        </div>
+        <div class="d-flex flex-column gap-3 mt-3">
+            <label for="account">Selecciona el rol:</label>
+
+            <mat-form-field>
+                <mat-label>Selecciona un rol</mat-label>
+                <mat-select id="role" formControlName="role">
+                    @for (role of roles; track role) {
+                    <mat-option [value]="role.value"> {{ role.label}}</mat-option>
+                    }
+                </mat-select>
+            </mat-form-field>
+        </div>
+    </form>
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button mat-button (click)="cancel()" [disabled]="isSubmitting">Cancelar</button>
+    <button mat-raised-button matButton="filled" color="primary" (click)="submit()"
+        [disabled]="userForm.invalid || isSubmitting">{{ isEdit ? 'Actualizar' : 'Crear cliente' }}</button>
+</mat-dialog-actions>

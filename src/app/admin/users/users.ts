@@ -12,7 +12,8 @@ import { User } from '../../models/interfaces/user.interface';
 import Swal from 'sweetalert2';
 import { MatDialog } from '@angular/material/dialog';
 import { ProductCreationModal } from './product-creation-modal/product-creation-modal';
-import { Account, Client } from '../../models/interfaces/products-user.interface';
+import { Client } from '../../models/interfaces/products-user.interface';
+import { UserCreationModal } from './user-creation-modal/user-creation-modal';
 
 @Component({
   selector: 'app-users',
@@ -37,11 +38,7 @@ export class Users implements OnInit {
 
   users: User[] = [];
 
-  constructor(
-    // private fb:FormBuilder,
-    private userService: UserService,
-    private dialog: MatDialog
-  ) {}
+  constructor(private userService: UserService, private dialog: MatDialog) {}
 
   ngOnInit(): void {
     this.getUsers();
@@ -78,12 +75,30 @@ export class Users implements OnInit {
 
   addNewUser() {
     console.log('addNewUser');
-    //getUsers();llamada del servicio
+    const ref = this.dialog.open(UserCreationModal, {
+      width: '600px',
+    });
+
+    ref.afterClosed().subscribe((created) => {
+      if (created) {
+        this.getUsers();
+        console.log('Usuario creado:', created);
+      }
+    });
   }
 
   editUser(element: User) {
     console.log('editUser', element);
-    //getUsers();
+    const ref = this.dialog.open(UserCreationModal, {
+      width: '600px',
+      data: element,
+    });
+
+    ref.afterClosed().subscribe((updated) => {
+      if (updated) {
+        this.getUsers();
+      }
+    });
   }
 
   deleteUser(element: User) {
@@ -99,7 +114,7 @@ export class Users implements OnInit {
       cancelButtonText: 'Cancelar',
     }).then((result) => {
       if (result.isConfirmed) {
-        this.userService.deleteUser(element.id).subscribe({
+        this.userService.deleteUser(String(element.id)).subscribe({
           next: () => {
             console.log('Usuario eliminado exitosamente');
             this.getUsers();
@@ -134,6 +149,7 @@ export class Users implements OnInit {
     ref.afterClosed().subscribe((createdProduct) => {
       if (createdProduct) {
         console.log('Producto creado:', createdProduct);
+        this.getUsers();
       }
     });
   }
