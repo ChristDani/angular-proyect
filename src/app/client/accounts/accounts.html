@@ -4,7 +4,7 @@
     <h5 class="fw-bold">Selección de la cuenta</h5>
     <app-button [type]="'button'" [text]="'Solicitar nueva cuenta'"></app-button>
   </div>
-  @if(selectedAccount) {
+  @if(cuentas.length > 0) {
 
   <div class="d-flex justify-content-between align-items-center mb-3">
     <h5 class="fw-bold">Cuenta</h5>
@@ -44,10 +44,10 @@
   <!-- Detalle de movimientos -->
   
   <h6 class="fw-bold color-blue">Detalle de movimientos</h6>
-  @if(movimientosFiltrados.length > 0) {
+  @if(movimientos.length > 0) {
   <mat-card class="shadow-sm">
     <div class="table-responsive">
-      <table mat-table [dataSource]="movimientosFiltrados" class="table table-bordered mb-0">
+      <table mat-table [dataSource]="movimientos" class="table table-bordered mb-0">
         <!-- Fecha -->
         <ng-container matColumnDef="fecha">
           <th mat-header-cell *matHeaderCellDef>Fecha</th>
@@ -84,12 +84,14 @@
     <span>No encontramos ningún movimiento.</span>
   }
 
-
   } @else {
-  <div class="flex flex-col items-center justify-center text-center py-6">
+    @if(!isLoading) {
+        <div class="flex flex-col items-center justify-center text-center py-6">
     <img src="/not-found/not-found-transactions.svg" alt="Not found" class="img" />
     <p class="fw-bold m-1">¡Ups! Me comí tus cuentas… 🦴</p>
     <span class="fw-bold">No encontramos ninguna cuenta registrada.</span>
   </div>
+    }
+
   }
 </div>

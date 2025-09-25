@@ -1,1 +1,51 @@
-<p>cards works!</p>
+<div class="container mt-4">
+  <!-- Configuración de tarjetas -->
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h5 class="fw-bold">Configurar mis tarjetas</h5>
+  </div>
+
+  <!-- Tarjeta débito -->
+  <mat-card class="credit-card">
+    <div class="card-content">
+      <div class="icon-section">
+        <div class="circle-icon">T</div>
+      </div>
+
+      <div class="info-section">
+        <div class="title">Tarjeta débito <span class="card-number">****2015</span></div>
+        <div class="limit">Límite: <span class="amount">0.00</span></div>
+      </div>
+
+      <div class="actions-section">
+        <div class="toggle-labels">
+          <span>Activar</span>
+          <mat-slide-toggle [(ngModel)]="isDebitActive"></mat-slide-toggle>
+          <span>Desactivar</span>
+        </div>
+      </div>
+    </div>
+  </mat-card>
+
+  <!-- Tarjeta crédito -->
+  <mat-card class="credit-card">
+    <div class="card-content">
+      <div class="icon-section">
+        <div class="circle-icon">T</div>
+      </div>
+
+      <div class="info-section">
+        <div class="title">Tarjeta crédito <span class="card-number">****2052</span></div>
+        <div class="limit">Límite: <span class="amount">$ 5,000,000.00</span></div>
+      </div>
+
+      <div class="actions-section">
+        <div class="toggle-labels">
+          <span>Activar</span>
+          <mat-slide-toggle [(ngModel)]="isCreditActive"></mat-slide-toggle>
+          <span>Desactivar</span>
+        </div>
+        <span class="manage-link">Gestionar límites ></span>
+      </div>
+    </div>
+  </mat-card>
+</div>

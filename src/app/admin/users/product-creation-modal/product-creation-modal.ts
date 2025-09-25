@@ -26,7 +26,7 @@ import { LoanService } from '../../../core/services/loan.service';
 
 @Component({
   selector: 'app-product-creation-modal',
-  imports: [MATERIAL_IMPORTS, ReactiveFormsModule, TitleCasePipe, CurrencyPipe],
+  imports: [MATERIAL_IMPORTS, ReactiveFormsModule],
   templateUrl: './product-creation-modal.html',
   styleUrl: './product-creation-modal.css',
 })
