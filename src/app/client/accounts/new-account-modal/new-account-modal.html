@@ -1,0 +1,35 @@
+<h4 mat-dialog-title class="text-center mt-4">Crear nueva cuenta</h4>
+<mat-dialog-content class="dialog-content">
+    <form [formGroup]="accountForm" (ngSubmit)="submitAccount()" class="mt-3">
+        <div class="d-flex flex-column gap-3">
+            <label for="acctType">Tipo de cuenta</label>
+            <mat-form-field appearance="fill">
+                <mat-label>Tipo</mat-label>
+                <mat-select id="acctType" formControlName="type">
+                    @for (st of subTypesCuenta; track st) {
+                    <mat-option [value]="st.value">{{ st.label }}</mat-option>
+                    }
+                </mat-select>
+                @if(accountForm.get('type')?.hasError('required')) {
+                <mat-error>Tipo requerido</mat-error>
+                }
+            </mat-form-field>
+
+            <label for="balance">Saldo inicial</label>
+            <mat-form-field appearance="fill">
+                <input matInput id="balance" formControlName="balance" placeholder="Ex. 3000" />
+                @if(accountForm.get('balance')?.hasError('required')) {
+                <mat-error>Saldo requerido</mat-error>
+                }
+            </mat-form-field>
+        </div>
+    </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <div class="d-flex gap-2">
+        <button mat-button type="button" (click)="cancel()">Cancelar</button>
+        <button mat-raised-button matButton="filled" color="primary" type="submit"
+            [disabled]="accountForm.invalid" (click)="submitAccount()">Crear cuenta</button>
+    </div>
+</mat-dialog-actions>

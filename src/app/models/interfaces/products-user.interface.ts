@@ -1,3 +1,5 @@
+import { N } from "@angular/cdk/keycodes";
+
 export interface Client {
   id: string;
   name: string;
@@ -29,4 +31,8 @@ export interface DialogData {
   client: Client;
   accounts?: Account[]; // cuentas del cliente/usuario si las tiene
   type?: string; // tipo de producto a crear
+}
+
+export interface NewAccountData {
+  userId?: string;
 }

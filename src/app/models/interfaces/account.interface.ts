@@ -1,5 +1,3 @@
-import { User } from "./user.interface";
-
 export interface Account{
   id : number;
   userId: number;
