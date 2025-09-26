@@ -4,6 +4,9 @@ import { Button } from '../../shared/components/button/button';
 import { Account } from '../../models/interfaces/account.interface';
 import { MATERIAL_IMPORTS } from '../../shared/components/material.imports';
 import { Transaction } from '../../models/interfaces/transaction.interface';
+import { AuthService } from '../../auth/auth.service';
+import { AccountService } from '../../core/services/account.service';
+import { TransactionService } from '../../core/services/transaction.service';
 
 @Component({
   selector: 'app-accounts',
@@ -12,57 +15,40 @@ import { Transaction } from '../../models/interfaces/transaction.interface';
   styleUrl: './accounts.css',
 })
 export class Accounts {
+  isLoading: boolean = false;
   displayedColumns: string[] = ['fecha', 'operacion', 'descripcion', 'importe'];
 
-  movimientos: Transaction[] = [
-    {
-      id: 1,
-      accountId: 2,
-      date: '2025-09-01',
-      type: 'depósito',
-      amount: 1000,
-      description: 'Depósito de apertura',
-    },
-    {
-      id: 2,
-      accountId: 2,
-      date: '2025-09-03',
-      type: 'retiro',
-      amount: 300,
-      description: 'Pago de servicios',
-    },
-    {
-      id: 3,
-      accountId: 2,
-      date: '2025-09-03',
-      type: 'depósito',
-      amount: 2500,
-      description: 'Transferencia recibida',
-    },
-  ];
+  movimientos: Transaction[] = [];
+  cuentas: Account[] = [];
+  selectedAccount!: Account;
 
-  cuentas: Account[] = [
-    {
-      id: 1,
-      userId: 1,
-      type: 'ahorro',
-      balance: 1500,
-      status: 'activa',
-    },
-        {
-      id: 2,
-      userId: 2,
-      type: 'retiro',
-      balance: 1400,
-      status: 'inactiva',
-    },
-  ];
+  constructor(
+    private auth: AuthService,
+    private accountService: AccountService,
+    private transactionService: TransactionService
+  ) {}
 
-  selectedAccount: Account = this.cuentas[0];
+  ngOnInit(): void {
+    const id = this.auth.getLoggedInUser()?.id;
+    this.getAccountsByUserId(Number(id));
+  }
 
-  constructor() {}
+  getAccountsByUserId(user: number | undefined): void {
+    this.isLoading = true;
+    this.accountService.getAccounts().subscribe((accounts: Account[]) => {
+      if (user !== undefined) {
+        this.cuentas = accounts.filter((account: Account) => account.userId === user);
+        this.selectedAccount = this.cuentas[0];
+        this.isLoading = false;
+        this.getTransactions();
+      }
+    });
+  }
 
-  get movimientosFiltrados(): Transaction[] {
-    return this.movimientos.filter((m) => m.accountId === this.selectedAccount?.id);
+  getTransactions(): void {
+    this.transactionService.getTransactions().subscribe((transactions: Transaction[]) => {
+      this.movimientos = transactions;
+    });
+
   }
 }
