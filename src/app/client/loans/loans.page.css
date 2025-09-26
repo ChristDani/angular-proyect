@@ -1,0 +1,48 @@
+.actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.action-card {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  cursor: pointer;
+  transition: transform .1s ease-in;
+}
+
+.action-card:hover {
+  transform: translateY(-2px);
+}
+
+.action-card mat-icon {
+  font-size: 40px;
+  width: 40px;
+  height: 40px;
+}
+
+.spacer {
+  margin: 12px 0 8px;
+}
+
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 4px 0 4px;
+}
+
+.filter {
+  width: 260px;
+}
+
+.table-wrapper {
+  overflow: auto;
+}
+
+.empty {
+  padding: 24px;
+  color: #5f6368;
+}

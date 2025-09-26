@@ -1,0 +1,15 @@
+.form {
+    display: grid;
+    gap: 12px;
+    margin-top: 8px
+}
+
+.result {
+    margin-top: 12px
+}
+
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 16px
+}
