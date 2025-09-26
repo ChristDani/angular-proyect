@@ -1,0 +1,28 @@
+/* Estilos adicionales para el modal base */
+:host {
+  display: block;
+}
+
+/* Aseguramos que el backdrop tenga el z-index correcto */
+.modal-backdrop {
+  z-index: 1040;
+}
+
+/* El modal debe estar por encima del backdrop */
+.modal {
+  z-index: 1050;
+}
+
+/* Animación de fade para el modal */
+.modal.show {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

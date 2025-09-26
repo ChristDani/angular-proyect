@@ -1,1 +1,102 @@
-<p>transfers works!</p>
+
+<div class="container py-4">
+    <!-- Transfer Options Section -->
+    <section class="mb-5">
+        <h4 class="mb-4 fw-bold">Realiza una transferencia o pago</h4>
+        <div class="row g-4 justify-content-center">
+            <div class="col-12 col-md-4">
+                <button class="btn btn-primary w-100 py-4 d-flex flex-column align-items-center rounded-3"
+                        (click)="openTransferModal('own')">
+                    <span class="transfer-circle rounded-circle bg-white d-flex align-items-center justify-content-center mb-2">
+                        <i class="bi bi-arrow-left-right text-primary"></i>
+                    </span>
+                    <span class="fw-semibold">Entre mis cuentas</span>
+                </button>
+            </div>
+            <div class="col-12 col-md-4">
+                <button class="btn btn-primary w-100 py-4 d-flex flex-column align-items-center rounded-3"
+                        (click)="openTransferModal('third')">
+                    <span class="transfer-circle rounded-circle bg-white d-flex align-items-center justify-content-center mb-2">
+                        <i class="bi bi-person-add text-primary"></i>
+                    </span>
+                    <span class="fw-semibold">A terceros</span>
+                </button>
+            </div>
+            <div class="col-12 col-md-4">
+                <button class="btn btn-primary w-100 py-4 d-flex flex-column align-items-center rounded-3"
+                        (click)="openTransferModal('service')">
+                    <span class="transfer-circle rounded-circle bg-white d-flex align-items-center justify-content-center mb-2">
+                        <i class="bi bi-receipt text-primary"></i>
+                    </span>
+                    <span class="fw-semibold">Pagar servicios</span>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Transaction History Section -->
+    <section>
+        <h4 class="mb-4 fw-bold">Historial de transacciones</h4>
+        <!-- Filters -->
+        <div class="filter-section d-flex align-items-center gap-2 mb-3">
+            <span class="fw-semibold">Filtrar por:</span>
+            <select class="form-select w-auto" [(ngModel)]="typeFilter" aria-label="Filtrar por tipo de transferencia">
+                <option value="">Tipo de transferencia</option>
+                <option value="own">Entre mis cuentas</option>
+                <option value="third">A terceros</option>
+                <option value="service">Pago de servicios</option>
+            </select>
+            <select class="form-select w-auto" [(ngModel)]="dateFilter" aria-label="Filtrar por fecha de transferencia">
+                <option value="">Fecha de transferencia</option>
+                <option value="today">Hoy</option>
+                <option value="week">Esta semana</option>
+                <option value="month">Este mes</option>
+                <option value="year">Este año</option>
+            </select>
+            <button class="btn btn-outline-primary rounded-circle px-3" 
+                    (click)="resetFilters()" 
+                    title="Reiniciar filtros">
+                    ⟲
+                <i class="bi bi-arrow-clockwise"></i>
+            </button>
+            <button class="btn btn-outline-primary rounded-circle px-3" 
+                    (click)="openFilterSettings()"
+                    title="Configuración de filtros">
+                    ⚙
+                <i class="bi bi-gear"></i>
+            </button>
+        </div>
+
+        <!-- Transactions List -->
+        @for (group of groupedTransactions | keyvalue; track group.key) {
+            <div class="mb-4">
+                <h6 class="fw-bold">{{group.key}}</h6>
+                @for (transaction of group.value; track transaction.id) {
+                    <div class="card mb-2 p-3 d-flex flex-row align-items-center justify-content-between hover-effect">
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="transfer-icon rounded-circle bg-primary text-white fw-bold d-flex align-items-center justify-content-center">
+                                T
+                            </span>
+                            <div>
+                                <span class="fw-semibold">{{transaction.type}}</span><br>
+                                <span class="transfer-date text-muted">
+                                    {{transaction.date | date:'d MMMM'}}
+                                </span>
+                            </div>
+                        </div>
+                        <span class="fw-bold" [class.text-danger]="transaction.amount < 0">
+                            {{transaction.currency === 'USD' ? '$' : 'S/'}} {{transaction.amount | number:'1.2-2'}}
+                        </span>
+                    </div>
+                }
+            </div>
+        } @empty {
+            <div class="text-center py-5">
+                <img src="assets/not-found/not-found-transactions.svg" 
+                     alt="No hay transacciones" 
+                     class="no-transactions-img mb-3">
+                <h5 class="text-muted">No hay transacciones que mostrar</h5>
+            </div>
+        }
+    </section>
+</div>
