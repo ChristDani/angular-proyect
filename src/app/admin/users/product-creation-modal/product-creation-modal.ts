@@ -37,7 +37,11 @@ export class ProductCreationModal {
   userAccount: Account[] = [];
 
   productForm!: FormGroup;
+  accountForm!: FormGroup;
   isSubmitting = false;
+  showAccountForm = false;
+  showProductForm = false;
+  showForms = false;
 
   // Opciones para selects (se pueden externalizar)
   productTypes: { value: ProductType; label: string }[] = [
@@ -46,7 +50,7 @@ export class ProductCreationModal {
   ];
 
   subTypesCuenta: SubType[] = [
-    { value: 'debito', label: 'Débito' },
+    { value: 'corriente', label: 'Corriente' },
     { value: 'ahorro', label: 'Ahorro' },
   ];
   subTypesTarjeta: SubType[] = [
@@ -76,6 +80,11 @@ export class ProductCreationModal {
       productType: ['', Validators.required],
       subProductType: ['', Validators.required],
     });
+
+    this.accountForm = this.fb.group({
+      type: ['', Validators.required],
+      balance: ['', [Validators.required, Validators.min(0)]],
+    });
     this.watchProductAndSubProduct();
   }
 
@@ -92,7 +101,7 @@ export class ProductCreationModal {
   }
 
   cancel(): void {
-    this.dialogRef.close(null);
+    this.dialogRef.close();
   }
 
   submit(): void {
@@ -167,6 +176,53 @@ export class ProductCreationModal {
     return;
   }
 
+  openForm(formProduct: string): void {
+    console.log(formProduct);
+
+    this.showForms = true;
+    if (formProduct === 'account') {
+      this.showAccountForm = true;
+      this.showProductForm = false;
+    }
+    if (formProduct === 'product') {
+      this.showProductForm = true;
+      this.showAccountForm = false;
+    }
+  }
+
+  cancelProductForm() {
+    this.showProductForm = false;
+  }
+
+  submitAccount(): void {
+    this.accountForm.markAllAsTouched();
+    if (this.accountForm.invalid) {
+      return;
+    }
+
+    const account: Account = {
+      id: this.generateId(),
+      userId: Number(this.client.id),
+      type: this.accountForm.get('type')!.value,
+      balance: Number(this.accountForm.get('balance')!.value),
+      status: 'activa',
+    };
+
+    this.accountService
+      .createAccount(account)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (created) => {
+          this.userAccount = [...this.userAccount, created];
+          this.accountForm.reset({ type: '', balance: 0 });
+          this.cancel();
+        },
+        error: (err) => {
+          console.error('Error creando cuenta', err);
+        },
+      });
+  }
+
   // Generador simple de id numérico (timestamp + aleatorio pequeño)
   private generateId(): number {
     return Date.now() + Math.floor(Math.random() * 1000);
@@ -194,8 +250,6 @@ export class ProductCreationModal {
     combineLatest([product$, subProduct$])
       .pipe(takeUntil(this.destroy$))
       .subscribe(([productType, subProductType]) => {
-        // Lógica para añadir/remover controles según la condición
-        // tarjeta + credito -> agregar limitCreditCard (required + min)
         if (productType === 'tarjeta' && subProductType === 'crédito') {
           if (!this.productForm.contains('limitCreditCard')) {
             this.productForm.addControl(
@@ -203,22 +257,17 @@ export class ProductCreationModal {
               new FormControl('', [Validators.required, Validators.min(0)])
             );
           } else {
-            // en caso de que exista, asegurar validadores correctos
             const c = this.productForm.get('limitCreditCard')!;
             c.setValidators([Validators.required, Validators.min(0)]);
             c.updateValueAndValidity({ emitEvent: false });
           }
-
-          // asegurar que no existan controles de préstamo
           if (this.productForm.contains('loanAmount')) {
             this.productForm.removeControl('loanAmount');
           }
           if (this.productForm.contains('installmentsQuotas')) {
             this.productForm.removeControl('installmentsQuotas');
           }
-        }
-        // tarjeta + debito -> solo subProductType (los condicionales se remueven)
-        else if (productType === 'tarjeta' && subProductType === 'debito') {
+        } else if (productType === 'tarjeta' && subProductType === 'debito') {
           if (this.productForm.contains('limitCreditCard')) {
             this.productForm.removeControl('limitCreditCard');
           }
@@ -228,9 +277,7 @@ export class ProductCreationModal {
           if (this.productForm.contains('installmentsQuotas')) {
             this.productForm.removeControl('installmentsQuotas');
           }
-        }
-        // prestamo -> añadir loanAmount y installmentsQuotas (required)
-        else if (productType === 'prestamo') {
+        } else if (productType === 'prestamo') {
           if (!this.productForm.contains('loanAmount')) {
             this.productForm.addControl('loanAmount', new FormControl('', [Validators.required]));
           } else {
@@ -250,7 +297,6 @@ export class ProductCreationModal {
             inst.updateValueAndValidity({ emitEvent: false });
           }
 
-          // remover control de tarjeta si existiera
           if (this.productForm.contains('limitCreditCard')) {
             this.productForm.removeControl('limitCreditCard');
           }
