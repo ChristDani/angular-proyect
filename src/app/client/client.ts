@@ -14,7 +14,7 @@ import { MATERIAL_IMPORTS } from '../shared/components/material.imports';
 })
 export class Client implements OnInit {
   private routeTitles: Record<string, string> = {
-    '/client/users': 'Inicio',
+    '/client/dashboard': 'Inicio',
     '/client/accounts': 'Cuentas',
     '/client/cards': 'Tarjetas',
     '/client/loans': 'Préstamos',
@@ -35,7 +35,7 @@ export class Client implements OnInit {
     this.router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
       .subscribe((event: any) => {
-        const newTitle = this.routeTitles[event.urlAfterRedirects] || 'Dashboard Cliente';
+        const newTitle = this.routeTitles[event.urlAfterRedirects] || 'Inicio';
         this.currentRoute.set(newTitle);
       });
   }

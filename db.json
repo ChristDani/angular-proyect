@@ -1,86 +1,85 @@
 {
-    "users": [
-      {
-        "id": 1,
-        "username": "cliente1",
-        "password": "cliente123",
-        "role": "client",
-        "name": "Juan Pérez"
-      },
-      {
-        "id": 2,
-        "username": "admin1",
-        "password": "admin123",
-        "role": "admin",
-        "name": "Ana García"
-      }
-    ],
-    "accounts": [
-      {
-        "id": 1,
-        "userId": 1,
-        "type": "ahorro",
-        "balance": 1500,
-        "status": "activa"
-      },
-      {
-        "id": 2,
-        "userId": 1,
-        "type": "corriente",
-        "balance": 2500,
-        "status": "activa"
-      }
-    ],
-    "loans": [
-      {
-        "id": 1,
-        "accountId": 1,
-        "amount": 1000,
-        "installments": 12,
-        "status": "pagando"
-      }
-    ],
-    "cards": [
-      {
-        "id": 1,
-        "accountId": 1,
-        "type": "crédito",
-        "limit": 3000,
-        "status": "activa"
-      },
-      {
-        "id": 2,
-        "accountId": 2,
-        "type": "débito",
-        "limit": 0,
-        "status": "activa"
-      }
-    ],
-    "transactions": [
-      {
-        "id": 1,
-        "accountId": 1,
-        "date": "2025-09-01",
-        "type": "depósito",
-        "amount": 1000,
-        "description": "Depósito de apertura"
-      },
-      {
-        "id": 2,
-        "accountId": 1,
-        "date": "2025-09-03",
-        "type": "retiro",
-        "amount": 300,
-        "description": "Pago de servicios"
-      },
-      {
-        "id": 3,
-        "accountId": 2,
-        "date": "2025-09-03",
-        "type": "depósito",
-        "amount": 2500,
-        "description": "Transferencia recibida"
-      }
-    ]
-  }
-  
+  "users": [
+    {
+      "id": "1",
+      "username": "cliente1",
+      "password": "cliente123",
+      "role": "client",
+      "name": "Juan Pérez"
+    },
+    {
+      "id": "2",
+      "username": "admin1",
+      "password": "admin123",
+      "role": "admin",
+      "name": "Ana García"
+    }
+  ],
+  "accounts": [
+    {
+      "id": "1",
+      "userId": 1,
+      "type": "ahorro",
+      "balance": 1500,
+      "status": "activa"
+    },
+    {
+      "id": "2",
+      "userId": 1,
+      "type": "corriente",
+      "balance": 2500,
+      "status": "activa"
+    }
+  ],
+  "loans": [
+    {
+      "id": "1",
+      "accountId": 1,
+      "amount": 1000,
+      "installments": 12,
+      "status": "pagando"
+    }
+  ],
+  "cards": [
+    {
+      "id": "1",
+      "accountId": 1,
+      "type": "crédito",
+      "limit": 3000,
+      "status": "activa"
+    },
+    {
+      "id": "2",
+      "accountId": 2,
+      "type": "débito",
+      "limit": 0,
+      "status": "activa"
+    }
+  ],
+  "transactions": [
+    {
+      "id": "1",
+      "accountId": 1,
+      "date": "2025-09-01",
+      "type": "depósito",
+      "amount": 1000,
+      "description": "Depósito de apertura"
+    },
+    {
+      "id": "2",
+      "accountId": 1,
+      "date": "2025-09-03",
+      "type": "retiro",
+      "amount": 300,
+      "description": "Pago de servicios"
+    },
+    {
+      "id": "3",
+      "accountId": 2,
+      "date": "2025-09-03",
+      "type": "depósito",
+      "amount": 2500,
+      "description": "Transferencia recibida"
+    }
+  ]
+}

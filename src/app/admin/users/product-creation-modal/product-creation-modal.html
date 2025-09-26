@@ -10,16 +10,57 @@
     <div class="rounded border p-3 bg-light">
         <div class="d-flex justify-content-center">
             <mat-icon class="text-warning" style="font-size: 48px;">warning</mat-icon>
-            <p class="text-danger mt-3 text-centerb fs-6 text">El cliente no tiene cuentas asociadas. Por favor, cree
-                una cuenta antes de agregar un producto.</p>
+            <p class="text-danger mt-3 text-center fs-6">
+                El cliente no tiene cuentas asociadas. Por favor, cree una cuenta antes de agregar un producto.
+            </p>
+        </div>
+        <div class="mt-3 d-flex justify-content-center gap-2">
+            <button mat-stroked-button matButton="filled" color="primary" type="button"
+                (click)="openForm('account')">Crear cuenta</button>
+            <button mat-stroked-button matButton="filled" color="primary" type="button" disabled>Crear producto</button>
         </div>
     </div>
     } @else {
-    <form [formGroup]="productForm">
+    <div class="d-flex justify-content-between mt-2 gap-2">
+        <button mat-stroked-button color="primary" type="button" (click)="openForm('account')">Crear cuenta
+            nueva</button>
+        <button mat-stroked-button color="primary" type="button" (click)="openForm('product')">Crear producto</button>
+    </div>
+    }
+    @if(showForms) {
+
+    @if(showAccountForm) {
+    <form [formGroup]="accountForm" (ngSubmit)="submitAccount()" class="mt-3">
+        <div class="d-flex flex-column gap-3">
+            <label for="acctType">Tipo de cuenta</label>
+            <mat-form-field appearance="fill">
+                <mat-label>Tipo</mat-label>
+                <mat-select id="acctType" formControlName="type">
+                    @for (st of subTypesCuenta; track st) {
+                    <mat-option [value]="st.value">{{ st.label }}</mat-option>
+                    }
+                </mat-select>
+                @if(accountForm.get('type')?.hasError('required')) {
+                <mat-error>Tipo requerido</mat-error>
+                }
+            </mat-form-field>
+
+            <label for="balance">Saldo inicial</label>
+            <mat-form-field appearance="fill">
+                <input matInput id="balance" formControlName="balance" placeholder="Ex. 3000" />
+                @if(accountForm.get('balance')?.hasError('required')) {
+                <mat-error>Saldo requerido</mat-error>
+                }
+            </mat-form-field>
+        </div>
+    </form>
+    <mat-divider class="my-3"></mat-divider>
+    } @else {
+    @if(showProductForm) {
+    <form [formGroup]="productForm" (ngSubmit)="submit()" class="mt-3">
         <div class="d-flex flex-column gap-3 mt-3">
             <label for="account">Cuenta a asociar nuevo producto:</label>
-
-            <mat-form-field>
+            <mat-form-field appearance="fill">
                 <mat-label>Selecciona una cuenta</mat-label>
                 <mat-select id="account" formControlName="selectedAccount">
                     @for (account of userAccount; track account) {
@@ -27,71 +68,105 @@
                         }}</mat-option>
                     }
                 </mat-select>
+                @if(productForm.get('selectedAccount')?.hasError('required')) {
+                <mat-error>Cuenta requerida</mat-error>
+                }
             </mat-form-field>
         </div>
+
         <div class="d-flex flex-column gap-3 mt-3">
-            <label for="account">Tipo de producto:</label>
-            <mat-form-field>
+            <label for="productType">Tipo de producto:</label>
+            <mat-form-field appearance="fill">
                 <mat-label>Selecciona un tipo de producto</mat-label>
                 <mat-select id="productType" formControlName="productType">
-                    @for (product of productTypes; track product) {
-                    <mat-option [value]="product.value">{{ product.label }}</mat-option>
+                    @for (p of productTypes; track p) {
+                    <mat-option [value]="p.value">{{ p.label }}</mat-option>
                     }
-
                 </mat-select>
+                @if(productForm.get('productType')?.hasError('required')) {
+                <mat-error>Tipo requerido</mat-error>
+                }
             </mat-form-field>
         </div>
+
         @if(productForm.get('productType')?.value === 'tarjeta') {
         <div class="d-flex flex-column gap-3 mt-3">
             <label for="subProductType">SubTipo de producto:</label>
-            <mat-form-field>
+            <mat-form-field appearance="fill">
                 <mat-label>Selecciona un tipo de producto</mat-label>
                 <mat-select id="subProductType" formControlName="subProductType">
-                    @for (product of subTypesTarjeta; track product) {
-                    <mat-option [value]="product.value">{{ product.label }}</mat-option>
+                    @for (p of subTypesTarjeta; track p) {
+                    <mat-option [value]="p.value">{{ p.label }}</mat-option>
                     }
-
                 </mat-select>
+                @if(productForm.get('subProductType')?.hasError('required')) {
+                <mat-error>Subtipo requerido</mat-error>
+                }
             </mat-form-field>
-            @if(productForm.get('subProductType')?.value === 'crédito') {
-            <label for="limitCreditCard">Límite:</label>
-            <mat-form-field>
-                <input matInput id="limitCreditCard" formControlName="limitCreditCard" placeholder="Ex. 3000">
-                <mat-error>Límite de tarjeta<strong>es requerido</strong></mat-error>
 
+            @if(productForm.contains('limitCreditCard')) {
+            <label for="limitCreditCard">Límite:</label>
+            <mat-form-field appearance="fill">
+                <input matInput id="limitCreditCard" formControlName="limitCreditCard" placeholder="Ex. 3000"
+                    type="number" />
+                @if(productForm.get('limitCreditCard')?.hasError('required')) {
+                <mat-error>Límite requerido</mat-error>
+                }
+                @if(productForm.get('limitCreditCard')?.hasError('min')) {
+                <mat-error>Límite debe ser &gt;= 0</mat-error>
+                }
             </mat-form-field>
             }
-
-
         </div>
         }
+
         @if(productForm.get('productType')?.value === 'prestamo') {
         <div class="d-flex flex-column gap-3 mt-3">
             <label for="installments">N° de cuotas:</label>
-            <mat-form-field>
+            <mat-form-field appearance="fill">
+                <mat-label>Seleccione cuotas</mat-label>
                 <mat-select id="installmentsQuotas" formControlName="installmentsQuotas">
-                    @for (product of installments; track product) {
-                    <mat-option [value]="product">{{ product }}</mat-option>
+                    @for (n of installments; track n) {
+                    <mat-option [value]="n">{{ n }}</mat-option>
                     }
-
                 </mat-select>
+                @if(productForm.get('installmentsQuotas')?.hasError('required')) {
+                <mat-error>Cuotas requeridas</mat-error>
+                }
             </mat-form-field>
-            <label for="subProductType">Monto:</label>
-            <mat-form-field>
-                <input matInput id="loanAmount" formControlName="loanAmount" placeholder="Ex. 3000">
 
+            <label for="subProductType">Monto:</label>
+            <mat-form-field appearance="fill">
+                <input matInput id="loanAmount" formControlName="loanAmount" placeholder="Ex. 3000" type="number" />
+                @if(productForm.get('loanAmount')?.hasError('required')) {
+                <mat-error>Monto requerido</mat-error>
+                }
             </mat-form-field>
         </div>
         }
     </form>
     }
-
+    }
+    }
 
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
-
-    <button mat-button (click)="cancel()" [disabled]="isSubmitting">Cancelar</button>
-    <button mat-raised-button matButton="filled" color="primary" (click)="submit()"
-        [disabled]="productForm.invalid || isSubmitting"> Crear producto </button>
+    @if(showForms) {
+    @if(showAccountForm) {
+    <div class="d-flex gap-2">
+        <button mat-button type="button" (click)="cancel()">Cancelar</button>
+        <button mat-raised-button matButton="filled" color="primary" type="submit"
+            [disabled]="accountForm.invalid || isSubmitting" (click)="submitAccount()">Crear cuenta</button>
+    </div>
+    } @else {
+    @if(showProductForm) {
+    <div class="d-flex gap-2">
+        <button mat-button (click)="cancel()" [disabled]="isSubmitting">Cancelar</button>
+        <button mat-raised-button matButton="filled" color="primary" (click)="submit()"
+            [disabled]="productForm.invalid || isSubmitting">Crear producto</button>
+    </div>
+    }
+    }
+    }
 </mat-dialog-actions>

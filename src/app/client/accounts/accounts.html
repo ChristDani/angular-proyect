@@ -2,26 +2,27 @@
   <!-- Selección de la cuenta -->
   <div class="d-flex justify-content-between align-items-center mb-3">
     <h5 class="fw-bold">Selección de la cuenta</h5>
-    <app-button [type]="'button'" [text]="'Solicitar nueva cuenta'"></app-button>
+    <app-button [type]="'button'" [text]="'Solicitar nueva cuenta'" (click)="openNewAccountModal()"></app-button>
   </div>
-  @if(selectedAccount) {
-
+  @if(cuentas.length > 0) {
   <div class="d-flex justify-content-between align-items-center mb-3">
     <h5 class="fw-bold">Cuenta</h5>
-
+    @if(selectedAccount){
     <mat-chip class="example-box">{{ selectedAccount.status | titlecase }}</mat-chip>
+    }
   </div>
 
   <!-- Selector de cuentas -->
   <mat-form-field appearance="outline" class="w-100">
-    <mat-select [(value)]="selectedAccount" placeholder="Selecciona una cuenta">
+    <mat-select [(value)]="selectedAccount" (selectionChange)="onAccountChange()" placeholder="Selecciona una cuenta">
+      @if(selectedAccount){
       <mat-select-trigger>
         <div class="d-flex justify-content-between align-items-center w-100">
           <div class="d-flex align-items-center">
             <div class="circle-icon me-2">C</div>
             <div>
               <p class="mb-0 fw-bold">Cuenta {{ selectedAccount.type | titlecase }}</p>
-              <small>***{{ selectedAccount.id }}</small>
+              <small>{{ selectedAccount.id }}</small>
             </div>
           </div>
           <span class="text-warning fw-bold">
@@ -29,67 +30,70 @@
           </span>
         </div>
       </mat-select-trigger>
-
-      <mat-option *ngFor="let cuenta of cuentas" [value]="cuenta">
+      } 
+      @for(cuenta of cuentas; track cuenta.id) {
+      <mat-option [value]="cuenta">
         <div class="d-flex justify-content-between align-items-center w-100">
           <div>
-            <p class="mb-0 fw-bold">Cuenta {{ cuenta.type | titlecase }} - ***{{ cuenta.id }}</p>
+            <p class="mb-0 fw-bold">Cuenta {{ cuenta.type | titlecase }} - {{ cuenta.id }}</p>
             <small>{{ cuenta.balance | currency : 'PEN' }}</small>
           </div>
         </div>
       </mat-option>
+      }
     </mat-select>
   </mat-form-field>
 
   <!-- Detalle de movimientos -->
-  
-  <h6 class="fw-bold color-blue">Detalle de movimientos</h6>
-  @if(movimientosFiltrados.length > 0) {
-  <mat-card class="shadow-sm">
-    <div class="table-responsive">
-      <table mat-table [dataSource]="movimientosFiltrados" class="table table-bordered mb-0">
-        <!-- Fecha -->
-        <ng-container matColumnDef="fecha">
-          <th mat-header-cell *matHeaderCellDef>Fecha</th>
-          <td mat-cell *matCellDef="let element">{{ element.date }}</td>
-        </ng-container>
+    @if(movimientos.length > 0) {
+      <h6 class="fw-bold color-blue">Detalle de movimientos</h6>
+    <mat-card class="shadow-sm">
+      <div class="table-responsive">
+        <table mat-table [dataSource]="movimientos" class="table table-bordered mb-0">
+          <!-- Fecha -->
+          <ng-container matColumnDef="fecha">
+            <th mat-header-cell *matHeaderCellDef>Fecha</th>
+            <td mat-cell *matCellDef="let element">{{ element.date }}</td>
+          </ng-container>
 
-        <!-- N° de Operación -->
-        <ng-container matColumnDef="operacion">
-          <th mat-header-cell *matHeaderCellDef>N° de Operación</th>
-          <td mat-cell *matCellDef="let element">{{ element.id }}</td>
-        </ng-container>
+          <!-- N° de Operación -->
+          <ng-container matColumnDef="operacion">
+            <th mat-header-cell *matHeaderCellDef>N° de Operación</th>
+            <td mat-cell *matCellDef="let element">{{ element.id }}</td>
+          </ng-container>
 
-        <!-- Descripción -->
-        <ng-container matColumnDef="descripcion">
-          <th mat-header-cell *matHeaderCellDef>Descripción</th>
-          <td mat-cell *matCellDef="let element">{{ element.description }}</td>
-        </ng-container>
+          <!-- Descripción -->
+          <ng-container matColumnDef="descripcion">
+            <th mat-header-cell *matHeaderCellDef>Descripción</th>
+            <td mat-cell *matCellDef="let element">{{ element.description }}</td>
+          </ng-container>
 
-        <!-- Importe -->
-        <ng-container matColumnDef="importe">
-          <th mat-header-cell *matHeaderCellDef>Importe</th>
-          <td mat-cell *matCellDef="let element">
-            {{ element.amount | currency : 'PEN' }}
-          </td>
-        </ng-container>
+          <!-- Importe -->
+          <ng-container matColumnDef="importe">
+            <th mat-header-cell *matHeaderCellDef>Importe</th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.amount | currency : 'PEN' }}
+            </td>
+          </ng-container>
 
-        <!-- Header y Row -->
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-      </table>
-    </div>
-  </mat-card>
-  } @else {
+          <!-- Header y Row -->
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        </table>
+      </div>
+    </mat-card>
+    } 
+    @else if(selectedAccount) {
+      <h6 class="fw-bold color-blue">Detalle de movimientos</h6>
     <span>No encontramos ningún movimiento.</span>
-  }
-
-
-  } @else {
+    } 
+} @else { 
+  @if(!isLoading) {
   <div class="flex flex-col items-center justify-center text-center py-6">
     <img src="/not-found/not-found-transactions.svg" alt="Not found" class="img" />
     <p class="fw-bold m-1">¡Ups! Me comí tus cuentas… 🦴</p>
     <span class="fw-bold">No encontramos ninguna cuenta registrada.</span>
   </div>
-  }
+  } }
 </div>
+

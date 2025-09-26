@@ -1,9 +1,16 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { Button } from '../../shared/components/button/button';
 import { Account } from '../../models/interfaces/account.interface';
 import { MATERIAL_IMPORTS } from '../../shared/components/material.imports';
 import { Transaction } from '../../models/interfaces/transaction.interface';
+import { AuthService } from '../../auth/auth.service';
+import { AccountService } from '../../core/services/account.service';
+import { TransactionService } from '../../core/services/transaction.service';
+import { MatDialog } from '@angular/material/dialog';
+import { NewAccountModal } from './new-account-modal/new-account-modal';
+import { ToastComponent } from '../../shared/components/toast/toast';
+import { ToastService } from '../../shared/services/toast.service';
 
 @Component({
   selector: 'app-accounts',
@@ -12,57 +19,70 @@ import { Transaction } from '../../models/interfaces/transaction.interface';
   styleUrl: './accounts.css',
 })
 export class Accounts {
+  isLoading: boolean = false;
   displayedColumns: string[] = ['fecha', 'operacion', 'descripcion', 'importe'];
 
-  movimientos: Transaction[] = [
-    {
-      id: 1,
-      accountId: 2,
-      date: '2025-09-01',
-      type: 'depósito',
-      amount: 1000,
-      description: 'Depósito de apertura',
-    },
-    {
-      id: 2,
-      accountId: 2,
-      date: '2025-09-03',
-      type: 'retiro',
-      amount: 300,
-      description: 'Pago de servicios',
-    },
-    {
-      id: 3,
-      accountId: 2,
-      date: '2025-09-03',
-      type: 'depósito',
-      amount: 2500,
-      description: 'Transferencia recibida',
-    },
-  ];
+  movimientos: Transaction[] = [];
+  cuentas: Account[] = [];
+  selectedAccount!: Account;
+  userId!: number;
 
-  cuentas: Account[] = [
-    {
-      id: 1,
-      userId: 1,
-      type: 'ahorro',
-      balance: 1500,
-      status: 'activa',
-    },
-        {
-      id: 2,
-      userId: 2,
-      type: 'retiro',
-      balance: 1400,
-      status: 'inactiva',
-    },
-  ];
+  constructor(
+    private auth: AuthService,
+    private accountService: AccountService,
+    private transactionService: TransactionService,
+    private dialog: MatDialog
+  ) {}
 
-  selectedAccount: Account = this.cuentas[0];
+  ngOnInit(): void {
+    const id = this.auth.getLoggedInUser()?.id;
+    this.userId = Number(id);
+    this.getAccountsByUserId(Number(id));
+  }
 
-  constructor() {}
+  getAccountsByUserId(user: number | undefined): void {
+    this.isLoading = true;
+    this.accountService.getAccounts().subscribe((accounts: Account[]) => {
+      if (user !== undefined) {
+        this.cuentas = accounts.filter((account: Account) => account.userId === user);
+      }
+      this.isLoading = false;
+    });
+  }
 
-  get movimientosFiltrados(): Transaction[] {
-    return this.movimientos.filter((m) => m.accountId === this.selectedAccount?.id);
+  onAccountChange(): void {
+    if (this.selectedAccount) {
+      this.getTransactions();
+    } else {
+      this.movimientos = [];
+    }
+  }
+
+  getTransactions(): void {
+    this.transactionService.getTransactions().subscribe((transactions: Transaction[]) => {
+      if (this.selectedAccount?.id) {
+        this.movimientos = transactions.filter(
+          (tx: Transaction) => tx.accountId === Number(this.selectedAccount.id)
+        );
+      } else {
+        this.movimientos = [];
+      }
+    });
+  }
+
+  openNewAccountModal() {
+    const ref = this.dialog.open(NewAccountModal, {
+      width: '600px',
+      data: {
+        userId: this.userId,
+      },
+    });
+
+    ref.afterClosed().subscribe((createdProduct) => {
+      if (createdProduct) {
+        this.getAccountsByUserId(Number(this.userId));
+        this.movimientos = [];
+      }
+    });
   }
 }

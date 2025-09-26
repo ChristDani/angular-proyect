@@ -1,3 +1,5 @@
+import { N } from "@angular/cdk/keycodes";
+
 export interface Client {
   id: string;
   name: string;
@@ -11,7 +13,7 @@ export interface Account {
 
 export type ProductType = 'cuenta' | 'tarjeta' | 'prestamo';
 export type SubType = {
-  value: 'debito' | 'ahorro' | 'crédito';
+  value: 'debito' | 'ahorro' | 'crédito' | 'corriente' | string;
   label: string;
 };
 
@@ -29,4 +31,8 @@ export interface DialogData {
   client: Client;
   accounts?: Account[]; // cuentas del cliente/usuario si las tiene
   type?: string; // tipo de producto a crear
+}
+
+export interface NewAccountData {
+  userId?: string;
 }
