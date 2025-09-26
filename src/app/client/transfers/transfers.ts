@@ -19,8 +19,7 @@ interface Transaction {
   imports: [
     CommonModule, 
     FormsModule,
-    MatDialogModule,
-    ModalOpComponent
+    MatDialogModule
   ],
   templateUrl: './transfers.html',
   styleUrls: ['./transfers.css']
