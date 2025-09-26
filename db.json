@@ -29,55 +29,6 @@
       "type": "corriente",
       "balance": 2500,
       "status": "activa"
-    },
-    {
-      "id": 1758853420271,
-      "userId": 1,
-      "type": "corriente",
-      "balance": 1500,
-      "status": "activa"
-    },
-    {
-      "id": 1758853463564,
-      "userId": 1,
-      "type": "corriente",
-      "balance": 123,
-      "status": "activa"
-    },
-    {
-      "id": 1758853507257,
-      "userId": 1,
-      "type": "corriente",
-      "balance": 1233,
-      "status": "activa"
-    },
-    {
-      "id": 1758853523059,
-      "userId": 1,
-      "type": "corriente",
-      "balance": 213213,
-      "status": "activa"
-    },
-    {
-      "id": 1758853693769,
-      "userId": 1,
-      "type": "ahorro",
-      "balance": 1500,
-      "status": "activa"
-    },
-    {
-      "id": 1758853724867,
-      "userId": 1,
-      "type": "ahorro",
-      "balance": 123213,
-      "status": "activa"
-    },
-    {
-      "id": 1758853778098,
-      "userId": 1,
-      "type": "corriente",
-      "balance": 123213,
-      "status": "activa"
     }
   ],
   "loans": [
