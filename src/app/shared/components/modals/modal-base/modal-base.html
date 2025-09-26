@@ -1,44 +1,29 @@
-<div
-  class="modal"
-  tabindex="-1"
-  [class.show]="isOpen"
-  [class.fade]="animation"
-  [style.display]="isOpen ? 'block' : 'none'"
-  (click)="onClose()"
->
-  <div
-    class="modal-dialog"
-    [class.modal-sm]="size === 'sm'"
-    [class.modal-lg]="size === 'lg'"
-    [class.modal-xl]="size === 'xl'"
-    [class.modal-dialog-centered]="centered"
-    [class.modal-dialog-scrollable]="scrollable"
-    (click)="onModalClick($event)"
-  >
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">{{ title }}</h5>
-        @if (showCloseButton) {
-        <button type="button" class="btn-close" (click)="onClose()" aria-label="Close"></button>
-        }
+<div *ngIf="isOpen" class="modal-base-container">
+  <div class="modal-base-background" (click)="onClose()"></div>
+  <div class="modal-base-content" (click)="onModalClick($event)">
+    <div *ngIf="withHeader" class="modal-base-header">
+      <h5>{{ title }}</h5>
+      <button type="button" class="btn-close" aria-label="Close" (click)="onClose()"></button>
+    </div>
+    <div class="modal-base-body"><ng-content /></div>
+    <div *ngIf="withFooter && buttonsInFooter" class="modal-base-footer">
+      <div *ngIf="buttonsInFooter.secondaryButtons">
+        <button
+          *ngFor="let button of buttonsInFooter.secondaryButtons"
+          (click)="button.action()"
+          [disabled]="button.disabled"
+        >
+          {{ button.text }}
+        </button>
       </div>
-
-      <div class="modal-body">
-        <ng-content select="[modal-content]"></ng-content>
+      <div *ngIf="buttonsInFooter.primaryButton">
+        <button
+          (click)="buttonsInFooter.primaryButton.action()"
+          [disabled]="buttonsInFooter.primaryButton.disabled"
+        >
+          {{ buttonsInFooter.primaryButton.text }}
+        </button>
       </div>
-
-      @if (this.hasFooterContent) {
-      <div class="modal-footer">
-        <div class="d-flex justify-content-between w-100">
-          <ng-content select="[secondary-buttons]"></ng-content>
-          <ng-content select="[primary-button]"></ng-content>
-        </div>
-      </div>
-      }
     </div>
   </div>
 </div>
-
-@if (isOpen) {
-<div class="modal-backdrop fade show"></div>
-}
