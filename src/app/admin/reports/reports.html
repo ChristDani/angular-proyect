@@ -1,1 +1,82 @@
-<p>reports works!</p>
+<h2 class="h4 mb-4">Reportes</h2>
+
+<mat-card class="mb-4">
+    <mat-card-content class="card-content d-flex justify-content-end">
+        <div class="row w-100">
+            <div class="col-12 d-flex justify-content-center">
+                <div class="w-100">
+                    <form [formGroup]="form" class="row g-2 align-items-end">
+                        <div class="col-md-4 d-flex flex-column">
+                            <label for="filterType" class="form-label">Tipo:</label>
+                            <select id="filterType" class="form-control" formControlName="type">
+                                <option value=""></option>
+                                <option *ngFor="let ty of types; trackBy: trackByType" [value]="ty">{{ ty }}</option>
+                            </select>
+                            <button matButton="filled" class="btn btn-primary me-2  mt-2" type="button"
+                                (click)="filterBy('type')" [disabled]="!form.get('type')!.value">Filtrar por
+                                Tipo</button>
+                        </div>
+
+                        <div class="col-md-4 d-flex flex-column">
+                            <label for="filterDate" class="form-label">Fecha:</label>
+                            <input id="filterDate" class="form-control" type="date" formControlName="date" />
+                            <button matButton="filled" class="btn btn-primary me-2  mt-2" type="button"
+                                (click)="filterBy('date')" [disabled]="!form.get('date')!.value">Filtrar por
+                                Fecha</button>
+                        </div>
+
+                        <div class="col-md-4 d-flex flex-column">
+                            <label for="filterDesc" class="form-label">Descripción:</label>
+                            <input id="filterDesc" class="form-control" type="text" formControlName="description"
+                                placeholder="Buscar descripción" />
+                            <button matButton="filled" class="btn btn-primary me-2 mt-2" type="button"
+                                (click)="filterBy('description')" [disabled]="!form.get('description')!.value">Filtrar
+                                por Descripción:</button>
+                        </div>
+
+                        <div class="col-12 d-flex justify-content-end mt-3">
+                            <button matButton="filled" class="btn btn-secondary" type="button"
+                                (click)="clearFilters()">Limpiar filtros</button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </mat-card-content>
+</mat-card>
+
+<mat-card class="mb-4 p-2">
+    <mat-card-header class="card-header">
+        <mat-card-title>Reporte de Transacciones </mat-card-title>
+    </mat-card-header>
+
+    <div class="card card-primary mt-4">
+        <div class="card-body">
+            <table class="table even-table">
+                <thead class="table-primary">
+                    <tr>
+                        <th>Id</th>
+                        <th>AccountId</th>
+                        <th>Date</th>
+                        <th>Type</th>
+                        <th>Amount</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let transaction of transactions; trackBy: trackByTransaction">
+                        <td>{{ transaction.id }}</td>
+                        <td>{{ transaction.accountId }}</td>
+                        <td>{{ transaction.date }}</td>
+                        <td>{{ transaction.type }}</td>
+                        <td>{{ transaction.amount }}</td>
+                        <td>{{ transaction.description }}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p *ngIf="transactions.length === 0">No hay transacciones disponibles...</p>
+        </div>
+    </div>
+</mat-card>
