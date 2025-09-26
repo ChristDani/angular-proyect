@@ -1,11 +1,14 @@
 <app-modal-base
   #modalBase
-  [title]="'Transferir dinero entre mis cuentas'"
-  [size]="'md'"
-  [centered]="true"
+  [title]="'Transferencia entre cuentas'"
+  [withFooter]="true"
+  [buttonsInFooter]="{
+    primaryButton: { text: 'Continuar', action: continuar.bind(this), disabled: !amount || amount <= 0 },
+    secondaryButtons: [{ text: 'Cancelar', action: modalBase.close.bind(modalBase), disabled: false }]
+  }"
   (closeModal)="onClose()"
 >
-  <div class="container-fluid" modal-content>
+  <div>
     <div class="row mb-3">
       <div class="col-12">
         <label class="d-block mb-2">Desde</label>
@@ -62,15 +65,6 @@
           <input type="number" class="form-control" [(ngModel)]="amount" placeholder="500,000.00" />
         </div>
       </div>
-    </div>
-  </div>
-
-  <div footer>
-    <div secondary-buttons>
-      <button type="button" class="btn btn-light me-2" (click)="modalBase.close()">Cancelar</button>
-    </div>
-    <div primary-button>
-      <button type="button" class="btn btn-primary" (click)="continuar()">Continuar</button>
     </div>
   </div>
 </app-modal-base>

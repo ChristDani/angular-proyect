@@ -17,7 +17,7 @@ import { IButtonsInFooter } from '../../../interfaces/modal-base.interfaces';
 export class ModalBaseComponent {
   @Input() title: string = '';
   @Input() withHeader?: boolean = true;
-  @Input() withFooter?: boolean = true;
+  @Input() withFooter?: boolean = false;
   @Input() buttonsInFooter?: IButtonsInFooter | null = null;
 
   @Output() closeModal = new EventEmitter<void>();

@@ -31,7 +31,6 @@
   max-width: 90%;
   min-height: 20vh;
   max-height: 90vh;
-  padding: 1.2rem;
   display: flex;
   flex-direction: column;
   z-index: 1050;
@@ -42,14 +41,14 @@
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid #e2e8ee;
-  padding: 1.2rem;
+  padding: 1.2rem 0.9rem;
   height: 60px;
   width: 100%;
 }
 
 .modal-base-content-body {
-  padding: 1.2rem;
-  height: calc(100% - 135px);
+  padding: 0.6rem 0.9rem;
+  height: calc(100% - 119px);
   display: flex;
   flex-direction: column;
   gap: 1.8rem;
@@ -72,9 +71,14 @@
 
 .modal-base-content-footer {
   border-top: 1px solid #e2e8ee;
-  padding: 1.2rem;
+  padding: 0.6rem 0.9rem;
   display: flex;
   justify-content: flex-end;
-  gap: 2rem;
-  height: 75px;
+  gap: 0.5rem;
+  height: 59px;
+}
+
+button:focus {
+  outline: none;  
+  box-shadow: none;
 }

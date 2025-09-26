@@ -1,15 +1,16 @@
 <div *ngIf="isOpen" class="modal-base-container">
   <div class="modal-base-background" (click)="onClose()"></div>
   <div class="modal-base-content" (click)="onModalClick($event)">
-    <div *ngIf="withHeader" class="modal-base-header">
+    <div *ngIf="withHeader" class="modal-base-content-header">
       <h5>{{ title }}</h5>
       <button type="button" class="btn-close" aria-label="Close" (click)="onClose()"></button>
     </div>
-    <div class="modal-base-body"><ng-content /></div>
-    <div *ngIf="withFooter && buttonsInFooter" class="modal-base-footer">
+    <div class="modal-base-content-body"><ng-content /></div>
+    <div *ngIf="withFooter && buttonsInFooter" class="modal-base-content-footer">
       <div *ngIf="buttonsInFooter.secondaryButtons">
         <button
           *ngFor="let button of buttonsInFooter.secondaryButtons"
+          class="btn btn-secondary"
           (click)="button.action()"
           [disabled]="button.disabled"
         >
@@ -18,6 +19,7 @@
       </div>
       <div *ngIf="buttonsInFooter.primaryButton">
         <button
+          class="btn btn-primary"
           (click)="buttonsInFooter.primaryButton.action()"
           [disabled]="buttonsInFooter.primaryButton.disabled"
         >
