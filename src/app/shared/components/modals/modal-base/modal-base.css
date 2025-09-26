@@ -1,28 +1,80 @@
-/* Estilos adicionales para el modal base */
-:host {
-  display: block;
-}
-
-/* Aseguramos que el backdrop tenga el z-index correcto */
-.modal-backdrop {
+.modal-base-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.1);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
   z-index: 1040;
 }
 
-/* El modal debe estar por encima del backdrop */
-.modal {
+.modal-base-container {
+  height: 100vh;
+  width: 100vw;
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   z-index: 1050;
 }
 
-/* Animación de fade para el modal */
-.modal.show {
-  animation: fadeIn 0.3s ease-in-out;
+.modal-base-content {
+  background-color: #fafbfd;
+  border: 1px solid #e2e8ee;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  min-width: 20%;
+  max-width: 90%;
+  min-height: 20vh;
+  max-height: 90vh;
+  padding: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  z-index: 1050;
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
+.modal-base-content-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #e2e8ee;
+  padding: 1.2rem;
+  height: 60px;
+  width: 100%;
+}
+
+.modal-base-content-body {
+  padding: 1.2rem;
+  height: calc(100% - 135px);
+  display: flex;
+  flex-direction: column;
+  gap: 1.8rem;
+  overflow-y: auto;
+  overflow-x: hidden;
+  &::-webkit-scrollbar {
+    width: 6px;
   }
-  to {
-    opacity: 1;
+
+  &::-webkit-scrollbar-track {
+    background-color: transparent;
   }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(49, 62, 242, 0.524);
+    border-radius: 10px;
+    border: 2px solid transparent;
+  }
+}
+
+.modal-base-content-footer {
+  border-top: 1px solid #e2e8ee;
+  padding: 1.2rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 2rem;
+  height: 75px;
 }
