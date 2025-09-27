@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit, signal } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
@@ -14,6 +14,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { ProductCreationModal } from './product-creation-modal/product-creation-modal';
 import { Client } from '../../models/interfaces/products-user.interface';
 import { UserCreationModal } from './user-creation-modal/user-creation-modal';
+import { AlertModal } from '../alert-modal/alert-modal';
+import { ToastService } from '../../shared/services/toast.service';
 
 @Component({
   selector: 'app-users',
@@ -38,7 +40,13 @@ export class Users implements OnInit {
 
   users: User[] = [];
 
-  constructor(private userService: UserService, private dialog: MatDialog) {}
+  deleteUserAlert: boolean = false;
+
+  constructor(
+    private userService: UserService,
+    private dialog: MatDialog,
+    private toastService: ToastService
+  ) {}
 
   ngOnInit(): void {
     this.getUsers();
@@ -74,7 +82,6 @@ export class Users implements OnInit {
   }
 
   addNewUser() {
-    console.log('addNewUser');
     const ref = this.dialog.open(UserCreationModal, {
       width: '600px',
     });
@@ -82,13 +89,11 @@ export class Users implements OnInit {
     ref.afterClosed().subscribe((created) => {
       if (created) {
         this.getUsers();
-        console.log('Usuario creado:', created);
       }
     });
   }
 
   editUser(element: User) {
-    console.log('editUser', element);
     const ref = this.dialog.open(UserCreationModal, {
       width: '600px',
       data: element,
@@ -102,27 +107,19 @@ export class Users implements OnInit {
   }
 
   deleteUser(element: User) {
-    console.log('deleteUser', element);
-    Swal.fire({
-      title: 'Eliminar usuario',
-      text: 'No podras revertir esto!',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#005CBB',
-      confirmButtonText: 'Si, eliminar!',
-      cancelButtonColor: '#d33',
-      cancelButtonText: 'Cancelar',
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.userService.deleteUser(String(element.id)).subscribe({
-          next: () => {
-            console.log('Usuario eliminado exitosamente');
-            this.getUsers();
-          },
-          error: (error) => {
-            console.error('Error eliminando el usuario ', error);
-          },
-        });
+    this.deleteUserAlert = true;
+    const id = element.id;
+
+    const ref = this.dialog.open(AlertModal, {
+      width: '500px',
+      data: {
+        id,
+      },
+    });
+
+    ref.afterClosed().subscribe((userDelete) => {
+      if (userDelete) {
+        this.getUsers();
       }
     });
   }
@@ -134,9 +131,6 @@ export class Users implements OnInit {
    * se requiere tipo de producto, id de user, id de account
    * @param element
    */
-  addUserAccount(element: User) {
-    console.log('addUserAccount', element);
-  }
 
   openCreateProductDialog(client: Client) {
     const ref = this.dialog.open(ProductCreationModal, {
@@ -148,7 +142,6 @@ export class Users implements OnInit {
 
     ref.afterClosed().subscribe((createdProduct) => {
       if (createdProduct) {
-        console.log('Producto creado:', createdProduct);
         this.getUsers();
       }
     });

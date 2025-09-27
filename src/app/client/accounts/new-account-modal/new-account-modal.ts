@@ -1,10 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { MATERIAL_IMPORTS } from '../../../shared/components/material.imports';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import {
-  NewAccountData,
-  SubType,
-} from '../../../models/interfaces/products-user.interface';
+import { NewAccountData, SubType } from '../../../models/interfaces/products-user.interface';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { AccountService } from '../../../core/services/account.service';
 import { Subject, takeUntil } from 'rxjs';
@@ -54,7 +51,7 @@ export class NewAccountModal {
     }
     const account: Account = {
       id: UGenerator.generateId(),
-      userId: Number(this.userId),
+      userId: this.userId,
       type: this.accountForm.get('type')!.value,
       balance: Number(this.accountForm.get('balance')!.value),
       status: 'activa',
@@ -64,11 +61,12 @@ export class NewAccountModal {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (created) => {
-        this.toastService.show(`Cuenta de ${created.type} creada exitosamente`, 'success');
+          this.toastService.show(`Cuenta creada exitosamente`, 'success');
           this.dialogRef.close(created);
         },
         error: (err) => {
-          console.error('Error creando cuenta', err);
+          this.toastService.show(`No se pudo crear la cuenta, inténtalo de nuevo.`, 'error');
+          this.dialogRef.close();
         },
       });
   }

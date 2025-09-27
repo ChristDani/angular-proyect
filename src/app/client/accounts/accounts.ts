@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
 import { Button } from '../../shared/components/button/button';
 import { Account } from '../../models/interfaces/account.interface';
 import { MATERIAL_IMPORTS } from '../../shared/components/material.imports';
@@ -9,8 +9,6 @@ import { AccountService } from '../../core/services/account.service';
 import { TransactionService } from '../../core/services/transaction.service';
 import { MatDialog } from '@angular/material/dialog';
 import { NewAccountModal } from './new-account-modal/new-account-modal';
-import { ToastComponent } from '../../shared/components/toast/toast';
-import { ToastService } from '../../shared/services/toast.service';
 
 @Component({
   selector: 'app-accounts',
@@ -25,7 +23,7 @@ export class Accounts {
   movimientos: ITransaction[] = [];
   cuentas: Account[] = [];
   selectedAccount!: Account;
-  userId!: number;
+  userId!: string | undefined;
 
   constructor(
     private auth: AuthService,
@@ -36,16 +34,22 @@ export class Accounts {
 
   ngOnInit(): void {
     const id = this.auth.getLoggedInUser()?.id;
-    this.userId = Number(id);
-    this.getAccountsByUserId(Number(id));
+    this.userId = id;
+    this.getAccountsByUserId(id);
   }
 
-  getAccountsByUserId(user: number | undefined): void {
+  getAccountsByUserId(user: string | undefined, isNewUser?: boolean): void {
     this.isLoading = true;
     this.accountService.getAccounts().subscribe((accounts: Account[]) => {
       if (user !== undefined) {
         this.cuentas = accounts.filter((account: Account) => account.userId === user);
       }
+
+      if (isNewUser) {
+        this.selectedAccount = this.cuentas[this.cuentas.length - 1];
+        this.getTransactions();
+      }
+
       this.isLoading = false;
     });
   }
@@ -80,8 +84,7 @@ export class Accounts {
 
     ref.afterClosed().subscribe((createdProduct) => {
       if (createdProduct) {
-        this.getAccountsByUserId(Number(this.userId));
-        this.movimientos = [];
+        this.getAccountsByUserId(this.userId, true);
       }
     });
   }

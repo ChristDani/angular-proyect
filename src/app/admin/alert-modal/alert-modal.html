@@ -1,0 +1,18 @@
+<mat-card class="bg-light text-dark">
+    <mat-card-title class="text-center my-4"> Eliminar usuario</mat-card-title>
+    <mat-card-content class="d-flex align-items-center flex-column">
+        <div class="d-flex flex-column align-items-center gap-3 w-100">
+            <i class="fa-solid fa-triangle-exclamation text-danger h1"></i>
+            <div class="text-center mb-4">
+                <h6>¡No podrás revertir esto!</h6>
+                <p class="my-1">¿Estás seguro de que deseas eliminar este usuario?</p>
+                <span>Al proceder también se borrarán sus cuentas, tarjetas y préstamos asociados.</span>
+
+            </div>
+        </div>
+        <div class="d-flex justify-content-evenly gap-3">
+            <button matButton="elevated" (click)="close()">Cancelar</button>
+            <button matButton="filled" (click)="deleteAlertUser()">Sí, eliminar</button>
+        </div>
+    </mat-card-content>
+</mat-card>

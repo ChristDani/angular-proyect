@@ -1,29 +1,10 @@
+
 <div class="container mt-4">
   <!-- Configuración de tarjetas -->
   <div class="d-flex justify-content-between align-items-center mb-3">
     <h5 class="fw-bold">Configurar mis tarjetas</h5>
   </div>
 
-  <!-- <mat-card class="credit-card">
-    <div class="card-content">
-      <div class="icon-section">
-        <div class="circle-icon">T</div>
-      </div>
-
-      <div class="info-section">
-        <div class="title">Tarjeta débito <span class="card-number">****2015</span></div>
-        <div class="limit">Límite: <span class="amount">0.00</span></div>
-      </div>
-
-      <div class="actions-section">
-        <div class="toggle-labels">
-          <span>Activar</span>
-          <mat-slide-toggle [(ngModel)]="isDebitActive"></mat-slide-toggle>
-          <span>Desactivar</span>
-        </div>
-      </div>
-    </div>
-  </mat-card> -->
   @if(cards.length && !isLoading) { @for (card of cards; track card.id){
   <mat-card class="credit-card">
     <div class="card-content">
@@ -35,18 +16,24 @@
         <div class="title">
           Tarjeta {{ card.type }} <span class="card-number">****{{ card.id }}</span>
         </div>
-        <div class="limit">
-          Límite: <span class="amount">{{ card.limit }}</span>
+        @if(card.type === 'crédito') {
+        <div class="limit d-flex">
+          <p class="m-0 me-2 fw-bold limit-label">Límite:</p><span class="amount">{{ card.limit | number:'1.0-2' }}</span>
         </div>
+        }
       </div>
 
       <div class="actions-section">
         <div class="toggle-labels">
-          <span>Activar</span>
-          <mat-slide-toggle [(ngModel)]="isCreditActive"></mat-slide-toggle>
-          <span>Desactivar</span>
+          <span>{{ card.status === 'activa' ? 'Activada' : 'Desactivada' }}</span>
+          <mat-slide-toggle 
+            [checked]="card.status === 'activa'"
+            (change)="toggleCardStatus(card)">
+          </mat-slide-toggle>
         </div>
-        <span class="manage-link">Gestionar límites ></span>
+        @if(card.type === 'crédito') {
+        <span class="manage-link" (click)="showModalLimits(card)">Gestionar límites ></span>
+        }
       </div>
     </div>
   </mat-card>
