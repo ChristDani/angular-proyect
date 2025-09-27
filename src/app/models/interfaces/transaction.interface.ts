@@ -1,6 +1,7 @@
-export interface ITransaction {
-  id: number;
-  accountId: number;
+
+export interface ITransaction{
+  id : string;
+  accountId: string;
   date: string;
   type: string;
   amount: number;
