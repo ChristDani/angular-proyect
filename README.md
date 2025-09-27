@@ -1,3 +1,13 @@
+### Grupo 1 
+Integrantes:
+  
+- Itzel Andrea González Valecillos
+- Maria Fernanda Perez Campos
+- Marco Francisco Durand Lujan
+- Christian Daniel Campaña Díaz
+- Milton Cesar Mariños Perez
+
+
 # Sistema de Gestión Bancaria Avanzada con Angular
 
 ## Descripción del Proyecto
@@ -20,6 +30,7 @@ Para poder ejecutar este proyecto en tu máquina local, sigue los siguientes pas
 ### Prerrequisitos
 
 Asegúrate de tener el siguiente software instalado:
+* **Angular Version** 20.1.6
 * **Node.js** (versión 16 o superior)
 * **Angular CLI** (puedes instalarlo globalmente con `npm install -g @angular/cli`)
 
