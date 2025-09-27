@@ -1,1 +1,134 @@
-<p>dashboard works!</p>
+
+<div class="container my-4">
+    <div class="row">
+        <h4 class="mb-4 fw-bold">Acciones rápidos</h4>
+        <div class="col-lg-4 col-md-4 col-sm-12 mt-3 d-flex justify-content-center">
+            <button class="btn btn-primary btn-lg w-75"> <i class="fa-solid fa-money-bill-transfer"></i> Transferir dinero</button>
+        </div>
+        <div class="col-lg-4 col-md-4 col-sm-12 mt-3 d-flex justify-content-center">
+            <button class="btn btn-primary btn-lg w-75"><i class="fa-solid fa-money-bill"></i> Pagar servicios</button>
+        </div>
+        <div class="col-lg-4 col-md-4 col-sm-12 mt-3 d-flex justify-content-center">
+            <button class="btn btn-primary btn-lg w-75"><i class="fa-solid fa-hand-holding-dollar"></i> Solicitar préstamo</button>
+        </div>
+    </div>
+
+</div>
+
+<div >
+    <h4 class="mb-4 fw-bold">Resumen de productos</h4>
+
+    <div class="card mb-3">
+        <div class="card-body px-5">
+            <h5 class="card-title my-2"><i class="fa-solid fa-file-invoice"></i> Cuentas </h5>
+            <div class="row">
+            @if (accounts.length>0) {
+                @for (account of accounts; track account.id) {
+                <div class="col-sm-12 col-md-4 col-lg-3 p-3">
+                    <div class="card bg-light">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-center">
+                                <div>
+                                    <h6 class="text-primary"><i class="fa-solid fa-circle"></i></h6>
+                                </div>
+                                <div class="ms-2">
+                                    @if (account.type==='ahorro') {
+                                        <h6 class="text-primary"> Cuenta de Ahorro</h6>
+                                    } @else {
+                                        <h6 class="text-primary"> Cuenta Corriente </h6>
+                                    }
+                                    <p class="text-warning fw-bold fs-4 mt-2 mb-1">S/. {{ account.balance | number:'1.2-2' }}</p>
+                                    <p class="text-black-50 mb-0 small">Saldo total</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                }
+            }@else{
+                @if(mensajeAccount!==''){
+                <div class="w-100 text-center">
+                    <p>{{ mensajeAccount }}</p>
+                </div>
+                }
+            }
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-body px-5">
+            <h5 class="card-title my-2"><i class="fa-solid fa-credit-card"></i> Tarjetas </h5>
+            <div class="row">
+            @if (cards.length>0) {
+                @for (card of cards; track card.id) {
+                <div class="col-sm-12 col-md-4 col-lg-3 p-3">
+                    <div class="card bg-light">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-center">
+                                <div>
+                                    <h6 class="text-primary"><i class="fa-solid fa-circle"></i></h6>
+                                </div>
+                                <div class="ms-2">
+                                    @if (card.type==='crédito') {
+                                        <h6 class="text-primary"> Tarjeta de crédito</h6>
+                                    } @else {
+                                        <h6 class="text-primary"> Tarjeta de débito </h6>
+                                    }
+                                    <p class="text-warning fw-bold fs-4 mt-2 mb-1">S/. {{ card.limit | number:'1.2-2' }}</p>
+                                    @if (card.type==='crédito') {
+                                        <p class="text-black-50 mb-0 small">Línea de crédito disponible</p>
+                                    } @else {
+                                        <p class="text-black-50 mb-0 small">Saldo disponible</p>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                }
+            }@else{
+                @if(mensajeCard!==''){
+                <div class="w-100 text-center">
+                    <p>{{ mensajeCard }}</p>
+                </div>
+                }
+            }
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-body px-5">
+            <h5 class="card-title my-2"><i class="fa-solid fa-hand-holding-dollar"></i>  Préstamos</h5>
+            <div class="row">
+            @if (loans.length>0) {
+                @for (loan of loans; track loan.id) {
+                <div class="col-sm-12 col-md-4 col-lg-3 p-3">
+                    <div class="card bg-light">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-center">
+                                <div>
+                                    <h6 class="text-primary"><i class="fa-solid fa-circle"></i></h6>
+                                </div>
+                                <div class="ms-2">
+                                    <h6 class="text-primary"> Préstamo</h6>
+                                    <p class="text-warning fw-bold fs-4 mt-2 mb-1"> S/. {{ loan.amount | number:'1.2-2' }}</p>
+                                    <p class="text-black-50 mb-0 small">{{ loan.status }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                }
+            }@else{
+                @if(mensajeLoan!==''){
+                <div class="w-100 text-center">
+                    <p>{{ mensajeLoan }}</p>
+                </div>
+                }
+            }
+            </div>
+        </div>
+    </div>
+</div>
