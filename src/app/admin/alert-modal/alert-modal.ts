@@ -42,8 +42,8 @@ export class AlertModal {
     private userService: UserService,
     private toastService: ToastService,
     private dialogRef: MatDialogRef<AlertModal, User | null>,
-    private cardService: CardService,
     private accountService: AccountService,
+    private cardService: CardService,
     private loanService: LoanService,
     private transactionService: TransactionService,
     @Inject(MAT_DIALOG_DATA) public data?: User
@@ -52,14 +52,11 @@ export class AlertModal {
   }
 
   ngOnInit(): void {
-    console.log('UserID:', this.userID);
-    // precarga opcional de cuentas
     this.getAccountsForUser(this.userID)
       .pipe(take(1))
       .subscribe((accounts) => {
         this.allAccounts = accounts;
         this.accountIDs = accounts.map((a) => String(a.id));
-        console.log('Cuentas cargadas:', this.accountIDs);
       });
   }
 
@@ -67,25 +64,18 @@ export class AlertModal {
     this.dialogRef.close();
   }
 
-  /**
-   * Elimina todas las cuentas del usuario y luego elimina el usuario.
-   * Si no hay cuentas, solo elimina el usuario.
-   */
   deleteAlertUser(): void {
-    console.log('Iniciando eliminación de cuentas y usuario:', this.userID);
+    const deleteAllResources$ = forkJoin({
+      accounts: this.deleteAccountsForUser(this.userID),
+      cards: this.deleteCardsForUser(this.userID),
+      loans: this.deleteLoansForUser(this.userID),
+      transactions: this.deleteTransactionsForUser(this.userID),
+    });
 
-    this.deleteAccountsForUser(this.userID)
+    deleteAllResources$
       .pipe(
         take(1),
         switchMap((results) => {
-          // Log de resultados individuales de eliminación de cuentas
-          if (results.length > 0) {
-            console.log('Resultados de eliminación de cuentas:', results);
-          } else {
-            console.log('No se encontraron cuentas a eliminar para el usuario.');
-          }
-
-          // Luego eliminar el usuario
           return this.userService.deleteUser(this.userID);
         }),
         finalize(() => console.log('Flujo de eliminación completado'))
@@ -96,14 +86,14 @@ export class AlertModal {
           this.dialogRef.close(result);
         },
         error: (err) => {
-          console.error('Error al eliminar usuario o cuentas:', err);
-          this.toastService.show('Error al eliminar usuario', 'error');
+          console.error('Error al eliminar usuario o recursos:', err);
+          this.toastService.show('Error al eliminar usuario o recursos', 'error');
         },
       });
   }
 
   /**
-   * Devuelve las cuentas del usuario (compatibiliza userId que puede ser number o string).
+   * Cuentas
    */
   private getAccountsForUser(userId: string): Observable<Account[]> {
     const lookup = String(userId);
@@ -113,34 +103,112 @@ export class AlertModal {
     );
   }
 
-  /**
-   * Elimina en paralelo todas las cuentas del usuario.
-   * Devuelve un arreglo con el resultado por cuenta { id, success, error? }.
-   */
   private deleteAccountsForUser(
     userId: string
   ): Observable<Array<{ id: any; success: boolean; error?: any }>> {
     return this.getAccountsForUser(userId).pipe(
       switchMap((accounts) => {
-        if (!accounts || accounts.length === 0) {
-          return of([]);
-        }
-
+        if (!accounts || accounts.length === 0) return of([]);
         const requests = accounts.map((acc) =>
-          this.accountService.deleteAccount(String(acc.id)).pipe(
-            // Si falla una eliminación, transformamos el error en resultado para no cancelar el forkJoin
+          this.accountService.deleteAccount(acc.id).pipe(
             map(() => ({ id: acc.id, success: true })),
             catchError((err) => of({ id: acc.id, success: false, error: err }))
           )
         );
-
         return forkJoin(requests);
       })
     );
   }
 
   /**
-   * Método público para eliminar una cuenta específica por id.
+   * Tarjetas (cards)
+   * - Se asume que CardService tiene un método getCards(): Observable<any[]>
+   */
+  private getCardsForUser(userId: string): Observable<any[]> {
+    const lookup = String(userId);
+    return this.cardService.getCards().pipe(
+      take(1),
+      map((cards: any[]) => cards.filter((c) => String(c.userId) === lookup))
+    );
+  }
+
+  private deleteCardsForUser(
+    userId: string
+  ): Observable<Array<{ id: any; success: boolean; error?: any }>> {
+    return this.getCardsForUser(userId).pipe(
+      switchMap((cards) => {
+        if (!cards || cards.length === 0) return of([]);
+        const requests = cards.map((card) =>
+          this.cardService.deleteCard(card.id).pipe(
+            map(() => ({ id: card.id, success: true })),
+            catchError((err) => of({ id: card.id, success: false, error: err }))
+          )
+        );
+        return forkJoin(requests);
+      })
+    );
+  }
+
+  /**
+   * Préstamos (loans)
+   * - Se asume que LoanService tiene un método getLoans(): Observable<any[]>
+   */
+  private getLoansForUser(userId: string): Observable<any[]> {
+    const lookup = String(userId);
+    return this.loanService.getLoans().pipe(
+      take(1),
+      map((loans: any[]) => loans.filter((l) => String(l.userId) === lookup))
+    );
+  }
+
+  private deleteLoansForUser(
+    userId: string
+  ): Observable<Array<{ id: any; success: boolean; error?: any }>> {
+    return this.getLoansForUser(userId).pipe(
+      switchMap((loans) => {
+        if (!loans || loans.length === 0) return of([]);
+        const requests = loans.map((loan) =>
+          this.loanService.deleteLoan(loan.id).pipe(
+            map(() => ({ id: loan.id, success: true })),
+            catchError((err) => of({ id: loan.id, success: false, error: err }))
+          )
+        );
+        return forkJoin(requests);
+      })
+    );
+  }
+
+  /**
+   * Transacciones (transactions)
+   * - Se asume que TransactionService tiene un método getTransactions(): Observable<any[]>
+   */
+  private getTransactionsForUser(userId: string): Observable<any[]> {
+    const lookup = String(userId);
+    return this.transactionService.getTransactions().pipe(
+      take(1),
+      map((txs: any[]) => txs.filter((t) => String(t.userId) === lookup))
+    );
+  }
+
+  private deleteTransactionsForUser(
+    userId: string
+  ): Observable<Array<{ id: any; success: boolean; error?: any }>> {
+    return this.getTransactionsForUser(userId).pipe(
+      switchMap((txs) => {
+        if (!txs || txs.length === 0) return of([]);
+        const requests = txs.map((tx) =>
+          this.transactionService.deleteTransaction(tx.id).pipe(
+            map(() => ({ id: tx.id, success: true })),
+            catchError((err) => of({ id: tx.id, success: false, error: err }))
+          )
+        );
+        return forkJoin(requests);
+      })
+    );
+  }
+
+  /**
+   * Eliminación individual pública para cuentas (se puede replicar para otros recursos si se necesita)
    */
   deleteAccountById(id: string): void {
     if (!id) {
@@ -149,7 +217,7 @@ export class AlertModal {
     }
 
     this.accountService
-      .deleteAccount(String(id))
+      .deleteAccount(id)
       .pipe(
         take(1),
         map(() => ({ id, success: true })),
