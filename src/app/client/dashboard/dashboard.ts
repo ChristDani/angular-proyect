@@ -7,6 +7,7 @@ import { Account } from '../../models/interfaces/account.interface';
 import { Card } from '../../models/interfaces/card.interface';
 import { Loan } from '../../models/interfaces/loan.interface';
 import { CommonModule, DecimalPipe } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-dashboard',
@@ -33,7 +34,8 @@ export class Dashboard implements OnInit {
     private authService: AuthService,
     private accountService: AccountService,
     private cardService: CardService,
-    private loanService: LoanService
+    private loanService: LoanService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -117,5 +119,9 @@ export class Dashboard implements OnInit {
         console.error('Error en obtener préstamos ', error);
       },
     });
+  }
+
+  redirectTo(path: string) {
+    this.router.navigate([`client/${path}`]);
   }
 }

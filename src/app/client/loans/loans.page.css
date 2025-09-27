@@ -1,41 +1,56 @@
-.actions {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 16px;
-  margin-bottom: 12px;
+table {
+  th {
+    background-color: #005CBB;
+    color: white;
+    text-align: center;
+  }
+
+  td {
+    text-align: center;
+    vertical-align: middle;
+  }
 }
 
-.action-card {
+.table,
+.table th,
+.table td {
+  border: none !important;
+}
+
+.mat-mdc-header-cell,
+.mat-mdc-cell {
+  border-bottom: none !important;
+}
+
+.mat-mdc-header-cell,
+.mat-mdc-cell {
+  text-align: center !important;
+  vertical-align: middle !important;
+}
+
+.mat-mdc-button,
+.mat-mdc-raised-button,
+.mat-mdc-stroked-button,
+.mat-mdc-flat-button {
+  border-radius: 0 !important;
+}
+
+.shortcut-cards-container,
+.stadistics-cards {
+  width: 100%;
   display: flex;
-  gap: 16px;
-  align-items: center;
-  cursor: pointer;
-  transition: transform .1s ease-in;
+  justify-content: space-around;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
 }
 
-.action-card:hover {
-  transform: translateY(-2px);
-}
-
-.action-card mat-icon {
-  font-size: 40px;
-  width: 40px;
-  height: 40px;
-}
 
 .spacer {
-  margin: 12px 0 8px;
-}
-
-.table-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px 4px 0 4px;
+  margin: 2rem 0rem;
 }
 
 .filter {
-  width: 260px;
+  width: 240px;
 }
 
 .table-wrapper {
@@ -45,4 +60,29 @@
 .empty {
   padding: 24px;
   color: #5f6368;
+}
+
+.base-color {
+  color: #2B3442;
+}
+
+.transfer-circle {
+  width: 48px;
+  height: 48px;
+}
+
+.transfer-icon {
+  width: 32px;
+  height: 32px;
+  font-size: 1.1em;
+}
+
+.fa-hand-holding-dollar,
+.fa-money-bill {
+    color: #005CBB !important;
+}
+
+.button-default {
+    background: #005CBB !important;
+    color: #FFFFFF !important;
 }

@@ -1,93 +1,119 @@
-<div class="actions">
-    <mat-card class="action-card" (click)="openRequest()">
-        <mat-icon>assignment</mat-icon>
-        <div>
-            <h3>Solicitud de préstamos</h3>
-            <p>Inicia una nueva solicitud en minutos.</p>
-        </div>
-    </mat-card>
+<div class="container mt-4">
+  <div class="my-4">
+    <h4 class="fw-bold base-color">Solicita y/o simula tu préstamo</h4>
+  </div>
+    <div class="row g-4 justify-content-center">
+      <div class="col-12 col-md-4">
+        <button
+          class="btn button-default w-100 py-4 d-flex flex-column align-items-center rounded-3"
+          (click)="openRequest()"
+        >
+          <span
+            class="transfer-circle rounded-circle bg-white d-flex align-items-center justify-content-center mb-2"
+          >
+            <i class="fa-solid fa-hand-holding-dollar"></i> 
+          </span>
+          <span class="fw-semibold">Solicitud de préstamos</span>
+        </button>
+      </div>
+      <div class="col-12 col-md-4">
+        <button
+          class="btn button-default w-100 py-4 d-flex flex-column align-items-center rounded-3"
+          (click)="openSimulator()"
+        >
+          <span
+            class="transfer-circle rounded-circle bg-white d-flex align-items-center justify-content-center mb-2"
+          >
+            <i class="fa-solid fa-money-bill"></i>
+          </span>
+          <span class="fw-semibold">Simulador de préstamos</span>
+        </button>
+      </div>
+    </div>
 
-    <mat-card class="action-card" (click)="openSimulator()">
-        <mat-icon>calculate</mat-icon>
-        <div>
-            <h3>Simulador de préstamos</h3>
-            <p>Calcula cuotas, tasas y plazos antes de solicitar.</p>
-        </div>
-    </mat-card>
+  <mat-divider class="spacer"></mat-divider>
+
+  @if (loading()) {
+
+  <div class="table-header">
+    <h5 class="fw-bold base-color">Detalle de préstamos</h5>
+    <mat-form-field appearance="outline" class="filter">
+      <mat-label>Filtrar</mat-label>
+      <input
+        matInput
+        (keyup)="applyFilter($any($event.target).value)"
+        placeholder="ID, cuenta, estado..."
+      />
+    </mat-form-field>
+  </div>
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+
+  }
+
+  <!-- Estado: vacío -->
+  @else if (dataSource.data.length === 0) {
+  <div class="table-header">
+    <h5 class="fw-bold base-color">Detalle de préstamos</h5>
+    <mat-form-field appearance="outline" class="filter">
+      <mat-label>Filtrar</mat-label>
+      <input
+        matInput
+        (keyup)="applyFilter($any($event.target).value)"
+        placeholder="ID, cuenta, estado..."
+      />
+    </mat-form-field>
+  </div>
+  <div class="empty">No hay préstamos registrados.</div>
+  }
+
+  <!-- Estado: con data -->
+  @else {
+  <div class="d-flex justify-content-between mb-3">
+    <div>
+      <h5 class="fw-bold base-color">Detalle de préstamos</h5>
+    </div>
+    <mat-form-field appearance="outline" class="filter">
+      <mat-label>Filtrar</mat-label>
+      <input
+        matInput
+        (keyup)="applyFilter($any($event.target).value)"
+        placeholder="ID, cuenta, estado..."
+      />
+    </mat-form-field>
+  </div>
+
+  <div class="table-wrapper">
+    <table mat-table [dataSource]="dataSource" class="table table-bordered mb-0">
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef>Nro. de crédito</th>
+        <td mat-cell *matCellDef="let row">{{ row.id }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="accountId">
+        <th mat-header-cell *matHeaderCellDef>ID Cuenta</th>
+        <td mat-cell *matCellDef="let row">{{ row.accountId }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="amount">
+        <th mat-header-cell *matHeaderCellDef>Monto</th>
+        <td mat-cell *matCellDef="let row">
+          {{ row.amount | currency : 'PEN' : 'symbol-narrow' }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="installments">
+        <th mat-header-cell *matHeaderCellDef>N° de cuotas</th>
+        <td mat-cell *matCellDef="let row">{{ row.installments }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>Estado</th>
+        <td mat-cell *matCellDef="let row">{{ row.status | titlecase }}</td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+  </div>
+  }
 </div>
-
-<mat-divider class="spacer"></mat-divider>
-
-@if (loading()) {
-<mat-card>
-    <div class="table-header">
-        <h2>Detalle de préstamos</h2>
-        <mat-form-field appearance="outline" class="filter">
-            <mat-label>Filtrar</mat-label>
-            <input matInput (keyup)="applyFilter($any($event.target).value)" placeholder="ID, cuenta, estado..." />
-        </mat-form-field>
-    </div>
-    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-</mat-card>
-}
-
-<!-- Estado: vacío -->
-@else if (dataSource.data.length === 0) {
-<mat-card>
-    <div class="table-header">
-        <h2>Detalle de préstamos</h2>
-        <mat-form-field appearance="outline" class="filter">
-            <mat-label>Filtrar</mat-label>
-            <input matInput (keyup)="applyFilter($any($event.target).value)" placeholder="ID, cuenta, estado..." />
-        </mat-form-field>
-    </div>
-    <div class="empty">No hay préstamos registrados.</div>
-</mat-card>
-}
-
-<!-- Estado: con data -->
-@else {
-<mat-card>
-    <div class="table-header">
-        <h2>Detalle de préstamos</h2>
-        <mat-form-field appearance="outline" class="filter">
-            <mat-label>Filtrar</mat-label>
-            <input matInput (keyup)="applyFilter($any($event.target).value)" placeholder="ID, cuenta, estado..." />
-        </mat-form-field>
-    </div>
-
-    <div class="table-wrapper">
-        <table mat-table [dataSource]="dataSource" matSort>
-            <ng-container matColumnDef="id">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>Nro. de crédito</th>
-                <td mat-cell *matCellDef="let row">{{ row.id }}</td>
-            </ng-container>
-
-            <ng-container matColumnDef="accountId">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>ID Cuenta</th>
-                <td mat-cell *matCellDef="let row">{{ row.accountId }}</td>
-            </ng-container>
-
-            <ng-container matColumnDef="amount">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>Monto</th>
-                <td mat-cell *matCellDef="let row">{{ row.amount | currency:'PEN':'symbol-narrow' }}</td>
-            </ng-container>
-
-            <ng-container matColumnDef="installments">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>N° de cuotas</th>
-                <td mat-cell *matCellDef="let row">{{ row.installments }}</td>
-            </ng-container>
-
-            <ng-container matColumnDef="status">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>Estado</th>
-                <td mat-cell *matCellDef="let row">{{ row.status | titlecase }}</td>
-            </ng-container>
-
-            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-        </table>
-
-        <mat-paginator [pageSize]="10" [pageSizeOptions]="[5,10,25]"></mat-paginator>
-    </div>
-</mat-card>
-}

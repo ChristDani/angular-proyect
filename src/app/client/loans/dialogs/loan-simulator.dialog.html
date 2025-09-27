@@ -1,25 +1,30 @@
-<h2 mat-dialog-title>Simulador</h2>
-<form [formGroup]="form" class="form">
-    <mat-form-field appearance="outline">
-        <mat-label>Monto</mat-label>
-        <input matInput type="number" formControlName="amount">
-    </mat-form-field>
-    <mat-form-field appearance="outline">
-        <mat-label>Tasa anual (%)</mat-label>
-        <input matInput type="number" formControlName="rate">
-    </mat-form-field>
-    <mat-form-field appearance="outline">
-        <mat-label>Cuotas</mat-label>
-        <input matInput type="number" formControlName="n">
-    </mat-form-field>
-</form>
+<h4 mat-dialog-title class="text-center mt-4">Simulador</h4>
 
-@if (cuota()) {
-<div class="result">
-    Cuota estimada: <strong>{{ cuota() | currency:'PEN':'symbol-narrow' }}</strong>
-</div>
-}
+<mat-dialog-content class="dialog-content">
+  <form [formGroup]="form" class="form">
+    <mat-form-field appearance="outline">
+      <mat-label>Monto</mat-label>
+      <input matInput type="number" formControlName="amount" />
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Tasa anual (%)</mat-label>
+      <input matInput type="number" formControlName="rate" />
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Cuotas</mat-label>
+      <input matInput type="number" formControlName="n" />
+    </mat-form-field>
+  </form>
 
-<div class="actions">
+  @if (cuota()) {
+  <div class="result">
+    Cuota estimada: <strong>{{ cuota() | currency : 'PEN' : 'symbol-narrow' }}</strong>
+  </div>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <div class="actions">
     <button mat-button mat-dialog-close>Cerrar</button>
-</div>
+  </div>
+</mat-dialog-actions>
