@@ -2,28 +2,24 @@
 
 <div class="shortcut-cards-container">
   <div class="shortcut-cards" (click)="redirectTo('/users')">
-    <mat-card>
-  </mat-card>
-  <mat-card>
-    <mat-card-header>
-      <div mat-card-avatar class="example-header-image">
-            <mat-icon>supervisor_account</mat-icon>
-      </div>
-      <mat-card-title>Gestión de clientes</mat-card-title>
-    </mat-card-header>
-  </mat-card>
+    <mat-card class="bg-light text-dark">
+      <mat-card-content class="d-flex align-items-center">
+
+        <i class="fa-duotone fa-solid fa-users text-muted me-4  h6"></i>
+        <h6 class=" text-muted ">Gestión de usuarios</h6>
+
+      </mat-card-content>
+    </mat-card>
   </div>
-  <div class="shortcut-cards"  (click)="redirectTo('/reports')">
-    <mat-card>
-  </mat-card>
-  <mat-card>
-    <mat-card-header>
-      <div mat-card-avatar class="example-header-image">
-           <mat-icon>file_copy</mat-icon>
-      </div>
-      <mat-card-title>Reportes</mat-card-title>
-    </mat-card-header>
-  </mat-card>
+  <div class="shortcut-cards" (click)="redirectTo('/reports')">
+    <mat-card class="bg-light text-dark">
+      <mat-card-content class="d-flex align-items-center">
+
+        <i class="fa-regular fa-file-lines text-muted me-4 h6"></i>
+        <h6 class=" text-muted ">Reportes</h6>
+
+      </mat-card-content>
+    </mat-card>
   </div>
 
 </div>
@@ -32,21 +28,21 @@
 
 <div class="stadistics-cards">
   @for (stat of statistics; track stat.title) {
-    <div class="stadistics-cards-container">
-     <mat-card appearance="outlined">
-       <mat-card-header>
-         <mat-card-title> {{ stat.title }} </mat-card-title>
-         <br>
-       </mat-card-header>
-       @for (item of stat.items; track item.label) {
-         <div>
-           <mat-card-content>
-             <mat-progress-bar mode="determinate" [value]="item.value"></mat-progress-bar>
-             <p>{{ item.label }} <span class="h5">{{ item.value }}</span></p>
-           </mat-card-content>
-         </div>
-       }
-     </mat-card>
-   </div>
+  <div class="stadistics-cards-container">
+    <mat-card appearance="outlined">
+      <mat-card-header>
+        <mat-card-title> {{ stat.title }} </mat-card-title>
+        <br>
+      </mat-card-header>
+      @for (item of stat.items; track item.label) {
+      <div>
+        <mat-card-content>
+          <mat-progress-bar mode="determinate" [value]="item.value"></mat-progress-bar>
+          <p>{{ item.label }} <span class="h5">{{ item.value }}</span></p>
+        </mat-card-content>
+      </div>
+      }
+    </mat-card>
+  </div>
   }
 </div>

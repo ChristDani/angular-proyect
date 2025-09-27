@@ -5,6 +5,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { UserService } from '../../../core/services/user.service';
 import { MATERIAL_IMPORTS } from '../../../shared/components/material.imports';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { ToastService } from '../../../shared/services/toast.service';
 
 @Component({
   selector: 'app-user-creation-modal',
@@ -29,12 +30,12 @@ export class UserCreationModal {
     private fb: FormBuilder,
     private userService: UserService,
     private dialogRef: MatDialogRef<UserCreationModal, User | null>,
+    private toastService: ToastService,
     @Inject(MAT_DIALOG_DATA) public data?: User
   ) {}
 
   ngOnInit(): void {
     const userData = this.user ?? this.data;
-    console.log('userData en modal:', userData);
 
     this.isEdit = !!userData;
     // Si es edición, la contraseña no debe ser obligatoria.
@@ -77,6 +78,11 @@ export class UserCreationModal {
         this.userForm.reset();
         this.isSubmitting = false;
         this.dialogRef.close(result);
+        if (this.isEdit) {
+          this.toastService.show(`Usuario actualizado exitosamente`, 'success');
+        } else {
+          this.toastService.show(`Usuario creado exitosamente`, 'success');
+        }
       },
       error: (err) => {
         this.isSubmitting = false;

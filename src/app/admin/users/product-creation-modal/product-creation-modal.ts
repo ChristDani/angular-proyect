@@ -15,7 +15,6 @@ import {
 } from '@angular/forms';
 import { CardService } from '../../../core/services/card.service';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { CurrencyPipe, TitleCasePipe } from '@angular/common';
 import { AccountService } from '../../../core/services/account.service';
 import { Account } from '../../../models/interfaces/account.interface';
 import { MATERIAL_IMPORTS } from '../../../shared/components/material.imports';
@@ -23,6 +22,7 @@ import { combineLatest, startWith, Subject, takeUntil } from 'rxjs';
 import { Card } from '../../../models/interfaces/card.interface';
 import { Loan } from '../../../models/interfaces/loan.interface';
 import { LoanService } from '../../../core/services/loan.service';
+import { ToastService } from '../../../shared/services/toast.service';
 
 @Component({
   selector: 'app-product-creation-modal',
@@ -54,7 +54,7 @@ export class ProductCreationModal {
     { value: 'ahorro', label: 'Ahorro' },
   ];
   subTypesTarjeta: SubType[] = [
-    { value: 'debito', label: 'Débito' },
+    { value: 'débito', label: 'Débito' },
     { value: 'crédito', label: 'Crédito' },
   ];
   installments = [3, 6, 9, 12, 18, 24];
@@ -65,6 +65,7 @@ export class ProductCreationModal {
     private accountService: AccountService,
     private loanService: LoanService,
     private dialogRef: MatDialogRef<ProductCreationModal, Product | null>,
+    private toastService: ToastService,
     @Inject(MAT_DIALOG_DATA) private data: DialogData
   ) {
     if (data) {
@@ -144,6 +145,7 @@ export class ProductCreationModal {
         next: (created) => {
           this.productForm.reset();
           this.cancel();
+          this.toastService.show(`Tarjeta creada exitosamente`, 'success');
         },
         error: (err) => {
           console.error('Error creando tarjeta', err);
@@ -167,6 +169,7 @@ export class ProductCreationModal {
         next: (created) => {
           this.productForm.reset();
           this.cancel();
+          this.toastService.show(`Préstamo creadao exitosamente`, 'success');
         },
         error: (err) => {
           console.error('Error creando préstamo', err);
@@ -177,8 +180,6 @@ export class ProductCreationModal {
   }
 
   openForm(formProduct: string): void {
-    console.log(formProduct);
-
     this.showForms = true;
     if (formProduct === 'account') {
       this.showAccountForm = true;
@@ -215,6 +216,7 @@ export class ProductCreationModal {
         next: (created) => {
           this.userAccount = [...this.userAccount, created];
           this.accountForm.reset({ type: '', balance: 0 });
+          this.toastService.show(`Cuenta creada exitosamente`, 'success');
           this.cancel();
         },
         error: (err) => {
@@ -267,7 +269,7 @@ export class ProductCreationModal {
           if (this.productForm.contains('installmentsQuotas')) {
             this.productForm.removeControl('installmentsQuotas');
           }
-        } else if (productType === 'tarjeta' && subProductType === 'debito') {
+        } else if (productType === 'tarjeta' && subProductType === 'débito') {
           if (this.productForm.contains('limitCreditCard')) {
             this.productForm.removeControl('limitCreditCard');
           }
@@ -278,6 +280,7 @@ export class ProductCreationModal {
             this.productForm.removeControl('installmentsQuotas');
           }
         } else if (productType === 'prestamo') {
+          this.productForm.get('subProductType')!.patchValue('prestamo');
           if (!this.productForm.contains('loanAmount')) {
             this.productForm.addControl('loanAmount', new FormControl('', [Validators.required]));
           } else {
