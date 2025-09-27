@@ -92,7 +92,7 @@ export class ProductCreationModal {
   getAccounts(): void {
     this.accountService.getAccounts().subscribe({
       next: (data) => {
-        const userAccount = data.filter((account) => account.userId === Number(this.client.id));
+        const userAccount = data.filter((account) => account.userId === this.client.id);
         this.userAccount = userAccount;
       },
       error: (error) => {
@@ -130,7 +130,7 @@ export class ProductCreationModal {
 
     const card: Card = {
       id: this.generateId(),
-      accountId: Number(this.productForm.get('selectedAccount')!.value),
+      accountId: this.productForm.get('selectedAccount')!.value,
       type: subProductType,
       limit: this.productForm.get('limitCreditCard')
         ? Number(this.productForm.get('limitCreditCard')!.value || 0)
@@ -156,7 +156,7 @@ export class ProductCreationModal {
   createLoan(): void {
     const loan: Loan = {
       id: this.generateId(),
-      accountId: Number(this.productForm.get('selectedAccount')!.value),
+      accountId: this.productForm.get('selectedAccount')!.value,
       amount: Number(this.productForm.get('loanAmount')!.value),
       installments: Number(this.productForm.get('installmentsQuotas')!.value),
       status: '',
@@ -196,6 +196,8 @@ export class ProductCreationModal {
   }
 
   submitAccount(): void {
+    console.log('crear cuenta');
+
     this.accountForm.markAllAsTouched();
     if (this.accountForm.invalid) {
       return;
@@ -203,17 +205,22 @@ export class ProductCreationModal {
 
     const account: Account = {
       id: this.generateId(),
-      userId: Number(this.client.id),
+      userId: this.client.id,
       type: this.accountForm.get('type')!.value,
       balance: Number(this.accountForm.get('balance')!.value),
       status: 'activa',
     };
+
+    console.log(account);
+    console.log(typeof account.id, account.id);
+    console.log(typeof account.userId, account.userId);
 
     this.accountService
       .createAccount(account)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (created) => {
+          console.log(created);
           this.userAccount = [...this.userAccount, created];
           this.accountForm.reset({ type: '', balance: 0 });
           this.toastService.show(`Cuenta creada exitosamente`, 'success');
@@ -226,8 +233,11 @@ export class ProductCreationModal {
   }
 
   // Generador simple de id numérico (timestamp + aleatorio pequeño)
-  private generateId(): number {
-    return Date.now() + Math.floor(Math.random() * 1000);
+  private generateId(): string {
+    const stringId = `${Date.now()}${Math.floor(Math.random() * 1000)
+      .toString()
+      .padStart(3, '0')}`;
+    return stringId;
   }
 
   /**

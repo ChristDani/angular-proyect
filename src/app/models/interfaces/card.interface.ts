@@ -1,7 +1,6 @@
-
-export interface Card{
-  id : number;
-  accountId: number;
+export interface Card {
+  id: string;
+  accountId: string;
   type: string;
   limit: number;
   status: string;

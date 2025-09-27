@@ -90,9 +90,12 @@ export class UserCreationModal {
     });
   }
 
-  // Generador simple de id numérico (timestamp + aleatorio pequeño)
-  private generateId(): number {
-    return Date.now() + Math.floor(Math.random() * 1000);
+  // Generador simple de id string (timestamp + aleatorio pequeño)
+  private generateId(): string {
+    const stringId = `${Date.now()}${Math.floor(Math.random() * 1000)
+      .toString()
+      .padStart(3, '0')}`;
+    return stringId;
   }
 
   cancel(): void {

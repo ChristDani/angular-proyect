@@ -22,7 +22,7 @@ export class Cards {
   isCreditActive: boolean = true;
   isLoading: boolean = false;
   cards: Card[] = [];
-  cardsAccounts: number[] = [];
+  cardsAccounts: string[] = [];
 
   constructor(
     private auth: AuthService,
@@ -34,22 +34,22 @@ export class Cards {
 
   ngOnInit(): void {
     const id = this.auth.getLoggedInUser()?.id;
-    this.getAccountsByUserId(Number(id));
+    this.getAccountsByUserId(id);
   }
 
-  getAccountsByUserId(user: number | undefined): void {
+  getAccountsByUserId(user: string | undefined): void {
     this.isLoading = true;
     this.accountService.getAccounts().subscribe((accounts: Account[]) => {
       if (user !== undefined) {
         this.cardsAccounts = accounts
           .filter((account: Account) => account.userId === user)
-          .map((account: Account) => Number(account.id));
+          .map((account: Account) => account.id);
         this.getCardsByAccounts(this.cardsAccounts);
       }
     });
   }
 
-  getCardsByAccounts(accountsIds: number[]): void {
+  getCardsByAccounts(accountsIds: string[]): void {
     this.cardService.getCards().subscribe((cards: Card[]) => {
       this.cards = cards.filter((card) => accountsIds.includes(card.accountId));
       this.isLoading = false;
