@@ -9,7 +9,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { UserService } from '../../core/services/user.service';
 import { User } from '../../models/interfaces/user.interface';
-import Swal from 'sweetalert2';
 import { MatDialog } from '@angular/material/dialog';
 import { ProductCreationModal } from './product-creation-modal/product-creation-modal';
 import { Client } from '../../models/interfaces/products-user.interface';
