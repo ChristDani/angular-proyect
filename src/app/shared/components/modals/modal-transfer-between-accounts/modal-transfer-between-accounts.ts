@@ -8,12 +8,12 @@ import { ModalBaseComponent } from '../modal-base/modal-base';
   selector: 'app-modal-op',
   standalone: true,
   imports: [CommonModule, FormsModule, ModalBaseComponent],
-  templateUrl: './modal-op.html',
-  styleUrls: ['./modal-op.css']
+  templateUrl: './modal-transfer-between-accounts.html',
+  styleUrls: ['./modal-transfer-between-accounts.css']
 })
-export class ModalOpComponent implements AfterViewInit {
+export class ModalTransferBetweenAccounts implements AfterViewInit {
   constructor(
-    private dialogRef: MatDialogRef<ModalOpComponent>
+    private dialogRef: MatDialogRef<ModalTransferBetweenAccounts>
   ) {}
 
   @ViewChild('modalBase') modalBase!: ModalBaseComponent;
