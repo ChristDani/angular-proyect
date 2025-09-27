@@ -7,12 +7,36 @@
     flex-wrap: wrap;
 }
 
-.shortcut-cards {
-    cursor: pointer;
-    width: 30%;
-}
-
 .stadistics-cards-container {
     width: 45%;
     margin: 20px 10px;
+}
+
+.transfer-circle {
+  width: 48px;
+  height: 48px;
+}
+
+.transfer-icon {
+  width: 32px;
+  height: 32px;
+  font-size: 1.1em;
+}
+
+.fa-money-bill-transfer,
+.fa-users {
+    color: #005CBB !important;
+}
+
+.button-default {
+    background: #005CBB !important;
+    color: #FFFFFF !important;
+}
+
+.color-default {
+    color: #2B3442;
+}
+
+.blue-default {
+    color: #005CBB !important;
 }

@@ -9,3 +9,7 @@
     width: 100%;
     table-layout: fixed;
 }
+
+.color-default {
+    color: #2B3442;
+}
