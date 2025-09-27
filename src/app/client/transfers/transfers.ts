@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { ModalOpComponent } from '../../shared/components/modals/modal-op/modal-op';
+import { ModalTransferBetweenAccounts } from '../../shared/components/modals/modal-transfer-between-accounts/modal-transfer-between-accounts';
+import { ITransaction, transactionType } from '../../models/interfaces/transaction.interface';
+import { STransactions } from '../../shared/services/transactions';
 
 interface Transaction {
   id: number;
@@ -25,49 +27,26 @@ interface Transaction {
   styleUrls: ['./transfers.css']
 })
 export class TransfersComponent implements OnInit {
-  transactions: Transaction[] = [];
-  typeFilter: string = '';
-  dateFilter: string = '';
+  private transactionsService = inject(STransactions);
+  transactions = signal<ITransaction[]>([]);
+  typeFilter = signal<transactionType | undefined>(undefined);
+  dateFilter = signal<string | undefined>(undefined);
 
   constructor(private dialog: MatDialog) {}
 
-  ngOnInit() {
-    // Simular datos de transacciones
-    this.transactions = [
-      {
-        id: 1,
-        type: 'TRANSF.BCO',
-        date: new Date(),
-        amount: -1000000.00,
-        description: 'Transferencia bancaria',
-        currency: 'USD'
-      },
-      {
-        id: 2,
-        type: 'TRANSF.BCO',
-        date: new Date(2025, 8, 19),
-        amount: -1000000.00,
-        description: 'Transferencia bancaria',
-        currency: 'USD'
-      },
-      {
-        id: 3,
-        type: 'TRANSF.BCO',
-        date: new Date(2025, 8, 19),
-        amount: -1000000.00,
-        description: 'Transferencia bancaria',
-        currency: 'USD'
-      }
-    ];
+  async getAllTransactions() {
+    try {
+      const transactions = await this.transactionsService.getAllTransactions(this.typeFilter(), this.dateFilter());
+      this.transactions.set(transactions);
+    } catch (error) {
+      console.error('Error fetching transactions:', error);
+    }
   }
 
   openTransferModal(type: 'own' | 'third' | 'service'): void {
     switch(type) {
       case 'own':
-        const dialogRef = this.dialog.open(ModalOpComponent, {
-          width: '500px',
-          disableClose: true
-        });
+        const dialogRef = this.dialog.open(ModalTransferBetweenAccounts);
 
         dialogRef.afterClosed().subscribe(result => {
           if (result) {
@@ -92,8 +71,8 @@ export class TransfersComponent implements OnInit {
   }
 
   resetFilters(): void {
-    this.typeFilter = '';
-    this.dateFilter = '';
+    this.typeFilter.set(undefined);
+    this.dateFilter.set(undefined);
     this.refreshTransactions();
   }
 
@@ -102,18 +81,22 @@ export class TransfersComponent implements OnInit {
   }
 
   // Agrupar transacciones por fecha
-  get groupedTransactions(): { [key: string]: Transaction[] } {
-    return this.transactions.reduce((groups, transaction) => {
-      const dateStr = this.isToday(transaction.date) ? 
-        'Hoy' : 
-        `${this.getMonthName(transaction.date.getMonth())} ${transaction.date.getFullYear()}`;
-      
-      if (!groups[dateStr]) {
-        groups[dateStr] = [];
-      }
-      groups[dateStr].push(transaction);
-      return groups;
-    }, {} as { [key: string]: Transaction[] });
+  get groupedTransactions(): { [key: string]: ITransaction[] } {
+    return this.transactions()
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+      .reduce((groups, transaction) => {
+        const transactionDate = new Date(transaction.date);
+        const dateKey = transactionDate.toISOString().split('T')[0]; // Use ISO date as key for accurate grouping
+        const displayDate = this.isToday(transactionDate) ? 
+          'Hoy' : 
+          `${this.getMonthName(transactionDate.getMonth())} ${transactionDate.getFullYear()}`;
+        
+        if (!groups[displayDate]) {
+          groups[displayDate] = [];
+        }
+        groups[displayDate].push(transaction);
+        return groups;
+      }, {} as { [key: string]: ITransaction[] });
   }
 
   private isToday(date: Date): boolean {
@@ -129,5 +112,9 @@ export class TransfersComponent implements OnInit {
       'Julio', 'Agosto', 'Setiembre', 'Octubre', 'Noviembre', 'Diciembre'
     ];
     return months[month];
+  }
+
+  ngOnInit() {
+    this.getAllTransactions();
   }
 }

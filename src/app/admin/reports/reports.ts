@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Transaction } from '../../models/interfaces/transaction.interface';
+import { ITransaction } from '../../models/interfaces/transaction.interface';
 import { TransactionService } from '../../core/services/transaction.service';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MATERIAL_IMPORTS } from '../../shared/components/material.imports';
@@ -14,9 +14,9 @@ import { MatTableModule } from '@angular/material/table';
   styleUrl: './reports.css',
 })
 export class Reports {
-  private originalTransactions: Transaction[] = [];
+  private originalTransactions: ITransaction[] = [];
   private destroy$ = new Subject<void>();
-  transactions: Transaction[] = [];
+  transactions: ITransaction[] = [];
   types: string[] = [];
   form!: FormGroup;
 
@@ -60,7 +60,7 @@ export class Reports {
     this.transactions = [...this.originalTransactions];
   }
 
-  trackByTransaction(_: number, item: Transaction): number {
+  trackByTransaction(_: number, item: ITransaction): number {
     return item.id;
   }
 

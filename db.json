@@ -63,7 +63,8 @@
       "date": "2025-09-01",
       "type": "depósito",
       "amount": 1000,
-      "description": "Depósito de apertura"
+      "description": "Depósito de apertura",
+      "currency": "USD"
     },
     {
       "id": "2",
@@ -71,7 +72,8 @@
       "date": "2025-09-03",
       "type": "retiro",
       "amount": 300,
-      "description": "Pago de servicios"
+      "description": "Pago de servicios",
+      "currency": "USD"
     },
     {
       "id": "3",
@@ -79,7 +81,8 @@
       "date": "2025-09-03",
       "type": "depósito",
       "amount": 2500,
-      "description": "Transferencia recibida"
+      "description": "Transferencia recibida",
+      "currency": "PEN"
     }
   ]
 }
