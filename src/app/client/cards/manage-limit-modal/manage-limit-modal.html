@@ -1,0 +1,39 @@
+<h4 mat-dialog-title class="text-center mt-4">Gestionar límites</h4>
+<mat-dialog-content class="dialog-content">
+  <form [formGroup]="cardForm" (ngSubmit)="submitAccount()" class="mt-3">
+    <div class="d-flex flex-column gap-3">
+      <div class="d-flex align-items-center gap-2">
+        <label for="currentLimit" class="form-label m-0 fw-bold" style="min-width: 100px"
+          >Límite actual</label
+        >
+        <p class="m-0">{{ currentCard.limit | number : '1.0-2' }}</p>
+      </div>
+
+      <div class="d-flex align-items-center gap-2">
+        <label for="limit" class="form-label m-0 fw-bold" style="min-width: 100px">Nuevo límite</label>
+        <mat-form-field appearance="fill" class="flex-grow-1 m-0">
+          <input matInput id="limit" formControlName="limit" placeholder="Ex. 3000" />
+          @if(cardForm.get('limit')?.hasError('required')) {
+          <mat-error>Límite requerido</mat-error>
+          }
+        </mat-form-field>
+      </div>
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <div class="d-flex gap-2">
+    <button mat-button type="button" (click)="cancel()">Cancelar</button>
+    <button
+      mat-raised-button
+      matButton="filled"
+      color="primary"
+      type="submit"
+      [disabled]="cardForm.invalid"
+      (click)="submitAccount()"
+    >
+      Guardar
+    </button>
+  </div>
+</mat-dialog-actions>

@@ -64,11 +64,12 @@ export class NewAccountModal {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (created) => {
-        this.toastService.show(`Cuenta de ${created.type} creada exitosamente`, 'success');
+        this.toastService.show(`Cuenta creada exitosamente`, 'success');
           this.dialogRef.close(created);
         },
         error: (err) => {
-          console.error('Error creando cuenta', err);
+          this.toastService.show(`No se pudo crear la cuenta, inténtalo de nuevo.`, 'error');
+          this.dialogRef.close();
         },
       });
   }

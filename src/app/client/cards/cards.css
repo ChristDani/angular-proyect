@@ -5,8 +5,9 @@
   display: flex;
   align-items: center;
   font-family: 'Roboto', sans-serif;
-  border: 1px solid #ddd;
+  border-color: #86929E;
   border-radius: 8px;
+  background: #fff;
 
   .card-content {
     display: flex;
@@ -17,7 +18,7 @@
 
   .icon-section {
     .circle-icon {
-      background-color: #1a3c6e;
+      background-color: #005CBB;
       color: white;
       border-radius: 50%;
       width: 40px;
@@ -54,6 +55,10 @@
         font-weight: bold;
         color: #f5a623;
       }
+    }
+    .limit-label{
+      font-size: 12px;
+      color: #86929E;
     }
   }
 
