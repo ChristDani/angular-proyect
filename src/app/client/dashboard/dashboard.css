@@ -1,0 +1,35 @@
+/* Círculo de las opciones de transferencia */
+.transfer-circle {
+  width: 48px;
+  height: 48px;
+}
+
+/* Círculo de los íconos de transacción */
+.transfer-icon {
+  width: 32px;
+  height: 32px;
+  font-size: 1.1em;
+}
+
+/* Fecha de transacción */
+.transfer-date {
+  font-size: 0.9em;
+}
+
+.fa-money-bill-transfer,
+.fa-money-bill {
+    color: #005CBB !important;
+}
+
+.button-default {
+    background: #005CBB !important;
+    color: #FFFFFF !important;
+}
+
+.color-default {
+    color: #2B3442;
+}
+
+.blue-default {
+    color: #005CBB !important;
+}

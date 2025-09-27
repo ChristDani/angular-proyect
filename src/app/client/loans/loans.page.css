@@ -44,10 +44,6 @@ table {
   flex-wrap: wrap;
 }
 
-.shortcut-cards {
-  cursor: pointer;
-  width: 30%;
-}
 
 .spacer {
   margin: 2rem 0rem;
@@ -70,3 +66,23 @@ table {
   color: #2B3442;
 }
 
+.transfer-circle {
+  width: 48px;
+  height: 48px;
+}
+
+.transfer-icon {
+  width: 32px;
+  height: 32px;
+  font-size: 1.1em;
+}
+
+.fa-hand-holding-dollar,
+.fa-money-bill {
+    color: #005CBB !important;
+}
+
+.button-default {
+    background: #005CBB !important;
+    color: #FFFFFF !important;
+}

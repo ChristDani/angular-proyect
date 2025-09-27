@@ -1,27 +1,35 @@
 <div class="container mt-4">
   <div class="my-4">
-    <h5 class="fw-bold base-color">Solicita y/o simula tu préstamo</h5>
+    <h4 class="fw-bold base-color">Solicita y/o simula tu préstamo</h4>
   </div>
-
-  <div class="shortcut-cards-container">
-    <div class="shortcut-cards" (click)="openRequest()">
-      <mat-card class="bg-light text-dark">
-        <mat-card-content class="d-flex align-items-center">
-          <i class="fa-solid fa-money-bill-wave text-muted me-4 h8"></i>
-          <!-- <i class="fa-duotone fa-solid fa-users text-muted me-4  h6"></i> -->
-          <h6 class="text-muted">Solicitud de préstamos</h6>
-        </mat-card-content>
-      </mat-card>
+    <div class="row g-4 justify-content-center">
+      <div class="col-12 col-md-4">
+        <button
+          class="btn button-default w-100 py-4 d-flex flex-column align-items-center rounded-3"
+          (click)="openRequest()"
+        >
+          <span
+            class="transfer-circle rounded-circle bg-white d-flex align-items-center justify-content-center mb-2"
+          >
+            <i class="fa-solid fa-hand-holding-dollar"></i> 
+          </span>
+          <span class="fw-semibold">Solicitud de préstamos</span>
+        </button>
+      </div>
+      <div class="col-12 col-md-4">
+        <button
+          class="btn button-default w-100 py-4 d-flex flex-column align-items-center rounded-3"
+          (click)="openSimulator()"
+        >
+          <span
+            class="transfer-circle rounded-circle bg-white d-flex align-items-center justify-content-center mb-2"
+          >
+            <i class="fa-solid fa-money-bill"></i>
+          </span>
+          <span class="fw-semibold">Simulador de préstamos</span>
+        </button>
+      </div>
     </div>
-    <div class="shortcut-cards" (click)="openSimulator()">
-      <mat-card class="bg-light text-dark">
-        <mat-card-content class="d-flex align-items-center">
-          <i class="fa-regular fa-file-lines text-muted me-4 h6"></i>
-          <h6 class="text-muted">Simulador de préstamos</h6>
-        </mat-card-content>
-      </mat-card>
-    </div>
-  </div>
 
   <mat-divider class="spacer"></mat-divider>
 
