@@ -21,7 +21,7 @@ interface Transaction {
   imports: [
     CommonModule, 
     FormsModule,
-    MatDialogModule
+    MatDialogModule,
   ],
   templateUrl: './transfers.html',
   styleUrls: ['./transfers.css']
@@ -34,9 +34,9 @@ export class TransfersComponent implements OnInit {
 
   constructor(private dialog: MatDialog) {}
 
-  async getAllTransactions() {
+  async getAllTransactions(type: transactionType | undefined, date: string | undefined) {
     try {
-      const transactions = await this.transactionsService.getAllTransactions(this.typeFilter(), this.dateFilter());
+      const transactions = await this.transactionsService.getAllTransactions(type, date);
       this.transactions.set(transactions);
     } catch (error) {
       console.error('Error fetching transactions:', error);
@@ -82,21 +82,64 @@ export class TransfersComponent implements OnInit {
 
   // Agrupar transacciones por fecha
   get groupedTransactions(): { [key: string]: ITransaction[] } {
-    return this.transactions()
-      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-      .reduce((groups, transaction) => {
-        const transactionDate = new Date(transaction.date);
-        const dateKey = transactionDate.toISOString().split('T')[0]; // Use ISO date as key for accurate grouping
-        const displayDate = this.isToday(transactionDate) ? 
-          'Hoy' : 
-          `${this.getMonthName(transactionDate.getMonth())} ${transactionDate.getFullYear()}`;
-        
-        if (!groups[displayDate]) {
-          groups[displayDate] = [];
-        }
-        groups[displayDate].push(transaction);
+    // First sort all transactions by date (most recent first)
+    const sortedTransactions = this.transactions()
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+    // Group transactions by display date
+    const groups = sortedTransactions.reduce((groups, transaction) => {
+      // Parse date using UTC to avoid timezone issues
+      const dateParts = transaction.date.split('-');
+      const year = parseInt(dateParts[0]);
+      const month = parseInt(dateParts[1]) - 1; // JavaScript months are 0-based
+      const day = parseInt(dateParts[2]);
+      const transactionDate = new Date(year, month, day);
+      
+      // Ensure valid date
+      if (isNaN(transactionDate.getTime())) {
+        console.warn('Invalid date found:', transaction.date);
         return groups;
-      }, {} as { [key: string]: ITransaction[] });
+      }
+      
+      const displayDate = this.isToday(transactionDate) ? 
+        'Hoy' : 
+        `${this.getMonthName(transactionDate.getMonth())} ${transactionDate.getFullYear()}`;
+      
+      if (!groups[displayDate]) {
+        groups[displayDate] = [];
+      }
+      groups[displayDate].push(transaction);
+      return groups;
+    }, {} as { [key: string]: ITransaction[] });
+
+    // Sort the groups by date, with "Hoy" always first, then by most recent date
+    return Object.entries(groups)
+      .sort(([dateA], [dateB]) => {
+        if (dateA === 'Hoy') return -1;
+        if (dateB === 'Hoy') return 1;
+        
+        // Extract month and year from display date
+        const [monthNameA, yearA] = dateA.split(' ');
+        const [monthNameB, yearB] = dateB.split(' ');
+        
+        // Convert month names to numbers (0-based index)
+        const monthA = this.getMonthNumber(monthNameA);
+        const monthB = this.getMonthNumber(monthNameB);
+        
+        // Handle invalid month names
+        if (monthA === -1 || monthB === -1) {
+          console.warn('Invalid month name found:', monthNameA, monthNameB);
+          return 0;
+        }
+        
+        // Create dates for comparison (using day 1 as reference)
+        const dateAObj = new Date(parseInt(yearA), monthA, 1);
+        const dateBObj = new Date(parseInt(yearB), monthB, 1);
+        
+        // Sort from most recent to oldest
+        return dateBObj.getTime() - dateAObj.getTime();
+      })
+      .reduce((obj, [key, value]) => ({ ...obj, [key]: value }), {});
   }
 
   private isToday(date: Date): boolean {
@@ -109,12 +152,20 @@ export class TransfersComponent implements OnInit {
   private getMonthName(month: number): string {
     const months = [
       'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-      'Julio', 'Agosto', 'Setiembre', 'Octubre', 'Noviembre', 'Diciembre'
+      'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
     ];
     return months[month];
   }
 
+  private getMonthNumber(monthName: string): number {
+    const months = [
+      'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+      'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+    ];
+    return months.indexOf(monthName);
+  }
+
   ngOnInit() {
-    this.getAllTransactions();
+    this.getAllTransactions(this.typeFilter(), this.dateFilter());
   }
 }

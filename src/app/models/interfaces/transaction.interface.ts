@@ -12,7 +12,7 @@ export type transactionType =
   | 'TRANSF.BCO'
   | 'PAGO SERV'
   | 'PAGO TARJ'
-  | 'DEPOSITO'
+  | 'DEPÓSITO'
   | 'RETIRO'
   | 'COMPRA'
   | 'VENTA';
