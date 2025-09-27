@@ -196,8 +196,6 @@ export class ProductCreationModal {
   }
 
   submitAccount(): void {
-    console.log('crear cuenta');
-
     this.accountForm.markAllAsTouched();
     if (this.accountForm.invalid) {
       return;
@@ -211,16 +209,11 @@ export class ProductCreationModal {
       status: 'activa',
     };
 
-    console.log(account);
-    console.log(typeof account.id, account.id);
-    console.log(typeof account.userId, account.userId);
-
     this.accountService
       .createAccount(account)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (created) => {
-          console.log(created);
           this.userAccount = [...this.userAccount, created];
           this.accountForm.reset({ type: '', balance: 0 });
           this.toastService.show(`Cuenta creada exitosamente`, 'success');
