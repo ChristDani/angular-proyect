@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Transaction } from '../../models/interfaces/transaction.interface';
+import { ITransaction } from '../../models/interfaces/transaction.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -11,20 +11,20 @@ export class TransactionService {
 
   constructor(private http: HttpClient) {}
 
-  createTransaction(transaction: Transaction): Observable<Transaction> {
-    return this.http.post<Transaction>(this.apiUrl, transaction);
+  createTransaction(transaction: ITransaction): Observable<ITransaction> {
+    return this.http.post<ITransaction>(this.apiUrl, transaction);
   }
 
-  getTransactions(): Observable<Transaction[]> {
-    return this.http.get<Transaction[]>(this.apiUrl);
+  getTransactions(): Observable<ITransaction[]> {
+    return this.http.get<ITransaction[]>(this.apiUrl);
   }
 
-  getTransactionById(id: number): Observable<Transaction> {
-    return this.http.get<Transaction>(`${this.apiUrl}/${id}`);
+  getTransactionById(id: number): Observable<ITransaction> {
+    return this.http.get<ITransaction>(`${this.apiUrl}/${id}`);
   }
 
-  updateTransaction(transaction: Transaction): Observable<Transaction> {
-    return this.http.put<Transaction>(`${this.apiUrl}/${transaction.id}`, transaction);
+  updateTransaction(transaction: ITransaction): Observable<ITransaction> {
+    return this.http.put<ITransaction>(`${this.apiUrl}/${transaction.id}`, transaction);
   }
 
   deleteTransaction(id: string): Observable<any> {

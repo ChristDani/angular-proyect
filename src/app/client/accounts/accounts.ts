@@ -3,12 +3,13 @@ import { Component } from '@angular/core';
 import { Button } from '../../shared/components/button/button';
 import { Account } from '../../models/interfaces/account.interface';
 import { MATERIAL_IMPORTS } from '../../shared/components/material.imports';
-import { Transaction } from '../../models/interfaces/transaction.interface';
+import { ITransaction } from '../../models/interfaces/transaction.interface';
 import { AuthService } from '../../auth/auth.service';
 import { AccountService } from '../../core/services/account.service';
 import { TransactionService } from '../../core/services/transaction.service';
 import { MatDialog } from '@angular/material/dialog';
 import { NewAccountModal } from './new-account-modal/new-account-modal';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-accounts',
@@ -20,7 +21,7 @@ export class Accounts {
   isLoading: boolean = false;
   displayedColumns: string[] = ['fecha', 'operacion', 'descripcion', 'importe'];
 
-  movimientos: Transaction[] = [];
+  movimientos: ITransaction[] = [];
   cuentas: Account[] = [];
   selectedAccount!: Account;
   userId!: string | undefined;
@@ -63,15 +64,23 @@ export class Accounts {
   }
 
   getTransactions(): void {
-    this.transactionService.getTransactions().subscribe((transactions: Transaction[]) => {
-      if (this.selectedAccount?.id) {
-        this.movimientos = transactions.filter(
-          (tx: Transaction) => tx.accountId === Number(this.selectedAccount.id)
-        );
-      } else {
-        this.movimientos = [];
-      }
-    });
+    this.isLoading = true;
+    this.transactionService
+      .getTransactions()
+      .pipe(
+        finalize(() => {
+          this.isLoading = false;
+        })
+      )
+      .subscribe((transactions: ITransaction[]) => {
+        if (this.selectedAccount?.id) {
+          this.movimientos = transactions.filter(
+            (tx: ITransaction) => tx.accountId === this.selectedAccount.id
+          );
+        } else {
+          this.movimientos = [];
+        }
+      });
   }
 
   openNewAccountModal() {
