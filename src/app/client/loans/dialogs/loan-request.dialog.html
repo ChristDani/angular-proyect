@@ -1,42 +1,48 @@
-<h2 mat-dialog-title>{{ data ? 'Editar préstamo' : 'Nueva solicitud' }}</h2>
-
-@if (loading()) {
+<h4  mat-dialog-title class="text-center mt-4">{{ data ? 'Editar préstamo' : 'Nueva solicitud' }}</h4>
+<mat-dialog-content class="dialog-content">
+  @if (loading()) {
   <div class="loading">Cargando cuentas...</div>
-} @else {
-  @if (accounts().length === 0) {
-    <div class="empty">No tienes cuentas activas para solicitar un préstamo.</div>
+  } @else { @if (accounts().length === 0) {
+  <div class="empty">No tienes cuentas activas para solicitar un préstamo.</div>
   } @else {
-    <form [formGroup]="form" class="form">
-      <mat-form-field appearance="outline">
-        <mat-label>Cuenta</mat-label>
-        <mat-select formControlName="accountId">
-          @for (acc of accounts(); track acc.id) {
-            <mat-option [value]="acc.id">
-              {{ 'Cuenta #' + acc.id }} — {{ acc.type }} (S/{{ acc.balance }})
-            </mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
+  <form [formGroup]="form" class="form">
+    <mat-form-field appearance="outline">
+      <mat-label>Cuenta</mat-label>
+      <mat-select formControlName="accountId">
+        @for (acc of accounts(); track acc.id) {
+        <mat-option [value]="acc.id">
+          {{ 'Cuenta #' + acc.id }} — {{ acc.type }} (S/{{ acc.balance }})
+        </mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
 
-      <mat-form-field appearance="outline">
-        <mat-label>Monto</mat-label>
-        <input matInput type="number" formControlName="amount">
-      </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Monto</mat-label>
+      <input matInput type="number" formControlName="amount" />
+    </mat-form-field>
 
-      <mat-form-field appearance="outline">
-        <mat-label>Cuotas</mat-label>
-        <input matInput type="number" formControlName="installments">
-      </mat-form-field>
-    </form>
+    <mat-form-field appearance="outline">
+      <mat-label>Cuotas</mat-label>
+      <input matInput type="number" formControlName="installments" />
+    </mat-form-field>
+  </form>
 
-    <div class="actions">
-      <button mat-button (click)="close()">Cancelar</button>
-      <button
-        mat-flat-button color="primary"
-        [disabled]="form.invalid || accounts().length === 0"
-        (click)="submit()">
-        {{ data ? 'Guardar' : 'Enviar' }}
-      </button>
-    </div>
-  }
-}
+
+} }
+
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <div class="actions">
+    <button mat-button (click)="close()">Cancelar</button>
+    <button
+      mat-flat-button
+      color="primary"
+      [disabled]="form.invalid || accounts().length === 0"
+      (click)="submit()"
+    >
+      {{ data ? 'Guardar' : 'Enviar' }}
+    </button>
+    
+  </div>
+</mat-dialog-actions>

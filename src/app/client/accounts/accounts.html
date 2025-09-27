@@ -4,7 +4,7 @@
     <div>
       <h5 class="fw-bold">Resumen de cuentas</h5>
       <p>Selecciona una cuenta para obtener detalles y movimientos asociados.
-  </p>
+    </p>
     </div>
     <app-button
       [type]="'button'"
@@ -85,7 +85,7 @@
         <ng-container matColumnDef="importe">
           <th mat-header-cell *matHeaderCellDef>Importe</th>
           <td mat-cell *matCellDef="let element">
-            {{ element.amount | currency : 'PEN' }}
+            {{ element.amount | currency : 'PEN' : 'symbol-narrow' }}
           </td>
         </ng-container>
 

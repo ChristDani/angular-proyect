@@ -9,18 +9,10 @@ import {
   ViewChild,
 } from '@angular/core';
 import { toSignal, toObservable } from '@angular/core/rxjs-interop';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatSort, MatSortModule } from '@angular/material/sort';
-import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatDialog } from '@angular/material/dialog';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatTableDataSource } from '@angular/material/table';
 import { startWith, tap, switchMap, catchError, of, forkJoin, map } from 'rxjs';
 import { LoanService } from '../../core/services/loan.service';
 import { Loan } from '../../models/interfaces/loan.interface';
@@ -28,24 +20,14 @@ import { LoanRequestDialog } from './dialogs/loan-request.dialog';
 import { LoanSimDialog } from './dialogs/loan-simulator.dialog';
 import { AuthService } from '../../auth/auth.service';
 import { AccountService } from '../../core/services/account.service';
+import { MATERIAL_IMPORTS } from '../../shared/components/material.imports';
 
 @Component({
   selector: 'app-loans-page',
   templateUrl: './loans.page.html',
   styleUrls: ['./loans.page.css'],
   imports: [
-    MatCardModule,
-    MatButtonModule,
-    MatIconModule,
-    MatTableModule,
-    MatPaginatorModule,
-    MatSortModule,
-    MatDividerModule,
-    MatDialogModule,
-    MatSnackBarModule,
-    MatProgressBarModule,
-    MatFormFieldModule,
-    MatInputModule,
+    ...MATERIAL_IMPORTS,
     CurrencyPipe,
     TitleCasePipe,
   ],
@@ -96,12 +78,8 @@ export class LoansPage {
   constructor(private injector: EnvironmentInjector) {}
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort;
 
   ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
-
     runInInjectionContext(this.injector, () => {
       effect(() => {
         this.dataSource.data = this.loans();

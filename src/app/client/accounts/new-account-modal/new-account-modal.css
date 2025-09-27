@@ -4,23 +4,3 @@
   gap: 1rem;
   min-width: 320px;
 }
- 
-.snackbar-success {
-  background-color: #2e7d32 !important;
-  color: #fff;
-}
-
-.snackbar-error {
-  background-color: #c62828 !important;
-  color: #fff;
-}
-
-.snackbar-info {
-  background-color: #1565c0 !important;
-  color: #fff;
-}
-
-.snackbar-warning {
-  background-color: #ef6c00 !important;
-  color: #fff;
-}
