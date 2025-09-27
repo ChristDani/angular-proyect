@@ -13,8 +13,7 @@
         step="100"
         placeholder="Ej. 10000"
       />
-      <mat-error *ngIf="form.controls.amount.hasError('required')">Requerido</mat-error>
-      <mat-error *ngIf="form.controls.amount.hasError('min')">Mínimo 100</mat-error>
+      <mat-error> {{ form.controls.amount.hasError('required') ? 'Requerido' : form.controls.amount.hasError('min') ? 'Mínimo 100' : '' }} </mat-error>
     </mat-form-field>
 
     <mat-form-field appearance="outline">
@@ -28,8 +27,7 @@
         step="0.1"
         placeholder="Ej. 20"
       />
-      <mat-error *ngIf="form.controls.rate.hasError('required')">Requerido</mat-error>
-      <mat-error *ngIf="form.controls.rate.hasError('min')">No puede ser negativa</mat-error>
+      <mat-error> {{ form.controls.rate.hasError('required') ? 'Requerido' : form.controls.rate.hasError('min') ? 'No puede ser negativa' : '' }} </mat-error>
     </mat-form-field>
 
     <mat-form-field appearance="outline">
@@ -44,13 +42,10 @@
         step="1"
         placeholder="Ej. 12"
       />
-      <mat-error *ngIf="form.controls.n.hasError('required')">Requerido</mat-error>
-      <mat-error *ngIf="form.controls.n.hasError('min')">Mínimo 1</mat-error>
-      <mat-error *ngIf="form.controls.n.hasError('max')">Máximo 360</mat-error>
+      <mat-error> {{ form.controls.n.hasError('required') ? 'Requerido' : form.controls.n.hasError('min') ? 'Mínimo 1' : form.controls.n.hasError('max') ? 'Máximo 360' : '' }} </mat-error>
     </mat-form-field>
   </form>
 
-  <!-- Mostramos resultados cuando el form es válido -->
   @if (form.valid) {
     <div class="result">
       <div>
