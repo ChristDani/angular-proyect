@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 import { Button } from '../../shared/components/button/button';
 import { Account } from '../../models/interfaces/account.interface';
 import { MATERIAL_IMPORTS } from '../../shared/components/material.imports';
-import { Transaction } from '../../models/interfaces/transaction.interface';
+import { ITransaction } from '../../models/interfaces/transaction.interface';
 import { AuthService } from '../../auth/auth.service';
 import { AccountService } from '../../core/services/account.service';
 import { TransactionService } from '../../core/services/transaction.service';
@@ -20,7 +20,7 @@ export class Accounts {
   isLoading: boolean = false;
   displayedColumns: string[] = ['fecha', 'operacion', 'descripcion', 'importe'];
 
-  movimientos: Transaction[] = [];
+  movimientos: ITransaction[] = [];
   cuentas: Account[] = [];
   selectedAccount!: Account;
   userId!: string | undefined;
@@ -63,10 +63,10 @@ export class Accounts {
   }
 
   getTransactions(): void {
-    this.transactionService.getTransactions().subscribe((transactions: Transaction[]) => {
+    this.transactionService.getTransactions().subscribe((transactions: ITransaction[]) => {
       if (this.selectedAccount?.id) {
         this.movimientos = transactions.filter(
-          (tx: Transaction) => tx.accountId === Number(this.selectedAccount.id)
+          (tx: ITransaction) => tx.accountId === Number(this.selectedAccount.id)
         );
       } else {
         this.movimientos = [];

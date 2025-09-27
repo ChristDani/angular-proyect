@@ -21,7 +21,5 @@ export const CLIENT_ROUTES: Routes = [
         { path: 'cards', component: Cards},
         { path: 'loans', component: LoansPage},
         { path: 'transfers', component: TransfersComponent},
-        
-        
     ]}
 ];
