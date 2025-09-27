@@ -61,7 +61,7 @@ export class Reports {
   }
 
   trackByTransaction(_: number, item: Transaction): number {
-    return item.id;
+    return Number(item.id);
   }
 
   trackByType(_: number, item: string): string {
