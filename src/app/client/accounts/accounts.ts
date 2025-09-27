@@ -9,6 +9,7 @@ import { AccountService } from '../../core/services/account.service';
 import { TransactionService } from '../../core/services/transaction.service';
 import { MatDialog } from '@angular/material/dialog';
 import { NewAccountModal } from './new-account-modal/new-account-modal';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-accounts',
@@ -63,15 +64,23 @@ export class Accounts {
   }
 
   getTransactions(): void {
-    this.transactionService.getTransactions().subscribe((transactions: Transaction[]) => {
-      if (this.selectedAccount?.id) {
-        this.movimientos = transactions.filter(
-          (tx: Transaction) => tx.accountId === Number(this.selectedAccount.id)
-        );
-      } else {
-        this.movimientos = [];
-      }
-    });
+    this.isLoading = true;
+    this.transactionService
+      .getTransactions()
+      .pipe(
+        finalize(() => {
+          this.isLoading = false;
+        })
+      )
+      .subscribe((transactions: Transaction[]) => {
+        if (this.selectedAccount?.id) {
+          this.movimientos = transactions.filter(
+            (tx: Transaction) => tx.accountId === this.selectedAccount.id
+          );
+        } else {
+          this.movimientos = [];
+        }
+      });
   }
 
   openNewAccountModal() {

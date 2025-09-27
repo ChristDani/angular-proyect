@@ -95,7 +95,7 @@
       </table>
     </div>
   </mat-card>
-  } @else if(selectedAccount) {
+  } @else if(selectedAccount && !isLoading) {
   <h6 class="fw-bold color-blue">Detalle de movimientos</h6>
   <span>No encontramos ningún movimiento.</span>
   } } @else { @if(!isLoading) {
