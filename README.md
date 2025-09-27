@@ -55,9 +55,18 @@ La aplicación requiere que dos procesos se ejecuten de forma simultánea en dos
     ```
     La opción `-o` abrirá automáticamente tu navegador en `http://localhost:4200/`, donde podrás ver la aplicación en funcionamiento.
 
+
 ### Credenciales de la Aplicación
 
-3. **Usuarios**
-    username: cliente1 | password: cliente123
-    admin1: admin1 | password: admin123
+Utiliza las siguientes credenciales para iniciar sesión durante las pruebas:
+
+#### 👤 Usuarios Disponibles
+
+- **Cliente**
+  - Usuario: `cliente1`
+  - Contraseña: `cliente123`
+
+- **Administrador**
+  - Usuario: `admin1`
+  - Contraseña: `admin123`
 
