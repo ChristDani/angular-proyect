@@ -4,12 +4,12 @@ import { Observable } from 'rxjs';
 import { Account } from '../../models/interfaces/account.interface';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AccountService {
   private apiUrl = 'http://localhost:3000/accounts';
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   createAccount(account: Account): Observable<Account> {
     return this.http.post<Account>(this.apiUrl, account);
@@ -25,15 +25,14 @@ export class AccountService {
   }
 
   getAccountById(id: number): Observable<Account> {
-    return this.http.get<Account>(`${this.apiUrl}/${id}`)
+    return this.http.get<Account>(`${this.apiUrl}/${id}`);
   }
 
   updateAccount(account: Account): Observable<Account> {
     return this.http.put<Account>(`${this.apiUrl}/${account.id}`, account);
   }
 
-  deleteAccount(id: number): Observable<any> {
+  deleteAccount(id: string): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${id}`);
   }
-
 }

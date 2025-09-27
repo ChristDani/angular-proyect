@@ -1,7 +1,6 @@
-
-export interface Loan{
-  id : number;
-  accountId: number;
+export interface Loan {
+  id: string;
+  accountId: string;
   amount: number;
   installments: number;
   status: string;

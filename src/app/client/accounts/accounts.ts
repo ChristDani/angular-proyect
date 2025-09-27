@@ -23,7 +23,7 @@ export class Accounts {
   movimientos: Transaction[] = [];
   cuentas: Account[] = [];
   selectedAccount!: Account;
-  userId!: number;
+  userId!: string | undefined;
 
   constructor(
     private auth: AuthService,
@@ -34,11 +34,11 @@ export class Accounts {
 
   ngOnInit(): void {
     const id = this.auth.getLoggedInUser()?.id;
-    this.userId = Number(id);
-    this.getAccountsByUserId(Number(id));
+    this.userId = id;
+    this.getAccountsByUserId(id);
   }
 
-  getAccountsByUserId(user: number, isNewUser?: boolean): void {
+  getAccountsByUserId(user: string | undefined, isNewUser?: boolean): void {
     this.isLoading = true;
     this.accountService.getAccounts().subscribe((accounts: Account[]) => {
       if (user !== undefined) {
@@ -84,7 +84,7 @@ export class Accounts {
 
     ref.afterClosed().subscribe((createdProduct) => {
       if (createdProduct) {
-        this.getAccountsByUserId(Number(this.userId), true);
+        this.getAccountsByUserId(this.userId, true);
       }
     });
   }

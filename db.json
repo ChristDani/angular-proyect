@@ -18,39 +18,60 @@
   "accounts": [
     {
       "id": "1",
-      "userId": 1,
+      "userId": "1",
       "type": "ahorro",
       "balance": 1500,
       "status": "activa"
     },
     {
       "id": "2",
-      "userId": 1,
+      "userId": "1",
       "type": "corriente",
       "balance": 2500,
+      "status": "activa"
+    },
+    {
+      "id": "1759000260719353",
+      "userId": "1",
+      "type": "corriente",
+      "balance": 100000,
       "status": "activa"
     }
   ],
   "loans": [
     {
       "id": "1",
-      "accountId": 1,
+      "accountId": "1",
       "amount": 1000,
       "installments": 12,
       "status": "pagando"
+    },
+    {
+      "id": 1759000307632,
+      "status": "PENDIENTE",
+      "accountId": "1759000260719353",
+      "amount": 5000,
+      "installments": 5
+    },
+    {
+      "id": "1759000844300",
+      "status": "PENDIENTE",
+      "accountId": "2",
+      "amount": 500,
+      "installments": 12
     }
   ],
   "cards": [
     {
       "id": "1",
-      "accountId": 1,
+      "accountId": "1",
       "type": "crédito",
       "limit": 3000,
       "status": "activa"
     },
     {
       "id": "2",
-      "accountId": 2,
+      "accountId": "2",
       "type": "débito",
       "limit": 0,
       "status": "activa"
@@ -59,7 +80,7 @@
   "transactions": [
     {
       "id": "1",
-      "accountId": 1,
+      "accountId": "1",
       "date": "2025-09-01",
       "type": "depósito",
       "amount": 1000,
@@ -67,7 +88,7 @@
     },
     {
       "id": "2",
-      "accountId": 1,
+      "accountId": "1",
       "date": "2025-09-03",
       "type": "retiro",
       "amount": 300,
@@ -75,7 +96,7 @@
     },
     {
       "id": "3",
-      "accountId": 2,
+      "accountId": "2",
       "date": "2025-09-03",
       "type": "depósito",
       "amount": 2500,

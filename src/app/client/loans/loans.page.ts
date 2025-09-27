@@ -1,35 +1,53 @@
-import { CurrencyPipe, TitleCasePipe } from "@angular/common";
-import { Component, effect, EnvironmentInjector, inject, runInInjectionContext, signal, ViewChild } from "@angular/core";
-import { toSignal, toObservable } from "@angular/core/rxjs-interop";
-import { MatButtonModule } from "@angular/material/button";
-import { MatCardModule } from "@angular/material/card";
-import { MatDialog, MatDialogModule } from "@angular/material/dialog";
-import { MatDividerModule } from "@angular/material/divider";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatIconModule } from "@angular/material/icon";
-import { MatInputModule } from "@angular/material/input";
-import { MatPaginator, MatPaginatorModule } from "@angular/material/paginator";
-import { MatProgressBarModule } from "@angular/material/progress-bar";
-import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar";
-import { MatSort, MatSortModule } from "@angular/material/sort";
-import { MatTableDataSource, MatTableModule } from "@angular/material/table";
-import { startWith, tap, switchMap, catchError, of, forkJoin, map } from "rxjs";
-import { LoanService } from "../../core/services/loan.service";
-import { Loan } from "../../models/interfaces/loan.interface";
-import { LoanRequestDialog } from "./dialogs/loan-request.dialog";
-import { LoanSimDialog } from "./dialogs/loan-simulator.dialog";
-import { AuthService } from "../../auth/auth.service";
-import { AccountService } from "../../core/services/account.service";
+import { CurrencyPipe, TitleCasePipe } from '@angular/common';
+import {
+  Component,
+  effect,
+  EnvironmentInjector,
+  inject,
+  runInInjectionContext,
+  signal,
+  ViewChild,
+} from '@angular/core';
+import { toSignal, toObservable } from '@angular/core/rxjs-interop';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatSort, MatSortModule } from '@angular/material/sort';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { startWith, tap, switchMap, catchError, of, forkJoin, map } from 'rxjs';
+import { LoanService } from '../../core/services/loan.service';
+import { Loan } from '../../models/interfaces/loan.interface';
+import { LoanRequestDialog } from './dialogs/loan-request.dialog';
+import { LoanSimDialog } from './dialogs/loan-simulator.dialog';
+import { AuthService } from '../../auth/auth.service';
+import { AccountService } from '../../core/services/account.service';
 
 @Component({
   selector: 'app-loans-page',
   templateUrl: './loans.page.html',
   styleUrls: ['./loans.page.css'],
   imports: [
-    MatCardModule, MatButtonModule, MatIconModule, MatTableModule, MatPaginatorModule,
-    MatSortModule, MatDividerModule, MatDialogModule, MatSnackBarModule, MatProgressBarModule,
-    MatFormFieldModule, MatInputModule,
-    CurrencyPipe, TitleCasePipe
+    MatCardModule,
+    MatButtonModule,
+    MatIconModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatSortModule,
+    MatDividerModule,
+    MatDialogModule,
+    MatSnackBarModule,
+    MatProgressBarModule,
+    MatFormFieldModule,
+    MatInputModule,
+    CurrencyPipe,
+    TitleCasePipe,
   ],
 })
 export class LoansPage {
@@ -37,8 +55,7 @@ export class LoansPage {
   private dialog = inject(MatDialog);
   private snack = inject(MatSnackBar);
   private auth = inject(AuthService);
-  private accountSvc = inject(AccountService)
-
+  private accountSvc = inject(AccountService);
 
   displayedColumns = ['id', 'accountId', 'amount', 'installments', 'status'];
   dataSource = new MatTableDataSource<Loan>([]);
@@ -57,14 +74,12 @@ export class LoansPage {
           return of([] as Loan[]);
         }
         return this.accountSvc.getAccountsByUserId(user.id).pipe(
-          switchMap(accounts => {
+          switchMap((accounts) => {
             if (!accounts || accounts.length === 0) return of([] as Loan[]);
-            const calls = accounts.map(acc =>
-              this.svc.getLoansByAccountId(String(acc.id)).pipe(
-                catchError(() => of([] as Loan[]))
-              )
+            const calls = accounts.map((acc) =>
+              this.svc.getLoansByAccountId(String(acc.id)).pipe(catchError(() => of([] as Loan[])))
             );
-            return forkJoin(calls).pipe(map(chunks => chunks.flat()));
+            return forkJoin(calls).pipe(map((chunks) => chunks.flat()));
           })
         );
       }),
@@ -78,8 +93,7 @@ export class LoansPage {
     { initialValue: [] as Loan[] }
   );
 
-  constructor(private injector: EnvironmentInjector) { }
-
+  constructor(private injector: EnvironmentInjector) {}
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -95,20 +109,27 @@ export class LoansPage {
     });
   }
 
-  applyFilter(v: string) { this.dataSource.filter = v.trim().toLowerCase(); }
+  applyFilter(v: string) {
+    this.dataSource.filter = v.trim().toLowerCase();
+  }
 
-  openSimulator() { this.dialog.open(LoanSimDialog, { width: '640px' }); }
-
+  openSimulator() {
+    this.dialog.open(LoanSimDialog, { width: '640px' });
+  }
 
   openRequest() {
-    this.dialog.open(LoanRequestDialog, { width: '520px' })
+    this.dialog
+      .open(LoanRequestDialog, { width: '520px' })
       .afterClosed()
-      .subscribe(val => {
+      .subscribe((val) => {
         if (!val) return;
-        const payload: Loan = { id: Date.now(), status: 'PENDIENTE', ...val };
+        const payload: Loan = { id: `${Date.now()}`, status: 'PENDIENTE', ...val };
         this.svc.createLoan(payload).subscribe({
-          next: () => { this.snack.open('Préstamo creado', 'OK', { duration: 2000 }); this.refresh.update(n => n + 1); },
-          error: () => this.snack.open('Error creando préstamo', 'Cerrar', { duration: 3000 })
+          next: () => {
+            this.snack.open('Préstamo creado', 'OK', { duration: 2000 });
+            this.refresh.update((n) => n + 1);
+          },
+          error: () => this.snack.open('Error creando préstamo', 'Cerrar', { duration: 3000 }),
         });
       });
   }
