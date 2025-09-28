@@ -135,7 +135,7 @@
       "id": "TXN-1759023714955-w0mje8m1j",
       "accountId": "2",
       "date": "2025-09-28T10:10:00.000Z",
-      "type": "deposito",
+      "type": "depósito",
       "amount": 500,
       "description": "Transferencia desde AHORRO",
       "currency": "PEN"
@@ -153,7 +153,7 @@
       "id": "TXN-1759024994992-2hhuedsbv",
       "accountId": "1759000260719353",
       "date": "2025-09-28T10:15:00.000Z",
-      "type": "deposito",
+      "type": "depósito",
       "amount": 500,
       "description": "test",
       "currency": "PEN"
@@ -171,7 +171,7 @@
       "id": "TXN-1759067432635-5m1nt8jr9",
       "accountId": "1",
       "date": "2025-09-28T10:25:00.000Z",
-      "type": "deposito",
+      "type": "depósito",
       "amount": 1000,
       "description": "Transferencia desde CORRIENTE",
       "currency": "PEN"
@@ -189,7 +189,7 @@
       "id": "TXN-1759067698534-j9l5xudxz",
       "accountId": "1",
       "date": "2025-09-28T10:30:00.000Z",
-      "type": "deposito",
+      "type": "depósito",
       "amount": 200,
       "description": "Transferencia desde CORRIENTE",
       "currency": "PEN"
@@ -207,7 +207,7 @@
       "id": "TXN-1759068177167-id6snqrx5",
       "accountId": "2",
       "date": "2025-09-28T14:02:57.167Z",
-      "type": "deposito",
+      "type": "depósito",
       "amount": 300,
       "description": "Transferencia desde CORRIENTE",
       "currency": "PEN"

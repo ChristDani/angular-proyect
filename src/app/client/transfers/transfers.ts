@@ -275,6 +275,19 @@ export class TransfersComponent implements OnInit {
     return months.indexOf(monthName);
   }
 
+  getTransactionIcon(type: string): string {
+    const iconMap: { [key: string]: string } = {
+      'transf.bco': 'bi-arrow-left-right',
+      'pago serv': 'bi-receipt',
+      'pago tarj': 'bi-credit-card',
+      'depósito': 'bi-arrow-down-circle',
+      'retiro': 'bi-arrow-up-circle',
+      'compra': 'bi-bag',
+      'venta': 'bi-tag'
+    };
+    return iconMap[type] || 'bi-cash-coin';
+  }
+
   ngOnInit() {
     this.getAllTransactions(this.typeFilter(), this.dateFilter());
   }
