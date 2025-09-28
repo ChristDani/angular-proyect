@@ -20,7 +20,7 @@
       "id": "1",
       "userId": "1",
       "type": "ahorro",
-      "balance": 500,
+      "balance": 1500,
       "status": "activa"
     },
     {
@@ -34,7 +34,7 @@
       "id": "1759000260719353",
       "userId": "1",
       "type": "corriente",
-      "balance": 100500,
+      "balance": 99500,
       "status": "activa"
     }
   ],
@@ -150,6 +150,24 @@
       "type": "deposito",
       "amount": 500,
       "description": "test",
+      "currency": "PEN"
+    },
+    {
+      "id": "TXN-1759067432635-5m1nt8jr9",
+      "accountId": "1759000260719353",
+      "date": "2025-09-28",
+      "type": "retiro",
+      "amount": -1000,
+      "description": "Transferencia a AHORRO",
+      "currency": "PEN"
+    },
+    {
+      "id": "TXN-1759067432635-5m1nt8jr9",
+      "accountId": "1",
+      "date": "2025-09-28",
+      "type": "deposito",
+      "amount": 1000,
+      "description": "Transferencia desde CORRIENTE",
       "currency": "PEN"
     }
   ]
