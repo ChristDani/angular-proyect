@@ -3,10 +3,12 @@ import { ModalBaseComponent } from "../modal-base/modal-base";
 import { MatDialogRef } from '@angular/material/dialog';
 import { AccountService } from '../../../../core/services/account.service';
 import { Account } from '../../../../models/interfaces/account.interface';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-modal-third-transfer',
-  imports: [ModalBaseComponent],
+  imports: [ModalBaseComponent, FormsModule, CommonModule],
   templateUrl: './modal-third-transfer.html',
   styleUrl: './modal-third-transfer.css'
 })
@@ -47,6 +49,17 @@ export class ModalThirdTransfer {
     } catch (error) {
       console.error('Error al obtener cuentas:', error);
     }
+  }
+
+  isFormInvalid(): boolean {
+    return (
+      this.mainAccount() === null || 
+      this.secondaryAccount() === null || 
+      this.amount === null || 
+      this.amount === undefined || 
+      this.amount <= 0 ||
+      this.mainAccount() !== this.secondaryAccount()
+    );
   }
 
   continuar(): void {

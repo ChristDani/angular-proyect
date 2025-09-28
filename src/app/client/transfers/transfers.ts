@@ -48,7 +48,21 @@ export class TransfersComponent implements OnInit {
 
         ModalTBA.afterClosed().subscribe((result) => {
           if (result) {
-            // Actualizar lista de transacciones
+            // Crear nueva transacción basada en el resultado del modal
+            const newTransaction: ITransaction = {
+              id: Date.now().toString(), // ID temporal
+              accountId: result.cuentaOrigen?.id || 0,
+              date: new Date().toISOString().split('T')[0], // Fecha actual en formato YYYY-MM-DD
+              type: 'transf.bco',
+              amount: -result.monto, // Negativo porque es una salida
+              description: `Transferencia a cuenta ${result.cuentaDestino?.accountNumber}`,
+              currency: result.moneda
+            };
+
+            // Agregar la nueva transacción a la lista actual
+            const currentTransactions = this.transactions();
+            this.transactions.set([newTransaction, ...currentTransactions]);
+
             this.refreshTransactions();
           }
         });
@@ -58,7 +72,21 @@ export class TransfersComponent implements OnInit {
 
         ModalTT.afterClosed().subscribe((result) => {
           if (result) {
-            // Actualizar lista de transacciones
+            // Crear nueva transacción basada en el resultado del modal
+            const newTransaction: ITransaction = {
+              id: Date.now().toString(), // ID temporal
+              accountId: result.cuentaOrigen?.id || 0,
+              date: new Date().toISOString().split('T')[0], // Fecha actual en formato YYYY-MM-DD
+              type: 'transf.bco',
+              amount: -result.monto, // Negativo porque es una salida
+              description: `Transferencia a cuenta ${result.cuentaDestino?.accountNumber}`,
+              currency: result.moneda
+            };
+
+            // Agregar la nueva transacción a la lista actual
+            const currentTransactions = this.transactions();
+            this.transactions.set([newTransaction, ...currentTransactions]);
+
             this.refreshTransactions();
           }
         });
@@ -68,7 +96,21 @@ export class TransfersComponent implements OnInit {
 
         ModalTS.afterClosed().subscribe((result) => {
           if (result) {
-            // Actualizar lista de transacciones
+            // Crear nueva transacción basada en el resultado del modal
+            const newTransaction: ITransaction = {
+              id: Date.now().toString(), // ID temporal
+              accountId: result.cuentaOrigen?.id || 0,
+              date: new Date().toISOString().split('T')[0], // Fecha actual en formato YYYY-MM-DD
+              type: 'pago serv',
+              amount: -result.monto, // Negativo porque es una salida
+              description: `Transferencia a cuenta ${result.cuentaDestino?.accountNumber}`,
+              currency: result.moneda
+            };
+
+            // Agregar la nueva transacción a la lista actual
+            const currentTransactions = this.transactions();
+            this.transactions.set([newTransaction, ...currentTransactions]);
+
             this.refreshTransactions();
           }
         });

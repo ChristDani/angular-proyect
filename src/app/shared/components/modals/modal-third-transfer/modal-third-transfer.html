@@ -3,8 +3,90 @@
   [title]="'Transferencia a terceros'"
   [withFooter]="true"
   [buttonsInFooter]="{
-    primaryButton: { text: 'Continuar', action: continuar.bind(this), disabled: !amount || amount <= 0 },
-    secondaryButtons: [{ text: 'Cancelar', action: modalBase.close.bind(modalBase), disabled: false }]
+    primaryButton: {
+      text: 'Continuar',
+      action: continuar.bind(this),
+      disabled: isFormInvalid()
+    },
+    secondaryButtons: [
+      { text: 'Cancelar', action: modalBase.close.bind(modalBase), disabled: false }
+    ]
   }"
   (closeModal)="onClose()"
-></app-modal-base>
+>
+  <div>
+    <div class="row mb-3">
+      <div class="col-12">
+        <label class="d-block mb-2">Desde</label>
+        <select
+          class="form-select"
+          [(ngModel)]="mainAccount"
+          aria-label="Seleccionar cuenta de origen"
+        >
+          <option value="" selected hidden>Seleccione una cuenta de origen</option>
+          <option *ngFor="let account of accounts()" [value]="account.id">
+            <div class="d-flex align-items-center">
+              <div class="bg-primary text-white rounded-circle p-2 me-2">
+                <span class="h5 mb-0">T</span>
+              </div>
+              <div>
+                <div class="fw-bold">{{ account.type }}</div>
+                <div class="text-muted small">****</div>
+              </div>
+              <div class="text-danger">{{ account.balance | currency }}</div>
+            </div>
+          </option>
+        </select>
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-12">
+        <label class="d-block mb-2">Enviar a</label>
+        <div class="form-control d-flex align-items-center">
+          <div class="d-flex align-items-center flex-grow-1">
+            <div class="bg-primary text-white rounded-circle p-2 me-2">
+              <span class="h5 mb-0">T</span>
+            </div>
+            <div>
+              <div class="fw-bold">CUENTA DEPOSITO</div>
+              <div class="text-muted small">****2015</div>
+            </div>
+          </div>
+          <div class="text-danger">-$ 1,000,000.00</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row mb-4">
+      <div class="col-12">
+        <label class="d-block mb-2">Moneda y Monto</label>
+        <div class="d-flex align-items-center gap-3 justify-content-around">
+          <div class="d-flex align-items-center justify-content-between">
+            <label class="form-check-label" for="currencySwitch">
+              <span [class.text-primary]="!isDollar">S/</span>
+            </label>
+            <div class="form-check form-switch">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                role="switch"
+                id="currencySwitch"
+                [(ngModel)]="isDollar"
+              />
+            </div>
+            <label class="form-check-label" for="currencySwitch">
+              <span [class.text-primary]="isDollar">$</span>
+            </label>
+          </div>
+          <input
+            type="number"
+            class="form-control"
+            [(ngModel)]="amount"
+            placeholder="Ingrese un monto"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</app-modal-base>

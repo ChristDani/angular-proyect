@@ -1,10 +1,12 @@
-import { Component, ViewChild, AfterViewInit, inject, signal } from '@angular/core';
+import { Component, ViewChild, AfterViewInit, inject, signal, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { ModalBaseComponent } from '../modal-base/modal-base';
 import { AccountService } from '../../../../core/services/account.service';
 import { Account } from '../../../../models/interfaces/account.interface';
+import { AuthService } from '../../../../auth/auth.service';
+import { User } from '../../../../models/interfaces/user.interface';
 
 @Component({
   selector: 'app-modal-op',
@@ -17,9 +19,13 @@ export class ModalTransferBetweenAccounts implements AfterViewInit {
   constructor(private dialogRef: MatDialogRef<ModalTransferBetweenAccounts>) {}
 
   private accountService = inject(AccountService);
+  private authService = inject(AuthService);
   accounts = signal<Account[]>([]);
   mainAccount = signal<Account | null>(null);
   secondaryAccount = signal<Account | null>(null);
+  user = signal<User | null>(null);
+
+  @Output() reloadAccounts = new EventEmitter<void>();
 
   // Referencia al componente base del modal
 
@@ -45,11 +51,24 @@ export class ModalTransferBetweenAccounts implements AfterViewInit {
 
   async getAccounts() {
     try {
-      const accounts = await this.accountService.getAccountsByUserId('1').toPromise();
+      const accounts = await this.accountService.getAccounts().toPromise();
       this.accounts.set(accounts || []);
     } catch (error) {
       console.error('Error al obtener cuentas:', error);
     }
+    console.log(this.accounts());
+    
+  }
+
+  isFormInvalid(): boolean {
+    return (
+      this.mainAccount() === null || 
+      this.secondaryAccount() === null || 
+      this.amount === null || 
+      this.amount === undefined || 
+      this.amount <= 0 ||
+      this.mainAccount() !== this.secondaryAccount()
+    );
   }
 
   continuar(): void {
