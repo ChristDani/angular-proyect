@@ -76,6 +76,19 @@ export class CurrencyService {
   }
 
   /**
+   * Obtiene la tasa de cambio específica entre dos monedas
+   * @param fromCurrency Moneda origen
+   * @param toCurrency Moneda destino
+   * @returns Tasa de cambio
+   */
+  getExchangeRate(fromCurrency: 'USD' | 'PEN', toCurrency: 'USD' | 'PEN'): number {
+    if (fromCurrency === toCurrency) return 1;
+    if (fromCurrency === 'USD' && toCurrency === 'PEN') return this.USD_TO_PEN_RATE;
+    if (fromCurrency === 'PEN' && toCurrency === 'USD') return this.PEN_TO_USD_RATE;
+    return 1; // fallback
+  }
+
+  /**
    * Formatea el monto con el símbolo de la moneda
    * @param amount Cantidad
    * @param currency Moneda ('USD' | 'PEN')

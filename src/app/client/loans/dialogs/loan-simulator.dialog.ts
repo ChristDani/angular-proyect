@@ -19,8 +19,7 @@ import { startWith } from "rxjs";
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
-    CurrencyPipe,
-    DecimalPipe
+    CurrencyPipe
   ],
 })
 export class LoanSimDialog {

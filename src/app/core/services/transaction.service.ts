@@ -1,10 +1,13 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { forkJoin, map, Observable, of, switchMap, throwError } from 'rxjs';
+import { forkJoin, map, Observable, of, switchMap, tap, throwError } from 'rxjs';
+import { MatDialog } from '@angular/material/dialog';
 import { ITransaction } from '../../models/interfaces/transaction.interface';
 import { AccountService } from './account.service';
 import { Account } from '../../models/interfaces/account.interface';
 import { CurrencyService } from './currency.service';
+import { ModalConfirmOp } from '../../shared/components/modals/modal-confirm-op/modal-confirm-op';
+import { OperationConfirmData } from '../../shared/interfaces/operation-confirm.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -14,8 +17,21 @@ export class TransactionService {
 
   private accountsSvc = inject(AccountService);
   private currencyService = inject(CurrencyService);
+  private dialog = inject(MatDialog);
 
   constructor(private http: HttpClient) { }
+
+  private showConfirmModal(data: OperationConfirmData): void {
+    setTimeout(() => {
+      this.dialog.open(ModalConfirmOp, {
+        data,
+        width: '90%',
+        maxWidth: '500px',
+        disableClose: false,
+        panelClass: 'custom-modal-container'
+      });
+    }, 300); // Pequeño delay para que se cierre el modal anterior
+  }
 
   createTransaction(transaction: ITransaction): Observable<ITransaction> {
     return this.http.post<ITransaction>(this.apiUrl, transaction);
@@ -130,7 +146,44 @@ export class TransactionService {
             return forkJoin([
               this.createTransaction(retiro),
               this.createTransaction(deposito)
-            ]).pipe(map(() => ({ ok: true as const })));
+            ]).pipe(
+              tap(() => {
+                // Preparar datos para el modal de confirmación
+                const confirmData: OperationConfirmData = {
+                  success: true,
+                  type: 'transfer-between-accounts',
+                  operationId: transferId,
+                  timestamp: now,
+                  amount: amount,
+                  currency: currency,
+                  fromAccount: {
+                    id: from.id,
+                    type: from.type,
+                    balance: updatedFrom.balance,
+                    currency: from.currency
+                  },
+                  toAccount: {
+                    id: to.id,
+                    type: to.type,
+                    balance: updatedTo.balance,
+                    currency: to.currency
+                  }
+                };
+
+                // Si hay conversión de moneda, agregamos la información
+                if (currency !== from.currency || currency !== to.currency) {
+                  const needsConversion = currency !== from.currency;
+                  if (needsConversion) {
+                    confirmData.convertedAmount = amountForFrom;
+                    confirmData.convertedCurrency = from.currency;
+                    confirmData.exchangeRate = this.currencyService.getExchangeRate(currency, from.currency);
+                  }
+                }
+
+                this.showConfirmModal(confirmData);
+              }),
+              map(() => ({ ok: true as const }))
+            );
           })
         );
       })
@@ -204,6 +257,34 @@ export class TransactionService {
                 this.accountsSvc.updateAccount(updatedTo),
               ]).pipe(
                 switchMap(() => forkJoin([ this.createTransaction(retiro), this.createTransaction(deposito) ])),
+                tap(() => {
+                  // Preparar datos para el modal de confirmación
+                  const confirmData: OperationConfirmData = {
+                    success: true,
+                    type: 'transfer-to-third',
+                    operationId: transferId,
+                    timestamp: now,
+                    amount: amount,
+                    currency: currency,
+                    fromAccount: {
+                      id: from.id,
+                      type: from.type,
+                      balance: updatedFrom.balance,
+                      currency: from.currency
+                    },
+                    thirdPartyAccount: toAccountId,
+                    description: description
+                  };
+
+                  // Si hay conversión de moneda, agregamos la información
+                  if (currency !== from.currency) {
+                    confirmData.convertedAmount = amountForFrom;
+                    confirmData.convertedCurrency = from.currency;
+                    confirmData.exchangeRate = this.currencyService.getExchangeRate(currency, from.currency);
+                  }
+
+                  this.showConfirmModal(confirmData);
+                }),
                 map(() => ({ ok: true as const }))
               );
             })
@@ -263,6 +344,38 @@ export class TransactionService {
           this.accountsSvc.updateAccount(updatedFrom),
           this.createTransaction(pagoServicio)
         ]).pipe(
+          tap(() => {
+            // Preparar datos para el modal de confirmación
+            const confirmData: OperationConfirmData = {
+              success: true,
+              type: 'service-payment',
+              operationId: paymentId,
+              timestamp: now,
+              amount: amount,
+              currency: currency,
+              fromAccount: {
+                id: from.id,
+                type: from.type,
+                balance: updatedFrom.balance,
+                currency: from.currency
+              },
+              service: {
+                id: serviceId,
+                name: serviceName,
+                category: 'Servicios'
+              },
+              description: description
+            };
+
+            // Si hay conversión de moneda, agregamos la información
+            if (currency !== from.currency) {
+              confirmData.convertedAmount = amountInAccountCurrency;
+              confirmData.convertedCurrency = from.currency;
+              confirmData.exchangeRate = this.currencyService.getExchangeRate(currency, from.currency);
+            }
+
+            this.showConfirmModal(confirmData);
+          }),
           map(() => ({ ok: true as const }))
         );
       })
