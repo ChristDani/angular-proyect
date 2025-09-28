@@ -7,6 +7,11 @@ Integrantes:
 - Christian Daniel Campaña Díaz
 - Milton Cesar Mariños Perez
 
+### RAMA A UTLIZAR
+    Utilizar la rama main
+
+### Diseño de maquetación con Figma
+    Visualizar url: https://www.figma.com/design/rEYqa5X6LzQXQ4DfwoIjnH/Untitled?node-id=0-1&p=f&t=qEbUkMxZvdwonwFS-0
 
 # Sistema de Gestión Bancaria Avanzada con Angular
 
