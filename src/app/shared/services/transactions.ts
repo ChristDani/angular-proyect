@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ITransaction, transactionType } from '../../models/interfaces/transaction.interface';
 import { Observable } from 'rxjs';
@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 })
 export class STransactions {
   private transactions: ITransaction[] = [];
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   private apiUrl = 'http://localhost:3000/transactions';
 
@@ -19,8 +19,8 @@ export class STransactions {
   private isSameDay(date1: Date | null, date2: Date | null): boolean {
     if (!date1 || !date2) return true;
     return date1.getFullYear() === date2.getFullYear() &&
-           date1.getMonth() === date2.getMonth() &&
-           date1.getDate() === date2.getDate();
+      date1.getMonth() === date2.getMonth() &&
+      date1.getDate() === date2.getDate();
   }
 
   ngOnInit() {
@@ -35,15 +35,15 @@ export class STransactions {
       const searchDate = date ? new Date(date) : null;
       return (allTransactions || []).filter(transaction => {
         let matches = true;
-        
+
         if (type) {
           matches = matches && transaction.type === type;
         }
-        
+
         if (searchDate) {
           matches = matches && this.isSameDay(new Date(transaction.date), searchDate);
         }
-        
+
         return matches;
       });
     } catch (error) {
@@ -51,4 +51,6 @@ export class STransactions {
       return [];
     }
   }
+
+  
 }

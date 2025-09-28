@@ -1,0 +1,53 @@
+.dialog-title {
+    text-align: center;
+    font-weight: 700;
+  }
+  
+  .dialog-content { min-width: 520px; }
+  
+  .field-title {
+    font-weight: 700;
+    margin: 6px 0 4px;
+  }
+  
+  .w-100 { width: 100%; }
+  
+  .option-row, .option-trigger {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: .75rem;
+  }
+  
+  .transfer-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 9999px;
+    background: #1f3b63;
+    color: #fff;
+    display: grid;
+    place-items: center;
+    font-weight: 700;
+  }
+  
+  .option-label { display: flex; flex-direction: column; line-height: 1.1; }
+  .muted { color: #6b7280; font-size: 12px; }
+  
+  .balance { font-weight: 700; }
+  .balance.negative { color: #b62525; }
+  
+  .msg { margin-top: .25rem; font-size: 12px; }
+  .msg.warning { color: #b08900; }
+  .msg.error { color: #b62525; }
+  
+  .state { padding: 10px; border-radius: 8px; }
+  .state.soft { background: #edf2ff; color: #2b4fa3; }
+  .state.error { background: #ffe8e8; color: #9b1c1c; }
+  
+  .dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: .5rem;
+    padding-top: .5rem;
+  }
+  

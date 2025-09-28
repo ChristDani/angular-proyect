@@ -1,51 +1,5 @@
-<div class="container py-4">
-  <!-- Transfer Options Section -->
-  <section class="mb-5">
-    <h4 class="mb-4 fw-bold">Realiza una transferencia o pago</h4>
-    <div class="row g-4 justify-content-center">
-      <div class="col-12 col-md-4">
-        <button
-          class="btn btn-primary w-100 py-4 d-flex flex-column align-items-center rounded-3"
-          (click)="openTransferModal('own')"
-        >
-          <span
-            class="transfer-circle rounded-circle bg-white d-flex align-items-center justify-content-center mb-2"
-          >
-            <i class="bi bi-arrow-left-right text-primary"></i>
-          </span>
-          <span class="fw-semibold">Entre mis cuentas</span>
-        </button>
-      </div>
-      <div class="col-12 col-md-4">
-        <button
-          class="btn btn-primary w-100 py-4 d-flex flex-column align-items-center rounded-3"
-          (click)="openTransferModal('third')"
-        >
-          <span
-            class="transfer-circle rounded-circle bg-white d-flex align-items-center justify-content-center mb-2"
-          >
-            <i class="bi bi-person-add text-primary"></i>
-          </span>
-          <span class="fw-semibold">A terceros</span>
-        </button>
-      </div>
-      <div class="col-12 col-md-4">
-        <button
-          class="btn btn-primary w-100 py-4 d-flex flex-column align-items-center rounded-3"
-          (click)="openTransferModal('service')"
-        >
-          <span
-            class="transfer-circle rounded-circle bg-white d-flex align-items-center justify-content-center mb-2"
-          >
-            <i class="bi bi-receipt text-primary"></i>
-          </span>
-          <span class="fw-semibold">Pagar servicios</span>
-        </button>
-      </div>
-    </div>
-  </section>
-
-  <!-- Transaction History Section -->
+<div class="layout">
+<!-- Transaction History Section -->
   <section>
     <h4 class="mb-4 fw-bold">Historial de transacciones</h4>
     <!-- Filters -->
@@ -100,44 +54,58 @@
       </button>
     </div>
 
-    <!-- Transactions List -->
-    @for (group of groupedTransactions | keyvalue; track group.key) {
-    <div class="mb-4">
-      <h6 class="fw-bold">{{ group.key }}</h6>
-      @for (transaction of group.value; track transaction.id) {
-      <div
-        class="card mb-2 p-3 d-flex flex-row align-items-center justify-content-between hover-effect"
-      >
-        <div class="d-flex align-items-center gap-3">
-          <span
-            class="transfer-icon rounded-circle bg-primary text-white fw-bold d-flex align-items-center justify-content-center"
-          >
-            T
-          </span>
-          <div>
-            <span class="fw-semibold">{{ transaction.type }}</span
-            ><br />
-            <span class="transfer-date text-muted">
-              {{ transaction.date | date : 'd MMMM' }}
+        <div class="col-12 col-md-4">
+          <mat-card class="action-card btn-primary rounded-3 w-100 py-4 d-flex flex-column align-items-center"
+                    (click)="doPayServices()">
+            <span class="transfer-circle rounded-circle bg-white d-flex align-items-center justify-content-center mb-2">
+              <mat-icon class="text-primary">receipt_long</mat-icon>
             </span>
-          </div>
+            <div class="fw-semibold">Pagar servicios</div>
+          </mat-card>
         </div>
-        <span class="fw-bold" [class.text-danger]="transaction.amount < 0">
-          {{ transaction.currency === 'USD' ? '$' : 'S/' }}
-          {{ transaction.amount | number : '1.2-2' }}
-        </span>
       </div>
-      }
-    </div>
-    } @empty {
-    <div class="text-center py-5">
-      <img
-        src="assets/not-found/not-found-transactions.svg"
-        alt="No hay transacciones"
-        class="no-transactions-img mb-3"
-      />
-      <h5 class="text-muted">No hay transacciones que mostrar</h5>
-    </div>
-    }
-  </section>
+    </section>
+
+    <mat-divider class="my-24"></mat-divider>
+
+    <!-- Historial -->
+    <section>
+      <h4 class="mb-4 fw-bold">Historial de transacciones</h4>
+
+      <div *ngIf="loading()" class="state soft">Cargando...</div>
+      <div *ngIf="!loading() && error()" class="state error">{{ error() }}</div>
+
+      <ng-container *ngIf="!loading() && !error() && transactions().length > 0; else noTxTpl">
+        <div class="tx-group" *ngFor="let g of grouped()">
+          <h6 class="fw-bold group-title">{{ g[0] }}</h6>
+
+          <mat-card class="tx-item hover-effect mb-2 p-3 d-flex flex-row align-items-center justify-content-between"
+                    *ngFor="let t of g[1]">
+            <div class="d-flex align-items-center gap-3">
+              <span class="transfer-icon rounded-circle bg-primary text-white fw-bold d-flex align-items-center justify-content-center">
+                T
+              </span>
+              <div>
+                <span class="fw-semibold">{{ t.type }}</span><br />
+                <span class="transfer-date text-muted">{{ t.date | date:'d MMMM' }}</span>
+              </div>
+            </div>
+            <span class="fw-bold" [class.text-danger]="t.amount < 0">
+              {{ (t.currency ?? 'PEN') === 'USD' ? '$' : 'S/' }}
+              {{ t.amount | number:'1.2-2' }}
+            </span>
+          </mat-card>
+        </div>
+      </ng-container>
+
+      <ng-template #noTxTpl>
+        <div class="text-center py-5">
+          <img src="assets/not-found/not-found-transactions.svg"
+               alt="No hay transacciones"
+               class="no-transactions-img mb-3" />
+          <h5 class="text-muted">No hay transacciones que mostrar</h5>
+        </div>
+      </ng-template>
+    </section>
+  </main>
 </div>
