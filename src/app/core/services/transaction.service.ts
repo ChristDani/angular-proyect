@@ -195,4 +195,57 @@ export class TransactionService {
         })
       );
     }
+
+  /**
+   * Pago de servicios:
+   * - Verifica cuenta del usuario y saldo suficiente
+   * - Actualiza saldo de la cuenta
+   * - Crea transacción de pago de servicio (negativa)
+   * - Devuelve { ok: true }
+   */
+  payService(
+    userId: string,
+    fromId: string,
+    serviceId: string,
+    serviceName: string,
+    amount: number,
+    description?: string
+  ): Observable<{ ok: true }> {
+    if (!fromId || !serviceId) return throwError(() => new Error('Datos inválidos'));
+    if (!(amount > 0)) return throwError(() => new Error('El monto debe ser mayor que 0'));
+
+    // 1) Cargar cuenta del usuario y validar
+    return this.accountsSvc.getAccountsByUserId(userId).pipe(
+      switchMap((userAccounts: Account[]) => {
+        const from = userAccounts.find(a => a.id === fromId);
+        if (!from) throw new Error('Cuenta no encontrada para el usuario');
+        if (from.status === 'inactiva') throw new Error('La cuenta está inactiva');
+        if (from.balance < amount) throw new Error('Saldo insuficiente en la cuenta');
+
+        // 2) Actualizar saldo de la cuenta
+        const updatedFrom = { ...from, balance: from.balance - amount };
+        const today = new Date().toISOString().slice(0, 10);
+        const paymentId = `PAY-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
+
+        // 3) Crear transacción de pago de servicio
+        const pagoServicio: ITransaction = {
+          id: paymentId,
+          accountId: from.id,
+          date: today,
+          type: 'PAGO SERV',
+          amount: -Math.abs(amount), // Siempre negativo porque es un gasto
+          description: description?.trim() || `Pago de ${serviceName} (${serviceId})`,
+          currency: 'PEN'
+        };
+
+        // 4) Actualizar cuenta y registrar transacción
+        return forkJoin([
+          this.accountsSvc.updateAccount(updatedFrom),
+          this.createTransaction(pagoServicio)
+        ]).pipe(
+          map(() => ({ ok: true as const }))
+        );
+      })
+    );
+  }
 }
