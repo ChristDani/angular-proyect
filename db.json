@@ -231,7 +231,7 @@
       "id": "YESTERDAY-3",
       "accountId": "1",
       "date": "2025-09-27T18:45:00.000Z",
-      "type": "PAGO SERV",
+      "type": "pago serv",
       "amount": -85,
       "description": "Pago de Netflix",
       "currency": "PEN"
@@ -258,7 +258,7 @@
       "id": "THIS-MONTH-3",
       "accountId": "2",
       "date": "2025-09-15T08:30:00.000Z",
-      "type": "PAGO SERV",
+      "type": "pago serv",
       "amount": -120,
       "description": "Pago de luz",
       "currency": "PEN"
