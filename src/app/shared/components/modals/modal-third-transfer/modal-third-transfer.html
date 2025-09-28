@@ -1,1 +1,10 @@
-<p>modal-third-transfer works!</p>
+<app-modal-base
+  #modalBase
+  [title]="'Transferencia a terceros'"
+  [withFooter]="true"
+  [buttonsInFooter]="{
+    primaryButton: { text: 'Continuar', action: continuar.bind(this), disabled: !amount || amount <= 0 },
+    secondaryButtons: [{ text: 'Cancelar', action: modalBase.close.bind(modalBase), disabled: false }]
+  }"
+  (closeModal)="onClose()"
+></app-modal-base>
