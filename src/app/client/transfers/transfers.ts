@@ -1,171 +1,144 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { ModalTransferBetweenAccounts } from '../../shared/components/modals/modal-transfer-between-accounts/modal-transfer-between-accounts';
-import { ITransaction, transactionType } from '../../models/interfaces/transaction.interface';
-import { STransactions } from '../../shared/services/transactions';
-
-interface Transaction {
-  id: number;
-  type: string;
-  date: Date;
-  amount: number;
-  description: string;
-  currency: 'USD' | 'PEN';
-}
+// src/app/transfers/transfers.page.ts
+import { Component, computed, DestroyRef, effect, inject, signal } from '@angular/core';
+import { CommonModule, CurrencyPipe, DatePipe, NgClass } from '@angular/common';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule }   from '@angular/material/card';
+import { MatIconModule }   from '@angular/material/icon';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatListModule } from '@angular/material/list';
+import { TransactionService } from '../../core/services/transaction.service';
+import { ITransaction, TxGroupKey } from '../../models/interfaces/transaction.interface';
+import { AuthService } from '../../auth/auth.service';
+import { TransferBetweenAccountsDialog } from './dialogs/transfer-between-accounts.dialog';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MatDialog } from '@angular/material/dialog';
+import { TransferToThirdDialog } from './dialogs/transfer-to-third.dialog';
 
 @Component({
-  selector: 'app-transfers',
+  selector: 'app-transfers-page',
   standalone: true,
   imports: [
-    CommonModule, 
-    FormsModule,
-    MatDialogModule,
+    CommonModule,
+    NgClass,
+    MatButtonModule,
+    MatCardModule,
+    MatIconModule,
+    MatDividerModule,
+    MatListModule,
+    CurrencyPipe,
+    DatePipe,
   ],
   templateUrl: './transfers.html',
   styleUrls: ['./transfers.css']
 })
-export class TransfersComponent implements OnInit {
-  private transactionsService = inject(STransactions);
-  transactions = signal<ITransaction[]>([]);
-  typeFilter = signal<transactionType | undefined>(undefined);
-  dateFilter = signal<string | undefined>(undefined);
+export class TransfersPage {
+  private svc = inject(TransactionService);
+  private auth = inject(AuthService);
+  private dialog = inject(MatDialog);
+  private destroyRef = inject(DestroyRef);
 
-  constructor(private dialog: MatDialog) {}
+  // signals
+  readonly loading = signal(true);
+  readonly error = signal<string | null>(null);
+  readonly transactions = signal<ITransaction[]>([]);
 
-  async getAllTransactions(type: transactionType | undefined, date: string | undefined) {
-    try {
-      const transactions = await this.transactionsService.getAllTransactions(type, date);
-      this.transactions.set(transactions);
-    } catch (error) {
-      console.error('Error fetching transactions:', error);
-    }
-  }
-
-  openTransferModal(type: 'own' | 'third' | 'service'): void {
-    switch(type) {
-      case 'own':
-        const dialogRef = this.dialog.open(ModalTransferBetweenAccounts);
-
-        dialogRef.afterClosed().subscribe(result => {
-          if (result) {
-            // Actualizar lista de transacciones
-            this.refreshTransactions();
-          }
-        });
-        break;
-      case 'third':
-        // Implementar modal para transferencias a terceros
-        break;
-      case 'service':
-        // Implementar modal para pago de servicios
-        break;
-    }
-  }
-
-  refreshTransactions(): void {
-    // Aquí iría la lógica para actualizar la lista de transacciones
-    // Por ahora solo recargamos los datos simulados
-    this.ngOnInit();
-  }
-
-  resetFilters(): void {
-    this.typeFilter.set(undefined);
-    this.dateFilter.set(undefined);
-    this.refreshTransactions();
-  }
-
-  openFilterSettings(): void {
-    // Implementar modal de configuración de filtros
-  }
-
-  // Agrupar transacciones por fecha
-  get groupedTransactions(): { [key: string]: ITransaction[] } {
-    // First sort all transactions by date (most recent first)
-    const sortedTransactions = this.transactions()
-      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-
-    // Group transactions by display date
-    const groups = sortedTransactions.reduce((groups, transaction) => {
-      // Parse date using UTC to avoid timezone issues
-      const dateParts = transaction.date.split('-');
-      const year = parseInt(dateParts[0]);
-      const month = parseInt(dateParts[1]) - 1; // JavaScript months are 0-based
-      const day = parseInt(dateParts[2]);
-      const transactionDate = new Date(year, month, day);
-      
-      // Ensure valid date
-      if (isNaN(transactionDate.getTime())) {
-        console.warn('Invalid date found:', transaction.date);
-        return groups;
-      }
-      
-      const displayDate = this.isToday(transactionDate) ? 
-        'Hoy' : 
-        `${this.getMonthName(transactionDate.getMonth())} ${transactionDate.getFullYear()}`;
-      
-      if (!groups[displayDate]) {
-        groups[displayDate] = [];
-      }
-      groups[displayDate].push(transaction);
-      return groups;
-    }, {} as { [key: string]: ITransaction[] });
-
-    // Sort the groups by date, with "Hoy" always first, then by most recent date
-    return Object.entries(groups)
-      .sort(([dateA], [dateB]) => {
-        if (dateA === 'Hoy') return -1;
-        if (dateB === 'Hoy') return 1;
-        
-        // Extract month and year from display date
-        const [monthNameA, yearA] = dateA.split(' ');
-        const [monthNameB, yearB] = dateB.split(' ');
-        
-        // Convert month names to numbers (0-based index)
-        const monthA = this.getMonthNumber(monthNameA);
-        const monthB = this.getMonthNumber(monthNameB);
-        
-        // Handle invalid month names
-        if (monthA === -1 || monthB === -1) {
-          console.warn('Invalid month name found:', monthNameA, monthNameB);
-          return 0;
+  // usuario actual
+  readonly currentUserId = this.auth.getLoggedInUser()?.id ?? '';
+  constructor() {
+    effect(() => {
+      this.loading.set(true);
+      this.error.set(null);
+      this.svc.getAllUserTransactions(this.currentUserId).subscribe({
+        next: txs => {
+          this.transactions.set(txs);
+          this.loading.set(false);
+        },
+        error: err => {
+          this.error.set('No se pudieron cargar las transacciones');
+          this.loading.set(false);
+          console.error(err);
         }
-        
-        // Create dates for comparison (using day 1 as reference)
-        const dateAObj = new Date(parseInt(yearA), monthA, 1);
-        const dateBObj = new Date(parseInt(yearB), monthB, 1);
-        
-        // Sort from most recent to oldest
-        return dateBObj.getTime() - dateAObj.getTime();
-      })
-      .reduce((obj, [key, value]) => ({ ...obj, [key]: value }), {});
+      });
+    });
   }
 
-  private isToday(date: Date): boolean {
-    const today = new Date();
-    return date.getDate() === today.getDate() &&
-           date.getMonth() === today.getMonth() &&
-           date.getFullYear() === today.getFullYear();
+  private reloadTransactions() {
+    this.loading.set(true);
+    this.error.set(null);
+
+    this.svc.getAllUserTransactions(this.currentUserId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: txs => {
+          this.transactions.set(txs);
+          this.loading.set(false);
+        },
+        error: err => {
+          console.error(err);
+          this.error.set('No se pudieron cargar las transacciones');
+          this.loading.set(false);
+        }
+      });
   }
 
-  private getMonthName(month: number): string {
-    const months = [
-      'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-      'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
-    ];
-    return months[month];
+
+  readonly grouped = computed(() => {
+    const todayISO = new Date().toISOString().slice(0, 10);
+    const groups = new Map<TxGroupKey, ITransaction[]>();
+    for (const t of this.transactions()) {
+      const key: TxGroupKey = t.date === todayISO
+        ? 'Hoy'
+        : this.formatMonthYear(t.date);
+      const list = groups.get(key) ?? [];
+      list.push(t);
+      groups.set(key, list);
+    }
+    const entries = Array.from(groups.entries()).sort((a, b) => {
+      if (a[0] === 'Hoy') return -1;
+      if (b[0] === 'Hoy') return 1;
+      const da = this.monthYearToDate(a[0]);
+      const db = this.monthYearToDate(b[0]);
+      return db.getTime() - da.getTime();
+    });
+    return entries;
+  });
+
+  private formatMonthYear(iso: string) {
+    const d = new Date(iso);
+    return d.toLocaleDateString('es-PE', { month: 'long', year: 'numeric' })
+      .replace(/^\w/, c => c.toUpperCase());
   }
 
-  private getMonthNumber(monthName: string): number {
-    const months = [
-      'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-      'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
-    ];
-    return months.indexOf(monthName);
+  private monthYearToDate(label: string) {
+    const [mes, anio] = label.split(' ');
+    const monthIdx = [
+      'enero','febrero','marzo','abril','mayo','junio',
+      'julio','agosto','septiembre','octubre','noviembre','diciembre'
+    ].findIndex(m => m.toLowerCase() === mes.toLowerCase());
+    return new Date(Number(anio), monthIdx, 1);
   }
 
-  ngOnInit() {
-    this.getAllTransactions(this.typeFilter(), this.dateFilter());
+  doOwnTransfer() {
+    this.dialog.open(TransferBetweenAccountsDialog, {
+      panelClass: 'dialog-rounded'
+    })
+    .afterClosed()
+    .pipe(takeUntilDestroyed(this.destroyRef))
+    .subscribe(res => {
+      if (res?.ok) this.reloadTransactions();
+    });
   }
+
+  doThirdTransfer() {
+    this.dialog.open(TransferToThirdDialog, { panelClass: 'dialog-rounded' })
+      .afterClosed()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(res => {
+        if (res?.ok) this.reloadTransactions();
+      });
+  }
+
+  doPayServices()   { /* abre modal o navega */ }
+
+  isOutflow(t: ITransaction) { return t.amount < 0; }
 }

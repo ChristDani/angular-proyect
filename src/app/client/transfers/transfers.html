@@ -1,143 +1,83 @@
-<div class="container py-4">
-  <!-- Transfer Options Section -->
-  <section class="mb-5">
-    <h4 class="mb-4 fw-bold">Realiza una transferencia o pago</h4>
-    <div class="row g-4 justify-content-center">
-      <div class="col-12 col-md-4">
-        <button
-          class="btn btn-primary w-100 py-4 d-flex flex-column align-items-center rounded-3"
-          (click)="openTransferModal('own')"
-        >
-          <span
-            class="transfer-circle rounded-circle bg-white d-flex align-items-center justify-content-center mb-2"
-          >
-            <i class="bi bi-arrow-left-right text-primary"></i>
-          </span>
-          <span class="fw-semibold">Entre mis cuentas</span>
-        </button>
-      </div>
-      <div class="col-12 col-md-4">
-        <button
-          class="btn btn-primary w-100 py-4 d-flex flex-column align-items-center rounded-3"
-          (click)="openTransferModal('third')"
-        >
-          <span
-            class="transfer-circle rounded-circle bg-white d-flex align-items-center justify-content-center mb-2"
-          >
-            <i class="bi bi-person-add text-primary"></i>
-          </span>
-          <span class="fw-semibold">A terceros</span>
-        </button>
-      </div>
-      <div class="col-12 col-md-4">
-        <button
-          class="btn btn-primary w-100 py-4 d-flex flex-column align-items-center rounded-3"
-          (click)="openTransferModal('service')"
-        >
-          <span
-            class="transfer-circle rounded-circle bg-white d-flex align-items-center justify-content-center mb-2"
-          >
-            <i class="bi bi-receipt text-primary"></i>
-          </span>
-          <span class="fw-semibold">Pagar servicios</span>
-        </button>
-      </div>
-    </div>
-  </section>
+<div class="layout">
 
-  <!-- Transaction History Section -->
-  <section>
-    <h4 class="mb-4 fw-bold">Historial de transacciones</h4>
-    <!-- Filters -->
-    <div class="filter-section d-flex align-items-center gap-2 mb-3">
-      <span class="fw-semibold">Filtrar por:</span>
-      <select
-        class="form-select w-auto"
-        [(ngModel)]="typeFilter"
-        aria-label="Filtrar por tipo de transferencia"
-      >
-        <option value="undefined" hidden selected>Seleccione un tipo</option>
-        <option value="TRANSF.BCO">Transferencia bancaria</option>
-        <option value="PAGO SERV">Pago de servicios</option>
-        <option value="PAGO TARJ">Pago de tarjeta</option>
-        <option value="DEPÓSITO">Depósito</option>
-        <option value="RETIRO">Retiro</option>
-        <option value="COMPRA">Compra</option>
-        <option value="VENTA">Venta</option>
-      </select>
-      <input
-        type="date"
-        class="form-control w-auto"
-        [(ngModel)]="dateFilter"
-        aria-label="Filtrar por fecha de transferencia"
-        placeholder="Fecha de transferencia"
-      />
-      <button
-        class="btn btn-outline-primary rounded-circle px-3"
-        (click)="resetFilters()"
-        title="Reiniciar filtros"
-      >
-        ⟲
-        <i class="bi bi-arrow-clockwise"></i>
-      </button>
-      <button
-        class="btn btn-outline-primary rounded-circle px-3"
-        (click)="getAllTransactions(typeFilter(), dateFilter())"
-        title="Buscar transacción"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="16"
-          height="16"
-          fill="currentColor"
-          class="bi bi-search"
-          viewBox="0 0 16 16"
-        >
-          <path
-            d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"
-          />
-        </svg>
-      </button>
-    </div>
+  <main class="content container py-4"><!-- container y py-4 del mock -->
+    <!-- Acciones -->
+    <section class="mb-5">
+      <h4 class="mb-4 fw-bold">Realiza una transferencia o pago</h4>
 
-    <!-- Transactions List -->
-    @for (group of groupedTransactions | keyvalue; track group.key) {
-    <div class="mb-4">
-      <h6 class="fw-bold">{{ group.key }}</h6>
-      @for (transaction of group.value; track transaction.id) {
-      <div
-        class="card mb-2 p-3 d-flex flex-row align-items-center justify-content-between hover-effect"
-      >
-        <div class="d-flex align-items-center gap-3">
-          <span
-            class="transfer-icon rounded-circle bg-primary text-white fw-bold d-flex align-items-center justify-content-center"
-          >
-            T
-          </span>
-          <div>
-            <span class="fw-semibold">{{ transaction.type }}</span
-            ><br />
-            <span class="transfer-date text-muted">
-              {{ transaction.date | date : 'd MMMM' }}
+      <div class="actions row g-4 justify-content-center">
+        <div class="col-12 col-md-4">
+          <mat-card class="action-card btn-primary rounded-3 w-100 py-4 d-flex flex-column align-items-center"
+                    (click)="doOwnTransfer()">
+            <span class="transfer-circle rounded-circle bg-white d-flex align-items-center justify-content-center mb-2">
+              <mat-icon class="text-primary">sync_alt</mat-icon>
             </span>
-          </div>
+            <div class="fw-semibold">Entre mis cuentas</div>
+          </mat-card>
         </div>
-        <span class="fw-bold" [class.text-danger]="transaction.amount < 0">
-          {{ transaction.currency === 'USD' ? '$' : 'S/' }}
-          {{ transaction.amount | number : '1.2-2' }}
-        </span>
+
+        <div class="col-12 col-md-4">
+          <mat-card class="action-card btn-primary rounded-3 w-100 py-4 d-flex flex-column align-items-center"
+                    (click)="doThirdTransfer()">
+            <span class="transfer-circle rounded-circle bg-white d-flex align-items-center justify-content-center mb-2">
+              <mat-icon class="text-primary">person_add</mat-icon>
+            </span>
+            <div class="fw-semibold">A terceros</div>
+          </mat-card>
+        </div>
+
+        <div class="col-12 col-md-4">
+          <mat-card class="action-card btn-primary rounded-3 w-100 py-4 d-flex flex-column align-items-center"
+                    (click)="doPayServices()">
+            <span class="transfer-circle rounded-circle bg-white d-flex align-items-center justify-content-center mb-2">
+              <mat-icon class="text-primary">receipt_long</mat-icon>
+            </span>
+            <div class="fw-semibold">Pagar servicios</div>
+          </mat-card>
+        </div>
       </div>
-      }
-    </div>
-    } @empty {
-    <div class="text-center py-5">
-      <img
-        src="assets/not-found/not-found-transactions.svg"
-        alt="No hay transacciones"
-        class="no-transactions-img mb-3"
-      />
-      <h5 class="text-muted">No hay transacciones que mostrar</h5>
-    </div>
-    }
-  </section>
+    </section>
+
+    <mat-divider class="my-24"></mat-divider>
+
+    <!-- Historial -->
+    <section>
+      <h4 class="mb-4 fw-bold">Historial de transacciones</h4>
+
+      <div *ngIf="loading()" class="state soft">Cargando...</div>
+      <div *ngIf="!loading() && error()" class="state error">{{ error() }}</div>
+
+      <ng-container *ngIf="!loading() && !error() && transactions().length > 0; else noTxTpl">
+        <div class="tx-group" *ngFor="let g of grouped()">
+          <h6 class="fw-bold group-title">{{ g[0] }}</h6>
+
+          <mat-card class="tx-item hover-effect mb-2 p-3 d-flex flex-row align-items-center justify-content-between"
+                    *ngFor="let t of g[1]">
+            <div class="d-flex align-items-center gap-3">
+              <span class="transfer-icon rounded-circle bg-primary text-white fw-bold d-flex align-items-center justify-content-center">
+                T
+              </span>
+              <div>
+                <span class="fw-semibold">{{ t.type }}</span><br />
+                <span class="transfer-date text-muted">{{ t.date | date:'d MMMM' }}</span>
+              </div>
+            </div>
+            <span class="fw-bold" [class.text-danger]="t.amount < 0">
+              {{ (t.currency ?? 'PEN') === 'USD' ? '$' : 'S/' }}
+              {{ t.amount | number:'1.2-2' }}
+            </span>
+          </mat-card>
+        </div>
+      </ng-container>
+
+      <ng-template #noTxTpl>
+        <div class="text-center py-5">
+          <img src="assets/not-found/not-found-transactions.svg"
+               alt="No hay transacciones"
+               class="no-transactions-img mb-3" />
+          <h5 class="text-muted">No hay transacciones que mostrar</h5>
+        </div>
+      </ng-template>
+    </section>
+  </main>
 </div>

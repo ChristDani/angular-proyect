@@ -17,3 +17,6 @@ export type transactionType =
   | 'RETIRO'
   | 'COMPRA'
   | 'VENTA';
+
+
+  export type TxGroupKey = 'Hoy' | string;

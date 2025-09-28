@@ -24,7 +24,7 @@ export class AccountService {
     return this.http.get<Account[]>(this.apiUrl, { params: params });
   }
 
-  getAccountById(id: number): Observable<Account> {
+  getAccountById(id: string): Observable<Account> {
     return this.http.get<Account>(`${this.apiUrl}/${id}`);
   }
 
