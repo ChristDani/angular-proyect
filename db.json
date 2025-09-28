@@ -20,21 +20,21 @@
       "id": "1",
       "userId": "1",
       "type": "ahorro",
-      "balance": 1500,
+      "balance": 500,
       "status": "activa"
     },
     {
       "id": "2",
       "userId": "1",
       "type": "corriente",
-      "balance": 2500,
+      "balance": 3000,
       "status": "activa"
     },
     {
       "id": "1759000260719353",
       "userId": "1",
       "type": "corriente",
-      "balance": 100000,
+      "balance": 100500,
       "status": "activa"
     }
   ],
@@ -47,7 +47,7 @@
       "status": "pagando"
     },
     {
-      "id": 1759000307632,
+      "id": "1759000307632",
       "status": "PENDIENTE",
       "accountId": "1759000260719353",
       "amount": 5000,
@@ -58,6 +58,20 @@
       "status": "PENDIENTE",
       "accountId": "2",
       "amount": 500,
+      "installments": 12
+    },
+    {
+      "id": "1759023035869",
+      "status": "PENDIENTE",
+      "accountId": "2",
+      "amount": 1000,
+      "installments": 12
+    },
+    {
+      "id": "1759023044058",
+      "status": "PENDIENTE",
+      "accountId": "1",
+      "amount": 2000,
       "installments": 12
     }
   ],
@@ -101,6 +115,42 @@
       "type": "depósito",
       "amount": 2500,
       "description": "Transferencia recibida"
+    },
+    {
+      "id": "TXN-1759023714955-w0mje8m1j",
+      "accountId": "1",
+      "date": "2025-09-28",
+      "type": "retiro",
+      "amount": -500,
+      "description": "Transferencia a CORRIENTE",
+      "currency": "PEN"
+    },
+    {
+      "id": "TXN-1759023714955-w0mje8m1j",
+      "accountId": "2",
+      "date": "2025-09-28",
+      "type": "deposito",
+      "amount": 500,
+      "description": "Transferencia desde AHORRO",
+      "currency": "PEN"
+    },
+    {
+      "id": "TXN-1759024994992-2hhuedsbv",
+      "accountId": "1",
+      "date": "2025-09-28",
+      "type": "retiro",
+      "amount": -500,
+      "description": "test",
+      "currency": "PEN"
+    },
+    {
+      "id": "TXN-1759024994992-2hhuedsbv",
+      "accountId": "1759000260719353",
+      "date": "2025-09-28",
+      "type": "deposito",
+      "amount": 500,
+      "description": "test",
+      "currency": "PEN"
     }
   ]
 }
