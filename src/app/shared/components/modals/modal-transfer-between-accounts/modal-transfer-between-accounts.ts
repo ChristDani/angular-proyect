@@ -1,26 +1,33 @@
-import { Component, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, ViewChild, AfterViewInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { ModalBaseComponent } from '../modal-base/modal-base';
+import { AccountService } from '../../../../core/services/account.service';
+import { Account } from '../../../../models/interfaces/account.interface';
 
 @Component({
   selector: 'app-modal-op',
   standalone: true,
   imports: [CommonModule, FormsModule, ModalBaseComponent],
   templateUrl: './modal-transfer-between-accounts.html',
-  styleUrls: ['./modal-transfer-between-accounts.css']
+  styleUrls: ['./modal-transfer-between-accounts.css'],
 })
 export class ModalTransferBetweenAccounts implements AfterViewInit {
-  constructor(
-    private dialogRef: MatDialogRef<ModalTransferBetweenAccounts>
-  ) {}
+  constructor(private dialogRef: MatDialogRef<ModalTransferBetweenAccounts>) {}
+
+  private accountService = inject(AccountService);
+  accounts = signal<Account[]>([]);
+  mainAccount = signal<Account | null>(null);
+  secondaryAccount = signal<Account | null>(null);
+
+  // Referencia al componente base del modal
 
   @ViewChild('modalBase') modalBase!: ModalBaseComponent;
 
   // Variables para el manejo de moneda y monto
   isDollar: boolean = false;
-  amount: number = 500000.00;
+  amount: number = 0.0;
 
   ngAfterViewInit() {
     // Abrimos el modal después de que la vista se ha inicializado
@@ -31,22 +38,18 @@ export class ModalTransferBetweenAccounts implements AfterViewInit {
     });
   }
 
-  // Variables para las cuentas (esto debería venir de un servicio)
-  cuentaRetiro = {
-    nombre: 'CUENTA RETIRO',
-    numero: '****2015',
-    monto: 1000000.00
-  };
-
-  cuentaDeposito = {
-    nombre: 'CUENTA DEPOSITO',
-    numero: '****2015',
-    monto: 1000000.00
-  };
-
   onClose(): void {
     this.modalBase.close();
     this.dialogRef.close();
+  }
+
+  async getAccounts() {
+    try {
+      const accounts = await this.accountService.getAccountsByUserId('1').toPromise();
+      this.accounts.set(accounts || []);
+    } catch (error) {
+      console.error('Error al obtener cuentas:', error);
+    }
   }
 
   continuar(): void {
@@ -55,10 +58,10 @@ export class ModalTransferBetweenAccounts implements AfterViewInit {
       const resultado = {
         moneda: this.isDollar ? 'USD' : 'PEN',
         monto: this.amount,
-        cuentaOrigen: this.cuentaRetiro,
-        cuentaDestino: this.cuentaDeposito
+        cuentaOrigen: this.mainAccount(),
+        cuentaDestino: this.secondaryAccount(),
       };
-      
+
       console.log('Procesando transferencia:', resultado);
       this.modalBase.close();
       this.dialogRef.close(resultado);
@@ -70,12 +73,15 @@ export class ModalTransferBetweenAccounts implements AfterViewInit {
       alert('Por favor ingrese un monto válido');
       return false;
     }
-    
-    if (this.amount > this.cuentaRetiro.monto) {
+
+    if (this.amount > this.mainAccount()?.balance!) {
       alert('Saldo insuficiente');
       return false;
     }
 
     return true;
+  }
+  onNgInit(): void {
+    this.getAccounts();
   }
 }
