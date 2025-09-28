@@ -7,6 +7,7 @@ import { AccountService } from '../../../../core/services/account.service';
 import { Account } from '../../../../models/interfaces/account.interface';
 import { AuthService } from '../../../../auth/auth.service';
 import { TransactionService } from '../../../../core/services/transaction.service';
+import { CurrencyService } from '../../../../core/services/currency.service';
 
 @Component({
   selector: 'app-modal-third-transfer',
@@ -21,6 +22,7 @@ export class ModalThirdTransfer implements AfterViewInit, OnInit {
   private accountService = inject(AccountService);
   private authService = inject(AuthService);
   private transactionService = inject(TransactionService);
+  private currencyService = inject(CurrencyService);
   
   accounts = signal<Account[]>([]);
   mainAccount = signal<Account | null>(null);
@@ -79,8 +81,23 @@ export class ModalThirdTransfer implements AfterViewInit, OnInit {
       !this.destinationAccount.trim() ||
       this.amount === null ||
       this.amount === undefined ||
-      this.amount <= 0
+      this.amount <= 0 ||
+      this.destinationAccount.length !== 20 ||
+      this.isInsufficientBalance()
     );
+  }
+
+  private isInsufficientBalance(): boolean {
+    if (!this.mainAccount() || this.amount <= 0) return false;
+    
+    const selectedCurrency = this.isDollar ? 'USD' : 'PEN';
+    const requiredAmount = this.currencyService.convertToAccountCurrency(
+      this.amount, 
+      selectedCurrency, 
+      this.mainAccount()!.currency
+    );
+    
+    return this.mainAccount()!.balance < requiredAmount;
   }
 
   async continuar(): Promise<void> {
@@ -97,18 +114,14 @@ export class ModalThirdTransfer implements AfterViewInit, OnInit {
         return;
       }
 
-      // Validar saldo suficiente
-      if (this.amount > this.mainAccount()!.balance) {
-        alert('Saldo insuficiente en la cuenta seleccionada');
-        return;
-      }
-
       // Realizar la transferencia usando el servicio
+      const selectedCurrency = this.isDollar ? 'USD' : 'PEN';
       const result = await this.transactionService.transferToThirdParty(
         user.id,
         this.mainAccount()!.id,
         this.destinationAccount,
         this.amount,
+        selectedCurrency,
         `Transferencia a cuenta ${this.destinationAccount}`
       ).toPromise();
 

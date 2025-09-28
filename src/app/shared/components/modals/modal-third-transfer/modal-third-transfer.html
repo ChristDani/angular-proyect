@@ -35,7 +35,7 @@
             <option value="" disabled>Seleccione una cuenta de origen</option>
             @for (account of accounts(); track account.id) {
               <option [value]="account.id">
-                {{ account.type }} - S/ {{ account.balance | number:'1.2-2' }}
+                {{ account.type }} - {{ account.currency === 'USD' ? '$' : 'S/' }} {{ account.balance | number:'1.2-2' }}
               </option>
             }
           </select>
@@ -97,7 +97,10 @@
         <div class="alert alert-info">
           <strong>Resumen:</strong><br>
           Transferir {{ isDollar ? '$' : 'S/' }} {{ amount | number:'1.2-2' }}
-          desde {{ mainAccount()?.type }} hacia cuenta {{ destinationAccount }}
+          desde {{ mainAccount()?.type }} ({{ mainAccount()?.currency }}) hacia cuenta {{ destinationAccount }}
+          @if ((isDollar ? 'USD' : 'PEN') !== mainAccount()?.currency) {
+            <br><small class="text-muted">Se aplicará conversión de moneda automáticamente</small>
+          }
         </div>
       }
     }

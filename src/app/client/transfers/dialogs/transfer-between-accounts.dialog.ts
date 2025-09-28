@@ -113,7 +113,7 @@ export class TransferBetweenAccountsDialog {
       const { fromId, toId, amount } = this.fv();
       this.submitting.set(true);
   
-      this.txSvc.transferBetweenAccounts(userId, fromId!, toId!, Number(amount))
+      this.txSvc.transferBetweenAccounts(userId, fromId!, toId!, Number(amount), 'PEN')
         .subscribe({
           next: () => { this.submitting.set(false); this.ref.close({ ok: true }); },
           error: e => { this.submitting.set(false); this.error.set(e?.message || 'No se pudo completar la transferencia.'); }

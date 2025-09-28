@@ -4,6 +4,7 @@ import { forkJoin, map, Observable, of, switchMap, throwError } from 'rxjs';
 import { ITransaction } from '../../models/interfaces/transaction.interface';
 import { AccountService } from './account.service';
 import { Account } from '../../models/interfaces/account.interface';
+import { CurrencyService } from './currency.service';
 
 @Injectable({
   providedIn: 'root',
@@ -12,6 +13,7 @@ export class TransactionService {
   private apiUrl = 'http://localhost:3000/transactions';
 
   private accountsSvc = inject(AccountService);
+  private currencyService = inject(CurrencyService);
 
   constructor(private http: HttpClient) { }
 
@@ -65,7 +67,8 @@ export class TransactionService {
     userId: string | null,
     fromId: string,
     toId: string,
-    amount: number
+    amount: number,
+    currency: 'USD' | 'PEN' = 'PEN'
   ): Observable<{ ok: true }> {
     if (userId == null) return throwError(() => new Error('No hay sesion')); 
     if (!fromId || !toId) return throwError(() => new Error('Cuentas inválidas'));
@@ -80,12 +83,19 @@ export class TransactionService {
         if (from.status === 'inactiva' || to.status === 'inactiva') {
           throw new Error('Alguna de las cuentas está inactiva');
         }
-        if (from.balance < amount) throw new Error('Saldo insuficiente en la cuenta de origen');
-        return { from, to };
+        // Convertir el monto a la moneda de la cuenta origen para validar saldo
+        const amountInFromCurrency = this.currencyService.convertToAccountCurrency(amount, currency, from.currency);
+        if (from.balance < amountInFromCurrency) throw new Error('Saldo insuficiente en la cuenta de origen');
+        
+        // Convertir el monto a la moneda de cada cuenta
+        const amountForFrom = this.currencyService.convertToAccountCurrency(amount, currency, from.currency);
+        const amountForTo = this.currencyService.convertToAccountCurrency(amount, currency, to.currency);
+        
+        return { from, to, amountForFrom, amountForTo };
       }),
-      switchMap(({ from, to }) => {
-        const updatedFrom = { ...from, balance: from.balance - amount };
-        const updatedTo   = { ...to,   balance: to.balance + amount };
+      switchMap(({ from, to, amountForFrom, amountForTo }) => {
+        const updatedFrom = { ...from, balance: from.balance - amountForFrom };
+        const updatedTo   = { ...to,   balance: to.balance + amountForTo };
 
         // 1) actualizar saldos
         return forkJoin([
@@ -102,9 +112,9 @@ export class TransactionService {
                accountId: from.id,
                date: now,
                type: 'retiro',         
-               amount: -Math.abs(amount),
+               amount: -Math.abs(amountForFrom),
                description: `Transferencia a ${to.type?.toUpperCase?.() ?? to.id}`,
-               currency: 'PEN'
+               currency: from.currency
              };
 
              const deposito: ITransaction = {
@@ -112,9 +122,9 @@ export class TransactionService {
                accountId: to.id,
                date: now,
                type: 'depósito',   
-               amount: Math.abs(amount),
+               amount: Math.abs(amountForTo),
                description: `Transferencia desde ${from.type?.toUpperCase?.() ?? from.id}`,
-               currency: 'PEN'
+               currency: to.currency
              };
 
             return forkJoin([
@@ -138,6 +148,7 @@ export class TransactionService {
       fromId: string,
       toAccountId: string,
       amount: number,
+      currency: 'USD' | 'PEN' = 'PEN',
       description?: string
     ): Observable<{ ok: true }> {
       if (!fromId || !toAccountId) return throwError(() => new Error('Cuentas inválidas'));
@@ -155,10 +166,15 @@ export class TransactionService {
             switchMap((to: Account | null) => {
               if (!to) return throwError(() => new Error('La cuenta destino no existe'));
               if (to.status === 'inactiva') return throwError(() => new Error('La cuenta destino está inactiva'));
-              if (from.balance < amount) return throwError(() => new Error('Saldo insuficiente en la cuenta de origen'));
-  
-              const updatedFrom = { ...from, balance: from.balance - amount };
-              const updatedTo   = { ...to,   balance: to.balance + amount };
+              
+              // Convertir el monto a la moneda de cada cuenta
+              const amountForFrom = this.currencyService.convertToAccountCurrency(amount, currency, from.currency);
+              const amountForTo = this.currencyService.convertToAccountCurrency(amount, currency, to.currency);
+              
+              if (from.balance < amountForFrom) return throwError(() => new Error('Saldo insuficiente en la cuenta de origen'));
+
+              const updatedFrom = { ...from, balance: from.balance - amountForFrom };
+              const updatedTo   = { ...to,   balance: to.balance + amountForTo };
               const now = new Date().toISOString();
   
              const transferId = `TXN-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
@@ -168,18 +184,18 @@ export class TransactionService {
                 accountId: from.id,
                 date: now,
                 type: 'retiro',           // siempre negativo
-                amount: -Math.abs(amount),
+                amount: -Math.abs(amountForFrom),
                 description: description?.trim() || `Transferencia a ${to.id}`,
-                currency: 'PEN'
+                currency: from.currency
               };
               const deposito: ITransaction = {
                 id: transferId,
                 accountId: to.id,
                 date: now,
                 type: 'depósito',         // siempre positivo
-                amount: Math.abs(amount),
+                amount: Math.abs(amountForTo),
                 description: description?.trim() || `Transferencia desde ${from.id}`,
-                currency: 'PEN'
+                currency: to.currency
               };
   
               // 2) Actualizar saldos y 3) registrar transacciones
@@ -209,6 +225,7 @@ export class TransactionService {
     serviceId: string,
     serviceName: string,
     amount: number,
+    currency: 'USD' | 'PEN' = 'PEN',
     description?: string
   ): Observable<{ ok: true }> {
     if (!fromId || !serviceId) return throwError(() => new Error('Datos inválidos'));
@@ -220,10 +237,13 @@ export class TransactionService {
         const from = userAccounts.find(a => a.id === fromId);
         if (!from) throw new Error('Cuenta no encontrada para el usuario');
         if (from.status === 'inactiva') throw new Error('La cuenta está inactiva');
-        if (from.balance < amount) throw new Error('Saldo insuficiente en la cuenta');
+        
+        // Convertir el monto a la moneda de la cuenta
+        const amountInAccountCurrency = this.currencyService.convertToAccountCurrency(amount, currency, from.currency);
+        if (from.balance < amountInAccountCurrency) throw new Error('Saldo insuficiente en la cuenta');
 
         // 2) Actualizar saldo de la cuenta
-        const updatedFrom = { ...from, balance: from.balance - amount };
+        const updatedFrom = { ...from, balance: from.balance - amountInAccountCurrency };
         const now = new Date().toISOString();
         const paymentId = `PAY-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
 
@@ -233,9 +253,9 @@ export class TransactionService {
           accountId: from.id,
           date: now,
           type: 'pago serv',   // siempre negativo
-          amount: -Math.abs(amount), // Siempre negativo porque es un gasto
+          amount: -Math.abs(amountInAccountCurrency), // Siempre negativo porque es un gasto
           description: description?.trim() || `Pago de ${serviceName} (${serviceId})`,
-          currency: 'PEN'
+          currency: from.currency
         };
 
         // 4) Actualizar cuenta y registrar transacción

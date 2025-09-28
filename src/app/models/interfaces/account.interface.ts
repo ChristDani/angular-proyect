@@ -4,4 +4,5 @@ export interface Account {
   type: string;
   balance: number;
   status: string;
+  currency: 'USD' | 'PEN';
 }
