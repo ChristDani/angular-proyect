@@ -82,7 +82,7 @@ export class ModalThirdTransfer implements AfterViewInit, OnInit {
       this.amount === null ||
       this.amount === undefined ||
       this.amount <= 0 ||
-      this.destinationAccount.length !== 20 ||
+      this.destinationAccount.length <= 0 ||
       this.isInsufficientBalance()
     );
   }

@@ -20,7 +20,7 @@
       "id": "1",
       "userId": "1",
       "type": "ahorro",
-      "balance": 1537.25,
+      "balance": 15537.25,
       "status": "activa",
       "currency": "PEN"
     },
@@ -28,7 +28,7 @@
       "id": "2",
       "userId": "1",
       "type": "corriente",
-      "balance": 3280,
+      "balance": 3538.67,
       "status": "activa",
       "currency": "USD"
     },
@@ -36,7 +36,7 @@
       "id": "1759000260719353",
       "userId": "1",
       "type": "corriente",
-      "balance": 99049,
+      "balance": 84039,
       "status": "activa",
       "currency": "PEN"
     }
@@ -373,6 +373,69 @@
       "amount": 56.25,
       "description": "Transferencia desde CORRIENTE",
       "currency": "PEN"
+    },
+    {
+      "id": "TXN-1759072992600-q8vqrwo5k",
+      "accountId": "1759000260719353",
+      "date": "2025-09-28T15:23:12.599Z",
+      "type": "retiro",
+      "amount": -15000,
+      "description": "Transferencia a AHORRO",
+      "currency": "PEN"
+    },
+    {
+      "id": "TXN-1759072992600-q8vqrwo5k",
+      "accountId": "1",
+      "date": "2025-09-28T15:23:12.599Z",
+      "type": "depósito",
+      "amount": 15000,
+      "description": "Transferencia desde CORRIENTE",
+      "currency": "PEN"
+    },
+    {
+      "id": "TXN-1759073149091-bx8ncmvlk",
+      "accountId": "1",
+      "date": "2025-09-28T15:25:49.091Z",
+      "type": "retiro",
+      "amount": -1000,
+      "description": "Transferencia a CORRIENTE",
+      "currency": "PEN"
+    },
+    {
+      "id": "TXN-1759073149091-bx8ncmvlk",
+      "accountId": "2",
+      "date": "2025-09-28T15:25:49.091Z",
+      "type": "depósito",
+      "amount": 266.67,
+      "description": "Transferencia desde AHORRO",
+      "currency": "USD"
+    },
+    {
+      "id": "TXN-1759073523180-p3jpola6j",
+      "accountId": "1759000260719353",
+      "date": "2025-09-28T15:32:03.180Z",
+      "type": "retiro",
+      "amount": -10,
+      "description": "Transferencia a cuenta 2",
+      "currency": "PEN"
+    },
+    {
+      "id": "TXN-1759073523180-p3jpola6j",
+      "accountId": "2",
+      "date": "2025-09-28T15:32:03.180Z",
+      "type": "depósito",
+      "amount": 2.67,
+      "description": "Transferencia a cuenta 2",
+      "currency": "USD"
+    },
+    {
+      "id": "PAY-1759073567797-yfl0lfxgl",
+      "accountId": "2",
+      "date": "2025-09-28T15:32:47.797Z",
+      "type": "pago serv",
+      "amount": -10.67,
+      "description": "Pago de servicio Spotify",
+      "currency": "USD"
     }
   ]
 }
