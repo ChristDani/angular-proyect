@@ -4,89 +4,102 @@
   [withFooter]="true"
   [buttonsInFooter]="{
     primaryButton: {
-      text: 'Continuar',
+      text: loading() ? 'Procesando...' : 'Continuar',
       action: continuar.bind(this),
-      disabled: isFormInvalid()
+      disabled: isFormInvalid() || loading()
     },
     secondaryButtons: [
-      { text: 'Cancelar', action: modalBase.close.bind(modalBase), disabled: false }
+      { text: 'Cancelar', action: modalBase.close.bind(modalBase), disabled: loading() }
     ]
   }"
   (closeModal)="onClose()"
 >
   <div>
-    <div class="row mb-3">
-      <div class="col-12">
-        <label class="d-block mb-2">Desde</label>
-        <select
-          class="form-select"
-          [(ngModel)]="mainAccount"
-          aria-label="Seleccionar cuenta de origen"
-        >
-          <option value="" selected hidden>Seleccione una cuenta de origen</option>
-          <option *ngFor="let account of accounts()" [value]="account.id">
-            <div class="d-flex align-items-center">
-              <div class="bg-primary text-white rounded-circle p-2 me-2">
-                <span class="h5 mb-0">T</span>
-              </div>
-              <div>
-                <div class="fw-bold">{{ account.type }}</div>
-                <div class="text-muted small">****</div>
-              </div>
-              <div class="text-danger">{{ account.balance | currency }}</div>
-            </div>
-          </option>
-        </select>
+    @if (loading()) {
+      <div class="text-center p-3">
+        <div class="spinner-border" role="status">
+          <span class="visually-hidden">Cargando...</span>
+        </div>
+        <p class="mt-2">Cargando cuentas...</p>
       </div>
-    </div>
-
-    <div class="row mb-3">
-      <div class="col-12">
-        <label class="d-block mb-2">Enviar a</label>
-        <div class="form-control d-flex align-items-center">
-          <div class="d-flex align-items-center flex-grow-1">
-            <div class="bg-primary text-white rounded-circle p-2 me-2">
-              <span class="h5 mb-0">T</span>
-            </div>
-            <div>
-              <div class="fw-bold">CUENTA DEPOSITO</div>
-              <div class="text-muted small">****2015</div>
-            </div>
-          </div>
-          <div class="text-danger">-$ 1,000,000.00</div>
+    } @else {
+      <div class="row mb-3">
+        <div class="col-12">
+          <label class="d-block mb-2">Desde</label>
+          <select
+            class="form-select"
+            [value]="selectedFromId"
+            (change)="onFromAccountChange($event)"
+            aria-label="Seleccionar cuenta de origen"
+          >
+            <option value="" disabled>Seleccione una cuenta de origen</option>
+            @for (account of accounts(); track account.id) {
+              <option [value]="account.id">
+                {{ account.type }} - S/ {{ account.balance | number:'1.2-2' }}
+              </option>
+            }
+          </select>
         </div>
       </div>
-    </div>
 
-    <div class="row mb-4">
-      <div class="col-12">
-        <label class="d-block mb-2">Moneda y Monto</label>
-        <div class="d-flex align-items-center gap-3 justify-content-around">
-          <div class="d-flex align-items-center justify-content-between">
-            <label class="form-check-label" for="currencySwitch">
-              <span [class.text-primary]="!isDollar">S/</span>
-            </label>
-            <div class="form-check form-switch">
-              <input
-                class="form-check-input"
-                type="checkbox"
-                role="switch"
-                id="currencySwitch"
-                [(ngModel)]="isDollar"
-              />
-            </div>
-            <label class="form-check-label" for="currencySwitch">
-              <span [class.text-primary]="isDollar">$</span>
-            </label>
-          </div>
+      <div class="row mb-3">
+        <div class="col-12">
+          <label class="d-block mb-2">Cuenta de destino</label>
           <input
-            type="number"
+            type="text"
             class="form-control"
-            [(ngModel)]="amount"
-            placeholder="Ingrese un monto"
+            placeholder="Ingrese el número de cuenta de 20 dígitos"
+            [(ngModel)]="destinationAccount"
+            [disabled]="loading()"
+            maxlength="20"
+            aria-label="Número de cuenta destino"
           />
+          <div class="form-text">Ingrese el número de cuenta completo del destinatario</div>
         </div>
       </div>
-    </div>
+
+      <div class="row mb-4">
+        <div class="col-12">
+          <label class="d-block mb-2">Moneda y Monto</label>
+          <div class="d-flex align-items-center gap-3 justify-content-around">
+            <div class="d-flex align-items-center justify-content-between">
+              <label class="form-check-label" for="currencySwitch">
+                <span [class.text-primary]="!isDollar">S/</span>
+              </label>
+              <div class="form-check form-switch">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  role="switch"
+                  id="currencySwitch"
+                  [(ngModel)]="isDollar"
+                  [disabled]="loading()"
+                />
+              </div>
+              <label class="form-check-label" for="currencySwitch">
+                <span [class.text-primary]="isDollar">$</span>
+              </label>
+            </div>
+            <input
+              type="number"
+              class="form-control"
+              [(ngModel)]="amount"
+              placeholder="Ingrese un monto"
+              min="0.01"
+              step="0.01"
+              [disabled]="loading()"
+            />
+          </div>
+        </div>
+      </div>
+
+      @if (mainAccount() && destinationAccount.trim() && amount > 0) {
+        <div class="alert alert-info">
+          <strong>Resumen:</strong><br>
+          Transferir {{ isDollar ? '$' : 'S/' }} {{ amount | number:'1.2-2' }}
+          desde {{ mainAccount()?.type }} hacia cuenta {{ destinationAccount }}
+        </div>
+      }
+    }
   </div>
 </app-modal-base>

@@ -111,7 +111,7 @@ export class TransactionService {
                id: transferId,
                accountId: to.id,
                date: now,
-               type: 'deposito',   
+               type: 'depósito',   
                amount: Math.abs(amount),
                description: `Transferencia desde ${from.type?.toUpperCase?.() ?? from.id}`,
                currency: 'PEN'
@@ -176,7 +176,7 @@ export class TransactionService {
                 id: transferId,
                 accountId: to.id,
                 date: now,
-                type: 'deposito',         // siempre positivo
+                type: 'depósito',         // siempre positivo
                 amount: Math.abs(amount),
                 description: description?.trim() || `Transferencia desde ${from.id}`,
                 currency: 'PEN'
@@ -232,7 +232,7 @@ export class TransactionService {
           id: paymentId,
           accountId: from.id,
           date: now,
-          type: 'PAGO SERV',
+          type: 'pago serv',   // siempre negativo
           amount: -Math.abs(amount), // Siempre negativo porque es un gasto
           description: description?.trim() || `Pago de ${serviceName} (${serviceId})`,
           currency: 'PEN'
