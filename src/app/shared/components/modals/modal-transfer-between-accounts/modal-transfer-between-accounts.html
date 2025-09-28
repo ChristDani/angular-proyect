@@ -48,7 +48,10 @@
     <div class="row mb-4">
       <div class="col-12">
         <label class="d-block mb-2">Moneda y Monto</label>
-        <div class="d-flex align-items-center gap-3">
+        <div class="d-flex align-items-center gap-3 justify-content-around">
+          <label class="form-check-label" for="currencySwitch">
+            <span [class.text-primary]="!isDollar">S/</span>
+          </label>
           <div class="form-check form-switch">
             <input
               class="form-check-input"
@@ -57,11 +60,10 @@
               id="currencySwitch"
               [(ngModel)]="isDollar"
             />
-            <label class="form-check-label" for="currencySwitch">
-              <span [class.text-primary]="!isDollar">S/</span>
-              <span [class.text-primary]="isDollar">$</span>
-            </label>
           </div>
+          <label class="form-check-label" for="currencySwitch">
+            <span [class.text-primary]="isDollar">$</span>
+          </label>
           <input type="number" class="form-control" [(ngModel)]="amount" placeholder="500,000.00" />
         </div>
       </div>

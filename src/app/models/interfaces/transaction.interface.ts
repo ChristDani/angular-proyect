@@ -10,10 +10,10 @@ export interface ITransaction{
 }
 
 export type transactionType =
-  | 'TRANSF.BCO'
-  | 'PAGO SERV'
-  | 'PAGO TARJ'
-  | 'DEPÓSITO'
-  | 'RETIRO'
-  | 'COMPRA'
-  | 'VENTA';
+  | 'transf.bco'
+  | 'pago serv'
+  | 'pago tarj'
+  | 'depósito'
+  | 'retiro'
+  | 'compra'
+  | 'venta';

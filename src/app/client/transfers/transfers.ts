@@ -5,6 +5,8 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { ModalTransferBetweenAccounts } from '../../shared/components/modals/modal-transfer-between-accounts/modal-transfer-between-accounts';
 import { ITransaction, transactionType } from '../../models/interfaces/transaction.interface';
 import { STransactions } from '../../shared/services/transactions';
+import { ModalThirdTransfer } from '../../shared/components/modals/modal-third-transfer/modal-third-transfer';
+import { ModalServicePayment } from '../../shared/components/modals/modal-service-payment/modal-service-payment';
 
 interface Transaction {
   id: number;
@@ -18,13 +20,9 @@ interface Transaction {
 @Component({
   selector: 'app-transfers',
   standalone: true,
-  imports: [
-    CommonModule, 
-    FormsModule,
-    MatDialogModule,
-  ],
+  imports: [CommonModule, FormsModule, MatDialogModule],
   templateUrl: './transfers.html',
-  styleUrls: ['./transfers.css']
+  styleUrls: ['./transfers.css'],
 })
 export class TransfersComponent implements OnInit {
   private transactionsService = inject(STransactions);
@@ -44,11 +42,11 @@ export class TransfersComponent implements OnInit {
   }
 
   openTransferModal(type: 'own' | 'third' | 'service'): void {
-    switch(type) {
+    switch (type) {
       case 'own':
-        const dialogRef = this.dialog.open(ModalTransferBetweenAccounts);
+        const ModalTBA = this.dialog.open(ModalTransferBetweenAccounts);
 
-        dialogRef.afterClosed().subscribe(result => {
+        ModalTBA.afterClosed().subscribe((result) => {
           if (result) {
             // Actualizar lista de transacciones
             this.refreshTransactions();
@@ -56,10 +54,24 @@ export class TransfersComponent implements OnInit {
         });
         break;
       case 'third':
-        // Implementar modal para transferencias a terceros
+        const ModalTT = this.dialog.open(ModalThirdTransfer);
+
+        ModalTT.afterClosed().subscribe((result) => {
+          if (result) {
+            // Actualizar lista de transacciones
+            this.refreshTransactions();
+          }
+        });
         break;
       case 'service':
-        // Implementar modal para pago de servicios
+        const ModalTS = this.dialog.open(ModalServicePayment);
+
+        ModalTS.afterClosed().subscribe((result) => {
+          if (result) {
+            // Actualizar lista de transacciones
+            this.refreshTransactions();
+          }
+        });
         break;
     }
   }
@@ -76,15 +88,12 @@ export class TransfersComponent implements OnInit {
     this.refreshTransactions();
   }
 
-  openFilterSettings(): void {
-    // Implementar modal de configuración de filtros
-  }
-
   // Agrupar transacciones por fecha
   get groupedTransactions(): { [key: string]: ITransaction[] } {
     // First sort all transactions by date (most recent first)
-    const sortedTransactions = this.transactions()
-      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    const sortedTransactions = this.transactions().sort(
+      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+    );
 
     // Group transactions by display date
     const groups = sortedTransactions.reduce((groups, transaction) => {
@@ -94,17 +103,17 @@ export class TransfersComponent implements OnInit {
       const month = parseInt(dateParts[1]) - 1; // JavaScript months are 0-based
       const day = parseInt(dateParts[2]);
       const transactionDate = new Date(year, month, day);
-      
+
       // Ensure valid date
       if (isNaN(transactionDate.getTime())) {
         console.warn('Invalid date found:', transaction.date);
         return groups;
       }
-      
-      const displayDate = this.isToday(transactionDate) ? 
-        'Hoy' : 
-        `${this.getMonthName(transactionDate.getMonth())} ${transactionDate.getFullYear()}`;
-      
+
+      const displayDate = this.isToday(transactionDate)
+        ? 'Hoy'
+        : `${this.getMonthName(transactionDate.getMonth())} ${transactionDate.getFullYear()}`;
+
       if (!groups[displayDate]) {
         groups[displayDate] = [];
       }
@@ -117,25 +126,25 @@ export class TransfersComponent implements OnInit {
       .sort(([dateA], [dateB]) => {
         if (dateA === 'Hoy') return -1;
         if (dateB === 'Hoy') return 1;
-        
+
         // Extract month and year from display date
         const [monthNameA, yearA] = dateA.split(' ');
         const [monthNameB, yearB] = dateB.split(' ');
-        
+
         // Convert month names to numbers (0-based index)
         const monthA = this.getMonthNumber(monthNameA);
         const monthB = this.getMonthNumber(monthNameB);
-        
+
         // Handle invalid month names
         if (monthA === -1 || monthB === -1) {
           console.warn('Invalid month name found:', monthNameA, monthNameB);
           return 0;
         }
-        
+
         // Create dates for comparison (using day 1 as reference)
         const dateAObj = new Date(parseInt(yearA), monthA, 1);
         const dateBObj = new Date(parseInt(yearB), monthB, 1);
-        
+
         // Sort from most recent to oldest
         return dateBObj.getTime() - dateAObj.getTime();
       })
@@ -144,23 +153,45 @@ export class TransfersComponent implements OnInit {
 
   private isToday(date: Date): boolean {
     const today = new Date();
-    return date.getDate() === today.getDate() &&
-           date.getMonth() === today.getMonth() &&
-           date.getFullYear() === today.getFullYear();
+    return (
+      date.getDate() === today.getDate() &&
+      date.getMonth() === today.getMonth() &&
+      date.getFullYear() === today.getFullYear()
+    );
   }
 
   private getMonthName(month: number): string {
     const months = [
-      'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-      'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+      'Enero',
+      'Febrero',
+      'Marzo',
+      'Abril',
+      'Mayo',
+      'Junio',
+      'Julio',
+      'Agosto',
+      'Septiembre',
+      'Octubre',
+      'Noviembre',
+      'Diciembre',
     ];
     return months[month];
   }
 
   private getMonthNumber(monthName: string): number {
     const months = [
-      'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-      'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+      'Enero',
+      'Febrero',
+      'Marzo',
+      'Abril',
+      'Mayo',
+      'Junio',
+      'Julio',
+      'Agosto',
+      'Septiembre',
+      'Octubre',
+      'Noviembre',
+      'Diciembre',
     ];
     return months.indexOf(monthName);
   }
