@@ -101,7 +101,7 @@
     </div>
 
     <!-- Transactions List -->
-    @for (group of groupedTransactions | keyvalue; track group.key) {
+    @for (group of groupedTransactions; track group.key) {
     <div class="mb-4">
       <h6 class="fw-bold">{{ group.key }}</h6>
       @for (transaction of group.value; track transaction.id) {
@@ -118,7 +118,7 @@
             <span class="fw-semibold">{{ transaction.type }}</span
             ><br />
             <span class="transfer-date text-muted">
-              {{ transaction.date | date : 'd MMMM' }}
+              {{ transaction.date | transactionDateTime }}
             </span>
           </div>
         </div>
