@@ -20,22 +20,25 @@
       "id": "1",
       "userId": "1",
       "type": "ahorro",
-      "balance": 1550,
-      "status": "activa"
+      "balance": 1537.25,
+      "status": "activa",
+      "currency": "PEN"
     },
     {
       "id": "2",
       "userId": "1",
       "type": "corriente",
-      "balance": 3300,
-      "status": "activa"
+      "balance": 3280,
+      "status": "activa",
+      "currency": "USD"
     },
     {
       "id": "1759000260719353",
       "userId": "1",
       "type": "corriente",
-      "balance": 99100,
-      "status": "activa"
+      "balance": 99049,
+      "status": "activa",
+      "currency": "PEN"
     }
   ],
   "loans": [
@@ -288,6 +291,87 @@
       "type": "depósito",
       "amount": 100,
       "description": "Transferencia a cuenta 1759000260719353",
+      "currency": "PEN"
+    },
+    {
+      "id": "PAY-1759070527037-4dm4jglhf",
+      "accountId": "2",
+      "date": "2025-09-28T14:42:07.037Z",
+      "type": "pago serv",
+      "amount": -10,
+      "description": "Pago de servicio ENEL - Luz del Sur",
+      "currency": "USD"
+    },
+    {
+      "id": "PAY-1759071038270-0zgi3zc80",
+      "accountId": "2",
+      "date": "2025-09-28T14:50:38.270Z",
+      "type": "pago serv",
+      "amount": -15,
+      "description": "Pago de servicio SEDAPAL",
+      "currency": "PEN"
+    },
+    {
+      "id": "TXN-1759071131819-kcvckc8ri",
+      "accountId": "1",
+      "date": "2025-09-28T14:52:11.819Z",
+      "type": "retiro",
+      "amount": -24,
+      "description": "Transferencia a cuenta 1759000260719353",
+      "currency": "PEN"
+    },
+    {
+      "id": "TXN-1759071131819-kcvckc8ri",
+      "accountId": "1759000260719353",
+      "date": "2025-09-28T14:52:11.819Z",
+      "type": "depósito",
+      "amount": 24,
+      "description": "Transferencia a cuenta 1759000260719353",
+      "currency": "PEN"
+    },
+    {
+      "id": "PAY-1759071439275-q7jyx2b4a",
+      "accountId": "1",
+      "date": "2025-09-28T14:57:19.275Z",
+      "type": "pago serv",
+      "amount": -45,
+      "description": "Pago de servicio Movistar",
+      "currency": "PEN"
+    },
+    {
+      "id": "TXN-1759071495916-iddg9pmwm",
+      "accountId": "1759000260719353",
+      "date": "2025-09-28T14:58:15.916Z",
+      "type": "retiro",
+      "amount": -75,
+      "description": "Transferencia a CORRIENTE",
+      "currency": "PEN"
+    },
+    {
+      "id": "TXN-1759071495916-iddg9pmwm",
+      "accountId": "2",
+      "date": "2025-09-28T14:58:15.916Z",
+      "type": "depósito",
+      "amount": 20,
+      "description": "Transferencia desde CORRIENTE",
+      "currency": "USD"
+    },
+    {
+      "id": "TXN-1759071533648-bs7p6351l",
+      "accountId": "2",
+      "date": "2025-09-28T14:58:53.648Z",
+      "type": "retiro",
+      "amount": -15,
+      "description": "Transferencia a AHORRO",
+      "currency": "USD"
+    },
+    {
+      "id": "TXN-1759071533648-bs7p6351l",
+      "accountId": "1",
+      "date": "2025-09-28T14:58:53.648Z",
+      "type": "depósito",
+      "amount": 56.25,
+      "description": "Transferencia desde CORRIENTE",
       "currency": "PEN"
     }
   ]

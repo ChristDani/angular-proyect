@@ -114,7 +114,7 @@ export class TransferToThirdDialog {
     const { fromId, toAccountId, amount, description } = this.fv();
     this.submitting.set(true);
 
-    this.txSvc.transferToThirdParty(userId, fromId!, toAccountId!, Number(amount), description)
+    this.txSvc.transferToThirdParty(userId, fromId!, toAccountId!, Number(amount), 'PEN', description)
       .subscribe({
         next: () => { this.submitting.set(false); this.ref.close({ ok: true }); },
         error: e => { this.submitting.set(false); this.error.set(e?.message || 'No se pudo completar la transferencia.'); }

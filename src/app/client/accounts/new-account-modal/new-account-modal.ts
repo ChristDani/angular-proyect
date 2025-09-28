@@ -55,6 +55,7 @@ export class NewAccountModal {
       type: this.accountForm.get('type')!.value,
       balance: Number(this.accountForm.get('balance')!.value),
       status: 'activa',
+      currency: 'PEN'
     };
     this.accountService
       .createAccount(account)

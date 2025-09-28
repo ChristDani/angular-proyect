@@ -7,6 +7,7 @@ import { AccountService } from '../../../../core/services/account.service';
 import { Account } from '../../../../models/interfaces/account.interface';
 import { AuthService } from '../../../../auth/auth.service';
 import { TransactionService } from '../../../../core/services/transaction.service';
+import { CurrencyService } from '../../../../core/services/currency.service';
 
 interface Service {
   id: string;
@@ -29,6 +30,7 @@ export class ModalServicePayment implements AfterViewInit, OnInit {
   private accountService = inject(AccountService);
   private authService = inject(AuthService);
   private transactionService = inject(TransactionService);
+  private currencyService = inject(CurrencyService);
   
   accounts = signal<Account[]>([]);
   mainAccount = signal<Account | null>(null);
@@ -96,8 +98,22 @@ export class ModalServicePayment implements AfterViewInit, OnInit {
       this.selectedService() === null || 
       this.amount === null || 
       this.amount === undefined || 
-      this.amount <= 0
+      this.amount <= 0 ||
+      this.isInsufficientBalance()
     );
+  }
+
+  private isInsufficientBalance(): boolean {
+    if (!this.mainAccount() || this.amount <= 0) return false;
+    
+    const selectedCurrency = this.isDollar ? 'USD' : 'PEN';
+    const requiredAmount = this.currencyService.convertToAccountCurrency(
+      this.amount, 
+      selectedCurrency, 
+      this.mainAccount()!.currency
+    );
+    
+    return this.mainAccount()!.balance < requiredAmount;
   }
 
   async continuar(): Promise<void> {
@@ -114,19 +130,15 @@ export class ModalServicePayment implements AfterViewInit, OnInit {
         return;
       }
 
-      // Validar saldo suficiente
-      if (this.amount > this.mainAccount()!.balance) {
-        alert('Saldo insuficiente en la cuenta seleccionada');
-        return;
-      }
-
       // Realizar el pago de servicio usando el servicio
+      const selectedCurrency = this.isDollar ? 'USD' : 'PEN';
       const result = await this.transactionService.payService(
         user.id,
         this.mainAccount()!.id,
         this.selectedService()!.id,
         this.selectedService()!.name,
         this.amount,
+        selectedCurrency,
         `Pago de servicio ${this.selectedService()!.name}`
       ).toPromise();
 
