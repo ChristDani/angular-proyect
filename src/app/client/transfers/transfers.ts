@@ -1,18 +1,3 @@
-
-import { Component, computed, DestroyRef, effect, inject, signal } from '@angular/core';
-import { CommonModule, CurrencyPipe, DatePipe, NgClass } from '@angular/common';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule }   from '@angular/material/card';
-import { MatIconModule }   from '@angular/material/icon';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatListModule } from '@angular/material/list';
-import { TransactionService } from '../../core/services/transaction.service';
-import { ITransaction, TxGroupKey } from '../../models/interfaces/transaction.interface';
-import { AuthService } from '../../auth/auth.service';
-import { TransferBetweenAccountsDialog } from './dialogs/transfer-between-accounts.dialog';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatDialog } from '@angular/material/dialog';
-import { TransferToThirdDialog } from './dialogs/transfer-to-third.dialog';
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -33,24 +18,12 @@ interface Transaction {
 }
 
 @Component({
-  selector: 'app-transfers-page',
+  selector: 'app-transfers',
   standalone: true,
   imports: [CommonModule, FormsModule, MatDialogModule],
   templateUrl: './transfers.html',
   styleUrls: ['./transfers.css'],
-}) 
-//   imports: [
-//     CommonModule,
-//     NgClass,
-//     MatButtonModule,
-//     MatCardModule,
-//     MatIconModule,
-//     MatDividerModule,
-//     MatListModule,
-//     CurrencyPipe,
-//     DatePipe,
-//   ],
-
+})
 export class TransfersComponent implements OnInit {
   private transactionsService = inject(STransactions);
   transactions = signal<ITransaction[]>([]);
@@ -58,25 +31,6 @@ export class TransfersComponent implements OnInit {
   dateFilter = signal<string | undefined>(undefined);
 
   constructor(private dialog: MatDialog) {}
-    
-  // usuario actual
-  readonly currentUserId = this.auth.getLoggedInUser()?.id ?? '';
-  constructor() {
-    effect(() => {
-      this.loading.set(true);
-      this.error.set(null);
-      this.svc.getAllUserTransactions(this.currentUserId).subscribe({
-        next: txs => {
-          this.transactions.set(txs);
-          this.loading.set(false);
-        },
-        error: err => {
-          this.error.set('No se pudieron cargar las transacciones');
-          this.loading.set(false);
-          console.error(err);
-        }
-      });
-    });
 
   async getAllTransactions(type: transactionType | undefined, date: string | undefined) {
     try {
@@ -94,7 +48,21 @@ export class TransfersComponent implements OnInit {
 
         ModalTBA.afterClosed().subscribe((result) => {
           if (result) {
-            // Actualizar lista de transacciones
+            // Crear nueva transacción basada en el resultado del modal
+            const newTransaction: ITransaction = {
+              id: Date.now().toString(), // ID temporal
+              accountId: result.cuentaOrigen?.id || 0,
+              date: new Date().toISOString().split('T')[0], // Fecha actual en formato YYYY-MM-DD
+              type: 'transf.bco',
+              amount: -result.monto, // Negativo porque es una salida
+              description: `Transferencia a cuenta ${result.cuentaDestino?.accountNumber}`,
+              currency: result.moneda
+            };
+
+            // Agregar la nueva transacción a la lista actual
+            const currentTransactions = this.transactions();
+            this.transactions.set([newTransaction, ...currentTransactions]);
+
             this.refreshTransactions();
           }
         });
@@ -104,7 +72,21 @@ export class TransfersComponent implements OnInit {
 
         ModalTT.afterClosed().subscribe((result) => {
           if (result) {
-            // Actualizar lista de transacciones
+            // Crear nueva transacción basada en el resultado del modal
+            const newTransaction: ITransaction = {
+              id: Date.now().toString(), // ID temporal
+              accountId: result.cuentaOrigen?.id || 0,
+              date: new Date().toISOString().split('T')[0], // Fecha actual en formato YYYY-MM-DD
+              type: 'transf.bco',
+              amount: -result.monto, // Negativo porque es una salida
+              description: `Transferencia a cuenta ${result.cuentaDestino?.accountNumber}`,
+              currency: result.moneda
+            };
+
+            // Agregar la nueva transacción a la lista actual
+            const currentTransactions = this.transactions();
+            this.transactions.set([newTransaction, ...currentTransactions]);
+
             this.refreshTransactions();
           }
         });
@@ -114,7 +96,21 @@ export class TransfersComponent implements OnInit {
 
         ModalTS.afterClosed().subscribe((result) => {
           if (result) {
-            // Actualizar lista de transacciones
+            // Crear nueva transacción basada en el resultado del modal
+            const newTransaction: ITransaction = {
+              id: Date.now().toString(), // ID temporal
+              accountId: result.cuentaOrigen?.id || 0,
+              date: new Date().toISOString().split('T')[0], // Fecha actual en formato YYYY-MM-DD
+              type: 'pago serv',
+              amount: -result.monto, // Negativo porque es una salida
+              description: `Transferencia a cuenta ${result.cuentaDestino?.accountNumber}`,
+              currency: result.moneda
+            };
+
+            // Agregar la nueva transacción a la lista actual
+            const currentTransactions = this.transactions();
+            this.transactions.set([newTransaction, ...currentTransactions]);
+
             this.refreshTransactions();
           }
         });
@@ -122,47 +118,16 @@ export class TransfersComponent implements OnInit {
     }
   }
 
-  private reloadTransactions() {
-    this.loading.set(true);
-    this.error.set(null);
-
-    this.svc.getAllUserTransactions(this.currentUserId)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: txs => {
-          this.transactions.set(txs);
-          this.loading.set(false);
-        },
-        error: err => {
-          console.error(err);
-          this.error.set('No se pudieron cargar las transacciones');
-          this.loading.set(false);
-        }
-      });
+  refreshTransactions(): void {
+    this.ngOnInit();
   }
 
-  doOwnTransfer() {
-    this.dialog.open(TransferBetweenAccountsDialog, {
-      panelClass: 'dialog-rounded'
-    })
-    .afterClosed()
-    .pipe(takeUntilDestroyed(this.destroyRef))
-    .subscribe(res => {
-      if (res?.ok) this.reloadTransactions();
-    });
+  resetFilters(): void {
+    this.typeFilter.set(undefined);
+    this.dateFilter.set(undefined);
+    this.refreshTransactions();
   }
 
-  doThirdTransfer() {
-    this.dialog.open(TransferToThirdDialog, { panelClass: 'dialog-rounded' })
-      .afterClosed()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(res => {
-        if (res?.ok) this.reloadTransactions();
-      });
-  }
-
-  doPayServices()   { /* abre modal o navega */ }
-    
   // Agrupar transacciones por fecha
   get groupedTransactions(): { [key: string]: ITransaction[] } {
     // First sort all transactions by date (most recent first)
@@ -270,6 +235,8 @@ export class TransfersComponent implements OnInit {
     ];
     return months.indexOf(monthName);
   }
-    
-  isOutflow(t: ITransaction) { return t.amount < 0; }
+
+  ngOnInit() {
+    this.getAllTransactions(this.typeFilter(), this.dateFilter());
+  }
 }

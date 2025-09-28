@@ -3,8 +3,93 @@
   [title]="'Pago de servicios'"
   [withFooter]="true"
   [buttonsInFooter]="{
-    primaryButton: { text: 'Continuar', action: continuar.bind(this), disabled: !amount || amount <= 0 },
-    secondaryButtons: [{ text: 'Cancelar', action: modalBase.close.bind(modalBase), disabled: false }]
+    primaryButton: {
+      text: 'Continuar',
+      action: continuar.bind(this),
+      disabled: isFormInvalid()
+    },
+    secondaryButtons: [
+      { text: 'Cancelar', action: modalBase.close.bind(modalBase), disabled: false }
+    ]
   }"
   (closeModal)="onClose()"
-></app-modal-base>
+>
+  <div>
+    <div class="row mb-3">
+      <div class="col-12">
+        <label class="d-block mb-2">Desde</label>
+        <select
+          class="form-select"
+          [(ngModel)]="mainAccount"
+          aria-label="Seleccionar cuenta de origen"
+        >
+          <option value="" selected hidden>Seleccione una cuenta de origen</option>
+          <option *ngFor="let account of accounts()" [value]="account.id">
+            <div class="d-flex align-items-center">
+              <div class="bg-primary text-white rounded-circle p-2 me-2">
+                <span class="h5 mb-0">T</span>
+              </div>
+              <div>
+                <div class="fw-bold">{{ account.type }}</div>
+                <div class="text-muted small">****</div>
+              </div>
+              <div class="text-danger">{{ account.balance | currency }}</div>
+            </div>
+          </option>
+        </select>
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-12">
+        <label class="d-block mb-2">Pagar a</label>
+        <select
+          class="form-select"
+          [value]="selectedService()?.id || ''"
+          (change)="onServiceChange($event)"
+          aria-label="Seleccionar servicio a pagar"
+        >
+          <option value="" selected hidden>Seleccione un servicio</option>
+          <option *ngFor="let service of services()" [value]="service.id">
+            <div class="d-flex align-items-center">
+              <div class="bg-success text-white rounded-circle p-2 me-2">
+                <span class="h5 mb-0">{{ service.icon }}</span>
+              </div>
+              <div>
+                <div class="fw-bold">{{ service.name }}</div>
+                <div class="text-muted small">{{ service.code }}</div>
+              </div>
+              <div class="text-muted small">{{ service.category }}</div>
+            </div>
+          </option>
+        </select>
+      </div>
+    </div>
+
+    <div class="row mb-4">
+      <div class="col-12">
+        <label class="d-block mb-2">Moneda y Monto</label>
+        <div class="d-flex align-items-center gap-3 justify-content-around">
+          <div class="d-flex align-items-center justify-content-between">
+            <label class="form-check-label" for="currencySwitch">
+              <span [class.text-primary]="!isDollar">S/</span>
+            </label>
+            <div class="form-check form-switch">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                role="switch"
+                id="currencySwitch"
+                [(ngModel)]="isDollar"
+              />
+            </div>
+            <label class="form-check-label" for="currencySwitch">
+              <span [class.text-primary]="isDollar">$</span>
+            </label>
+          </div>
+          <input type="number" class="form-control" [(ngModel)]="amount" placeholder="500,000.00" />
+        </div>
+      </div>
+    </div>
+  </div>
+</app-modal-base>
