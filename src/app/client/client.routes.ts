@@ -6,7 +6,7 @@ import { Accounts } from './accounts/accounts';
 import { RoleGuardClient } from '../core/guards/role.guard';
 import { Users } from '../admin/users/users';
 import { Dashboard } from './dashboard/dashboard';
-import { TransfersPage } from './transfers/transfers';
+import { TransfersComponent } from './transfers/transfers';
 
 
 export const CLIENT_ROUTES: Routes = [
@@ -20,6 +20,6 @@ export const CLIENT_ROUTES: Routes = [
         { path: 'accounts', component: Accounts},
         { path: 'cards', component: Cards},
         { path: 'loans', component: LoansPage},
-        { path: 'transfers', component: TransfersPage},
+        { path: 'transfers', component: TransfersComponent},
     ]}
 ];

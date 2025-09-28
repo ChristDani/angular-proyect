@@ -48,7 +48,7 @@ export class TransactionService {
       ),
       map(lists => lists.flat()
         .map(t => ({ ...t, currency: t.currency ?? 'PEN' }))
-        .sort((a, b) => b.date.localeCompare(a.date))
+        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
       )
     );
   }
@@ -94,13 +94,13 @@ export class TransactionService {
         ]).pipe(
           // 2) registrar transacciones
            switchMap(() => {
-             const today = new Date().toISOString().slice(0, 10);
+             const now = new Date().toISOString();
              const transferId = `TXN-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
 
              const retiro: ITransaction = {
                id: transferId,
                accountId: from.id,
-               date: today,
+               date: now,
                type: 'retiro',         
                amount: -Math.abs(amount),
                description: `Transferencia a ${to.type?.toUpperCase?.() ?? to.id}`,
@@ -110,7 +110,7 @@ export class TransactionService {
              const deposito: ITransaction = {
                id: transferId,
                accountId: to.id,
-               date: today,
+               date: now,
                type: 'deposito',   
                amount: Math.abs(amount),
                description: `Transferencia desde ${from.type?.toUpperCase?.() ?? from.id}`,
@@ -159,14 +159,14 @@ export class TransactionService {
   
               const updatedFrom = { ...from, balance: from.balance - amount };
               const updatedTo   = { ...to,   balance: to.balance + amount };
-              const today = new Date().toISOString().slice(0, 10);
+              const now = new Date().toISOString();
   
              const transferId = `TXN-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
 
               const retiro: ITransaction = {
                 id: transferId,
                 accountId: from.id,
-                date: today,
+                date: now,
                 type: 'retiro',           // siempre negativo
                 amount: -Math.abs(amount),
                 description: description?.trim() || `Transferencia a ${to.id}`,
@@ -175,7 +175,7 @@ export class TransactionService {
               const deposito: ITransaction = {
                 id: transferId,
                 accountId: to.id,
-                date: today,
+                date: now,
                 type: 'deposito',         // siempre positivo
                 amount: Math.abs(amount),
                 description: description?.trim() || `Transferencia desde ${from.id}`,
@@ -195,4 +195,57 @@ export class TransactionService {
         })
       );
     }
+
+  /**
+   * Pago de servicios:
+   * - Verifica cuenta del usuario y saldo suficiente
+   * - Actualiza saldo de la cuenta
+   * - Crea transacción de pago de servicio (negativa)
+   * - Devuelve { ok: true }
+   */
+  payService(
+    userId: string,
+    fromId: string,
+    serviceId: string,
+    serviceName: string,
+    amount: number,
+    description?: string
+  ): Observable<{ ok: true }> {
+    if (!fromId || !serviceId) return throwError(() => new Error('Datos inválidos'));
+    if (!(amount > 0)) return throwError(() => new Error('El monto debe ser mayor que 0'));
+
+    // 1) Cargar cuenta del usuario y validar
+    return this.accountsSvc.getAccountsByUserId(userId).pipe(
+      switchMap((userAccounts: Account[]) => {
+        const from = userAccounts.find(a => a.id === fromId);
+        if (!from) throw new Error('Cuenta no encontrada para el usuario');
+        if (from.status === 'inactiva') throw new Error('La cuenta está inactiva');
+        if (from.balance < amount) throw new Error('Saldo insuficiente en la cuenta');
+
+        // 2) Actualizar saldo de la cuenta
+        const updatedFrom = { ...from, balance: from.balance - amount };
+        const now = new Date().toISOString();
+        const paymentId = `PAY-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
+
+        // 3) Crear transacción de pago de servicio
+        const pagoServicio: ITransaction = {
+          id: paymentId,
+          accountId: from.id,
+          date: now,
+          type: 'PAGO SERV',
+          amount: -Math.abs(amount), // Siempre negativo porque es un gasto
+          description: description?.trim() || `Pago de ${serviceName} (${serviceId})`,
+          currency: 'PEN'
+        };
+
+        // 4) Actualizar cuenta y registrar transacción
+        return forkJoin([
+          this.accountsSvc.updateAccount(updatedFrom),
+          this.createTransaction(pagoServicio)
+        ]).pipe(
+          map(() => ({ ok: true as const }))
+        );
+      })
+    );
+  }
 }

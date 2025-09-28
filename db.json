@@ -20,21 +20,21 @@
       "id": "1",
       "userId": "1",
       "type": "ahorro",
-      "balance": 500,
+      "balance": 1700,
       "status": "activa"
     },
     {
       "id": "2",
       "userId": "1",
       "type": "corriente",
-      "balance": 3000,
+      "balance": 3300,
       "status": "activa"
     },
     {
       "id": "1759000260719353",
       "userId": "1",
       "type": "corriente",
-      "balance": 100500,
+      "balance": 99000,
       "status": "activa"
     }
   ],
@@ -95,31 +95,34 @@
     {
       "id": "1",
       "accountId": "1",
-      "date": "2025-09-01",
+      "date": "2025-09-01T08:30:00.000Z",
       "type": "depósito",
       "amount": 1000,
-      "description": "Depósito de apertura"
+      "description": "Depósito de apertura",
+      "currency": "USD"
     },
     {
       "id": "2",
       "accountId": "1",
-      "date": "2025-09-03",
+      "date": "2025-09-03T14:15:00.000Z",
       "type": "retiro",
-      "amount": 300,
-      "description": "Pago de servicios"
+      "amount": -300,
+      "description": "Pago de servicios",
+      "currency": "USD"
     },
     {
       "id": "3",
       "accountId": "2",
-      "date": "2025-09-03",
+      "date": "2025-09-03T16:45:00.000Z",
       "type": "depósito",
       "amount": 2500,
-      "description": "Transferencia recibida"
+      "description": "Transferencia recibida",
+      "currency": "PEN"
     },
     {
       "id": "TXN-1759023714955-w0mje8m1j",
       "accountId": "1",
-      "date": "2025-09-28",
+      "date": "2025-09-28T10:10:00.000Z",
       "type": "retiro",
       "amount": -500,
       "description": "Transferencia a CORRIENTE",
@@ -128,7 +131,7 @@
     {
       "id": "TXN-1759023714955-w0mje8m1j",
       "accountId": "2",
-      "date": "2025-09-28",
+      "date": "2025-09-28T10:10:00.000Z",
       "type": "deposito",
       "amount": 500,
       "description": "Transferencia desde AHORRO",
@@ -137,7 +140,7 @@
     {
       "id": "TXN-1759024994992-2hhuedsbv",
       "accountId": "1",
-      "date": "2025-09-28",
+      "date": "2025-09-28T10:15:00.000Z",
       "type": "retiro",
       "amount": -500,
       "description": "test",
@@ -146,10 +149,118 @@
     {
       "id": "TXN-1759024994992-2hhuedsbv",
       "accountId": "1759000260719353",
-      "date": "2025-09-28",
+      "date": "2025-09-28T10:15:00.000Z",
       "type": "deposito",
       "amount": 500,
       "description": "test",
+      "currency": "PEN"
+    },
+    {
+      "id": "TXN-1759067432635-5m1nt8jr9",
+      "accountId": "1759000260719353",
+      "date": "2025-09-28T10:25:00.000Z",
+      "type": "retiro",
+      "amount": -1000,
+      "description": "Transferencia a AHORRO",
+      "currency": "PEN"
+    },
+    {
+      "id": "TXN-1759067432635-5m1nt8jr9",
+      "accountId": "1",
+      "date": "2025-09-28T10:25:00.000Z",
+      "type": "deposito",
+      "amount": 1000,
+      "description": "Transferencia desde CORRIENTE",
+      "currency": "PEN"
+    },
+    {
+      "id": "TXN-1759067698534-j9l5xudxz",
+      "accountId": "1759000260719353",
+      "date": "2025-09-28T10:30:00.000Z",
+      "type": "retiro",
+      "amount": -200,
+      "description": "Transferencia a AHORRO",
+      "currency": "PEN"
+    },
+    {
+      "id": "TXN-1759067698534-j9l5xudxz",
+      "accountId": "1",
+      "date": "2025-09-28T10:30:00.000Z",
+      "type": "deposito",
+      "amount": 200,
+      "description": "Transferencia desde CORRIENTE",
+      "currency": "PEN"
+    },
+    {
+      "id": "TXN-1759068177167-id6snqrx5",
+      "accountId": "1759000260719353",
+      "date": "2025-09-28T14:02:57.167Z",
+      "type": "retiro",
+      "amount": -300,
+      "description": "Transferencia a CORRIENTE",
+      "currency": "PEN"
+    },
+    {
+      "id": "TXN-1759068177167-id6snqrx5",
+      "accountId": "2",
+      "date": "2025-09-28T14:02:57.167Z",
+      "type": "deposito",
+      "amount": 300,
+      "description": "Transferencia desde CORRIENTE",
+      "currency": "PEN"
+    },
+    {
+      "id": "YESTERDAY-1",
+      "accountId": "1",
+      "date": "2025-09-27T09:15:00.000Z",
+      "type": "depósito",
+      "amount": 750,
+      "description": "Depósito de ayer",
+      "currency": "PEN"
+    },
+    {
+      "id": "YESTERDAY-2",
+      "accountId": "2",
+      "date": "2025-09-27T14:30:00.000Z",
+      "type": "retiro",
+      "amount": -150,
+      "description": "Compra online ayer",
+      "currency": "USD"
+    },
+    {
+      "id": "YESTERDAY-3",
+      "accountId": "1",
+      "date": "2025-09-27T18:45:00.000Z",
+      "type": "pago serv",
+      "amount": -85,
+      "description": "Pago de Netflix",
+      "currency": "PEN"
+    },
+    {
+      "id": "THIS-MONTH-1",
+      "accountId": "2",
+      "date": "2025-09-25T11:20:00.000Z",
+      "type": "retiro",
+      "amount": -300,
+      "description": "Compra en supermercado",
+      "currency": "PEN"
+    },
+    {
+      "id": "THIS-MONTH-2",
+      "accountId": "1",
+      "date": "2025-09-20T16:00:00.000Z",
+      "type": "depósito",
+      "amount": 1500,
+      "description": "Transferencia recibida",
+      "currency": "USD"
+    },
+    {
+      "id": "THIS-MONTH-3",
+      "accountId": "2",
+      "date": "2025-09-15T08:30:00.000Z",
+      "type": "pago serv",
+      "amount": -120,
+      "description": "Pago de luz",
       "currency": "PEN"
     }
   ]
