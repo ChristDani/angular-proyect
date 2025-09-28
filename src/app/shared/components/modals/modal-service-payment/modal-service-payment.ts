@@ -1,10 +1,12 @@
-import { Component, inject, signal, ViewChild } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
-import { AccountService } from '../../../../core/services/account.service';
-import { Account } from '../../../../models/interfaces/account.interface';
-import { ModalBaseComponent } from '../modal-base/modal-base';
+import { Component, ViewChild, AfterViewInit, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { MatDialogRef } from '@angular/material/dialog';
+import { ModalBaseComponent } from '../modal-base/modal-base';
+import { AccountService } from '../../../../core/services/account.service';
+import { Account } from '../../../../models/interfaces/account.interface';
+import { AuthService } from '../../../../auth/auth.service';
+import { TransactionService } from '../../../../core/services/transaction.service';
 
 interface Service {
   id: string;
@@ -16,29 +18,37 @@ interface Service {
 
 @Component({
   selector: 'app-modal-service-payment',
-  imports: [ModalBaseComponent, CommonModule, FormsModule],
+  standalone: true,
+  imports: [CommonModule, FormsModule, ModalBaseComponent],
   templateUrl: './modal-service-payment.html',
-  styleUrl: './modal-service-payment.css'
+  styleUrls: ['./modal-service-payment.css']
 })
-export class ModalServicePayment {
+export class ModalServicePayment implements AfterViewInit, OnInit {
   constructor(private dialogRef: MatDialogRef<ModalServicePayment>) {}
 
   private accountService = inject(AccountService);
+  private authService = inject(AuthService);
+  private transactionService = inject(TransactionService);
+  
   accounts = signal<Account[]>([]);
   mainAccount = signal<Account | null>(null);
   selectedService = signal<Service | null>(null);
   services = signal<Service[]>([]);
-
-  // Referencia al componente base del modal
+  loading = signal<boolean>(false);
 
   @ViewChild('modalBase') modalBase!: ModalBaseComponent;
 
-  // Variables para el manejo de moneda y monto
+  // Variables para el formulario
   isDollar: boolean = false;
-  amount: number = 0.0;
+  amount: number = 0;
+  selectedFromId: string = '';
+
+  ngOnInit(): void {
+    this.loadAccounts();
+    this.loadServices();
+  }
 
   ngAfterViewInit() {
-    // Abrimos el modal después de que la vista se ha inicializado
     setTimeout(() => {
       if (this.modalBase) {
         this.modalBase.open();
@@ -46,18 +56,38 @@ export class ModalServicePayment {
     });
   }
 
-  onClose(): void {
-    this.modalBase.close();
-    this.dialogRef.close();
+  async loadAccounts() {
+    try {
+      this.loading.set(true);
+      const user = this.authService.getLoggedInUser();
+      if (!user?.id) {
+        console.error('No hay usuario logueado');
+        return;
+      }
+
+      const accounts = await this.accountService.getAccountsByUserId(user.id).toPromise();
+      const activeAccounts = accounts?.filter(acc => acc.status === 'activa') || [];
+      this.accounts.set(activeAccounts);
+    } catch (error) {
+      console.error('Error al cargar cuentas:', error);
+    } finally {
+      this.loading.set(false);
+    }
   }
 
-  async getAccounts() {
-    try {
-      const accounts = await this.accountService.getAccountsByUserId('1').toPromise();
-      this.accounts.set(accounts || []);
-    } catch (error) {
-      console.error('Error al obtener cuentas:', error);
-    }
+  onFromAccountChange(event: Event): void {
+    const target = event.target as HTMLSelectElement;
+    const accountId = target.value;
+    const account = this.accounts().find(acc => acc.id === accountId);
+    this.mainAccount.set(account || null);
+    this.selectedFromId = accountId;
+  }
+
+  onServiceChange(event: Event): void {
+    const target = event.target as HTMLSelectElement;
+    const serviceId = target.value;
+    const service = this.services().find(s => s.id === serviceId);
+    this.selectedService.set(service || null);
   }
   
   isFormInvalid(): boolean {
@@ -70,50 +100,59 @@ export class ModalServicePayment {
     );
   }
 
-  continuar(): void {
-    if (this.validarPagoServicio()) {
-      // Aquí iría la lógica para procesar el pago de servicio
-      const resultado = {
-        moneda: this.isDollar ? 'USD' : 'PEN',
-        monto: this.amount,
-        cuentaOrigen: this.mainAccount(),
-        servicio: this.selectedService(),
-      };
+  async continuar(): Promise<void> {
+    if (this.isFormInvalid()) {
+      return;
+    }
 
-      console.log('Procesando pago de servicio:', resultado);
-      this.modalBase.close();
-      this.dialogRef.close(resultado);
+    try {
+      this.loading.set(true);
+      const user = this.authService.getLoggedInUser();
+      
+      if (!user?.id) {
+        console.error('Error: No hay usuario logueado');
+        return;
+      }
+
+      // Validar saldo suficiente
+      if (this.amount > this.mainAccount()!.balance) {
+        alert('Saldo insuficiente en la cuenta seleccionada');
+        return;
+      }
+
+      // Realizar el pago de servicio usando el servicio
+      const result = await this.transactionService.payService(
+        user.id,
+        this.mainAccount()!.id,
+        this.selectedService()!.id,
+        this.selectedService()!.name,
+        this.amount,
+        `Pago de servicio ${this.selectedService()!.name}`
+      ).toPromise();
+
+      if (result?.ok) {
+        const resultado = {
+          moneda: this.isDollar ? 'USD' : 'PEN',
+          monto: this.amount,
+          cuentaOrigen: this.mainAccount(),
+          servicio: this.selectedService(),
+        };
+
+        console.log('Pago de servicio exitoso:', resultado);
+        this.modalBase.close();
+        this.dialogRef.close(resultado);
+      }
+    } catch (error: any) {
+      console.error('Error en pago de servicio:', error);
+      alert(error?.message || 'Error al procesar el pago');
+    } finally {
+      this.loading.set(false);
     }
   }
 
-  private validarPagoServicio(): boolean {
-    if (!this.amount || this.amount <= 0) {
-      alert('Por favor ingrese un monto válido');
-      return false;
-    }
-
-    if (this.amount > this.mainAccount()?.balance!) {
-      alert('Saldo insuficiente');
-      return false;
-    }
-
-    if (!this.selectedService()) {
-      alert('Por favor seleccione un servicio');
-      return false;
-    }
-
-    return true;
-  }
-  onServiceChange(event: Event): void {
-    const target = event.target as HTMLSelectElement;
-    const serviceId = target.value;
-    const service = this.services().find(s => s.id === serviceId);
-    this.selectedService.set(service || null);
-  }
-
-  onNgInit(): void {
-    this.getAccounts();
-    this.loadServices();
+  onClose(): void {
+    this.modalBase.close();
+    this.dialogRef.close();
   }
 
   private loadServices(): void {

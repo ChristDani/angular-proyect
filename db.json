@@ -20,7 +20,7 @@
       "id": "1",
       "userId": "1",
       "type": "ahorro",
-      "balance": 1700,
+      "balance": 1550,
       "status": "activa"
     },
     {
@@ -34,7 +34,7 @@
       "id": "1759000260719353",
       "userId": "1",
       "type": "corriente",
-      "balance": 99000,
+      "balance": 99100,
       "status": "activa"
     }
   ],
@@ -261,6 +261,33 @@
       "type": "pago serv",
       "amount": -120,
       "description": "Pago de luz",
+      "currency": "PEN"
+    },
+    {
+      "id": "PAY-1759069673189-oxuzjajcd",
+      "accountId": "1",
+      "date": "2025-09-28T14:27:53.189Z",
+      "type": "pago serv",
+      "amount": -50,
+      "description": "Pago de servicio Netflix",
+      "currency": "PEN"
+    },
+    {
+      "id": "TXN-1759070027256-sh3hgjdhi",
+      "accountId": "1",
+      "date": "2025-09-28T14:33:47.256Z",
+      "type": "retiro",
+      "amount": -100,
+      "description": "Transferencia a cuenta 1759000260719353",
+      "currency": "PEN"
+    },
+    {
+      "id": "TXN-1759070027256-sh3hgjdhi",
+      "accountId": "1759000260719353",
+      "date": "2025-09-28T14:33:47.256Z",
+      "type": "depósito",
+      "amount": 100,
+      "description": "Transferencia a cuenta 1759000260719353",
       "currency": "PEN"
     }
   ]

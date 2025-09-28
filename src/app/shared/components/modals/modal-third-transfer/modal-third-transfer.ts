@@ -1,35 +1,44 @@
-import { Component, inject, signal, ViewChild } from '@angular/core';
-import { ModalBaseComponent } from "../modal-base/modal-base";
-import { MatDialogRef } from '@angular/material/dialog';
-import { AccountService } from '../../../../core/services/account.service';
-import { Account } from '../../../../models/interfaces/account.interface';
+import { Component, ViewChild, AfterViewInit, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { MatDialogRef } from '@angular/material/dialog';
+import { ModalBaseComponent } from '../modal-base/modal-base';
+import { AccountService } from '../../../../core/services/account.service';
+import { Account } from '../../../../models/interfaces/account.interface';
+import { AuthService } from '../../../../auth/auth.service';
+import { TransactionService } from '../../../../core/services/transaction.service';
 
 @Component({
   selector: 'app-modal-third-transfer',
-  imports: [ModalBaseComponent, FormsModule, CommonModule],
+  standalone: true,
+  imports: [CommonModule, FormsModule, ModalBaseComponent],
   templateUrl: './modal-third-transfer.html',
-  styleUrl: './modal-third-transfer.css'
+  styleUrls: ['./modal-third-transfer.css'],
 })
-export class ModalThirdTransfer {
+export class ModalThirdTransfer implements AfterViewInit, OnInit {
   constructor(private dialogRef: MatDialogRef<ModalThirdTransfer>) {}
 
   private accountService = inject(AccountService);
+  private authService = inject(AuthService);
+  private transactionService = inject(TransactionService);
+  
   accounts = signal<Account[]>([]);
   mainAccount = signal<Account | null>(null);
-  secondaryAccount = signal<Account | null>(null);
-
-  // Referencia al componente base del modal
+  loading = signal<boolean>(false);
 
   @ViewChild('modalBase') modalBase!: ModalBaseComponent;
 
-  // Variables para el manejo de moneda y monto
+  // Variables para el formulario
   isDollar: boolean = false;
-  amount: number = 0.0;
+  amount: number = 0;
+  selectedFromId: string = '';
+  destinationAccount: string = '';
+
+  ngOnInit(): void {
+    this.loadAccounts();
+  }
 
   ngAfterViewInit() {
-    // Abrimos el modal después de que la vista se ha inicializado
     setTimeout(() => {
       if (this.modalBase) {
         this.modalBase.open();
@@ -37,62 +46,93 @@ export class ModalThirdTransfer {
     });
   }
 
-  onClose(): void {
-    this.modalBase.close();
-    this.dialogRef.close();
+  async loadAccounts() {
+    try {
+      this.loading.set(true);
+      const user = this.authService.getLoggedInUser();
+      if (!user?.id) {
+        console.error('No hay usuario logueado');
+        return;
+      }
+
+      const accounts = await this.accountService.getAccountsByUserId(user.id).toPromise();
+      const activeAccounts = accounts?.filter(acc => acc.status === 'activa') || [];
+      this.accounts.set(activeAccounts);
+    } catch (error) {
+      console.error('Error al cargar cuentas:', error);
+    } finally {
+      this.loading.set(false);
+    }
   }
 
-  async getAccounts() {
-    try {
-      const accounts = await this.accountService.getAccountsByUserId('1').toPromise();
-      this.accounts.set(accounts || []);
-    } catch (error) {
-      console.error('Error al obtener cuentas:', error);
-    }
+  onFromAccountChange(event: Event): void {
+    const target = event.target as HTMLSelectElement;
+    const accountId = target.value;
+    const account = this.accounts().find(acc => acc.id === accountId);
+    this.mainAccount.set(account || null);
+    this.selectedFromId = accountId;
   }
 
   isFormInvalid(): boolean {
     return (
-      this.mainAccount() === null || 
-      this.secondaryAccount() === null || 
-      this.amount === null || 
-      this.amount === undefined || 
-      this.amount <= 0 ||
-      this.mainAccount() !== this.secondaryAccount()
+      this.mainAccount() === null ||
+      !this.destinationAccount.trim() ||
+      this.amount === null ||
+      this.amount === undefined ||
+      this.amount <= 0
     );
   }
 
-  continuar(): void {
-    if (this.validarTransferencia()) {
-      // Aquí iría la lógica para procesar la transferencia
-      const resultado = {
-        moneda: this.isDollar ? 'USD' : 'PEN',
-        monto: this.amount,
-        cuentaOrigen: this.mainAccount(),
-        cuentaDestino: this.secondaryAccount(),
-      };
+  async continuar(): Promise<void> {
+    if (this.isFormInvalid()) {
+      return;
+    }
 
-      console.log('Procesando transferencia:', resultado);
-      this.modalBase.close();
-      this.dialogRef.close(resultado);
+    try {
+      this.loading.set(true);
+      const user = this.authService.getLoggedInUser();
+      
+      if (!user?.id) {
+        console.error('Error: No hay usuario logueado');
+        return;
+      }
+
+      // Validar saldo suficiente
+      if (this.amount > this.mainAccount()!.balance) {
+        alert('Saldo insuficiente en la cuenta seleccionada');
+        return;
+      }
+
+      // Realizar la transferencia usando el servicio
+      const result = await this.transactionService.transferToThirdParty(
+        user.id,
+        this.mainAccount()!.id,
+        this.destinationAccount,
+        this.amount,
+        `Transferencia a cuenta ${this.destinationAccount}`
+      ).toPromise();
+
+      if (result?.ok) {
+        const resultado = {
+          moneda: this.isDollar ? 'USD' : 'PEN',
+          monto: this.amount,
+          cuentaOrigen: this.mainAccount(),
+          cuentaDestino: this.destinationAccount,
+        };
+
+        console.log('Transferencia a terceros exitosa:', resultado);
+        this.modalBase.close();
+        this.dialogRef.close(resultado);
+      }
+    } catch (error: any) {
+      console.error('Error en transferencia a terceros:', error);
+      alert(error?.message || 'Error al procesar la transferencia');
+    } finally {
+      this.loading.set(false);
     }
   }
 
-  private validarTransferencia(): boolean {
-    if (!this.amount || this.amount <= 0) {
-      alert('Por favor ingrese un monto válido');
-      return false;
-    }
-
-    if (this.amount > this.mainAccount()?.balance!) {
-      alert('Saldo insuficiente');
-      return false;
-    }
-
-    return true;
-  }
-  onNgInit(): void {
-    this.getAccounts();
-  }
-
-}
+  onClose(): void {
+    this.modalBase.close();
+    this.dialogRef.close();
+  }}
