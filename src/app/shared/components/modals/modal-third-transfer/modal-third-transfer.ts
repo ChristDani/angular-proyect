@@ -1,20 +1,17 @@
-import { Component, ViewChild, AfterViewInit, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { Component, inject, signal, ViewChild } from '@angular/core';
+import { ModalBaseComponent } from "../modal-base/modal-base";
 import { MatDialogRef } from '@angular/material/dialog';
-import { ModalBaseComponent } from '../modal-base/modal-base';
 import { AccountService } from '../../../../core/services/account.service';
 import { Account } from '../../../../models/interfaces/account.interface';
 
 @Component({
-  selector: 'app-modal-op',
-  standalone: true,
-  imports: [CommonModule, FormsModule, ModalBaseComponent],
-  templateUrl: './modal-transfer-between-accounts.html',
-  styleUrls: ['./modal-transfer-between-accounts.css'],
+  selector: 'app-modal-third-transfer',
+  imports: [ModalBaseComponent],
+  templateUrl: './modal-third-transfer.html',
+  styleUrl: './modal-third-transfer.css'
 })
-export class ModalTransferBetweenAccounts implements AfterViewInit {
-  constructor(private dialogRef: MatDialogRef<ModalTransferBetweenAccounts>) {}
+export class ModalThirdTransfer {
+  constructor(private dialogRef: MatDialogRef<ModalThirdTransfer>) {}
 
   private accountService = inject(AccountService);
   accounts = signal<Account[]>([]);
@@ -84,4 +81,5 @@ export class ModalTransferBetweenAccounts implements AfterViewInit {
   onNgInit(): void {
     this.getAccounts();
   }
+
 }
